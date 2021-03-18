@@ -47,9 +47,9 @@ kustomize build logging | kubectl apply -f -
 kustomize build monitoring | kubectl apply -f -
 kustomize build tracing | kubectl apply -f -
 ```
-- Alertmanager web will listen to node port `30615`
-- Grafana web will listen to node port `31565`
-- Prometheus web will listen to node port `30830`
+- Alertmanager web will listen on node port `30615`
+- Grafana web will listen on node port `31565`
+- Prometheus web will listen on node port `30830`
 ### Grafana Integration
 Add the following data sources in Grafana:
 - Jaeger: `http://jaeger.tracing:16686`
