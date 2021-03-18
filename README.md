@@ -40,7 +40,7 @@ Check whether cluster nodes can ping each other:
 kubectl apply -f testing/overlaytest.sh
 ./pingtest.sh
 ```
-### One-Shot Deployments
+### One-Shot Deployment
 ```bash
 kustomize build ingress | kubectl apply -f -
 kustomize build logging | kubectl apply -f -
