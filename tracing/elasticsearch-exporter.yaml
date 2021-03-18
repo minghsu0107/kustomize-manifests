@@ -1,0 +1,50 @@
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: elasticsearch-exporter
+  labels:
+    app: elasticsearch
+    type: exporter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: elasticsearch
+      type: exporter
+  template:
+    metadata:
+      annotations:
+        prometheus.io/port: metrics
+        prometheus.io/scrape: "true"
+      labels:
+        app: elasticsearch
+        type: exporter
+    spec:
+      containers:
+      - name: es-exporter
+        image: justwatch/elasticsearch_exporter:1.1.0
+        ports:
+        - name: metrics
+          containerPort: 9114
+        args:
+        - --es.uri=http://elasticsearch:9200
+        - --es.all
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: elasticsearch-exporter
+  labels:
+    app: elasticsearch
+    type: exporter
+  annotations:
+    prometheus.io/port: "9114"
+    prometheus.io/scrape: "true"
+spec:
+  selector:
+    app: elasticsearch
+    type: exporter
+  ports:
+  - name: metrics
+    port: 9114

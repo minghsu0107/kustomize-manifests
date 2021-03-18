@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: dnstest
+spec:
+  selector:
+      matchLabels:
+        name: dnstest
+  template:
+    metadata:
+      labels:
+        name: dnstest
+    spec:
+      tolerations:
+      - operator: Exists
+      containers:
+      - image: busybox:1.28
+        imagePullPolicy: Always
+        name: alpine
+        command: ["sh", "-c", "tail -f /dev/null"]
+        terminationMessagePath: /dev/termination-log

@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: loki
+spec:
+  template:
+    spec:
+      containers:
+      - name: loki
+        resources:
+          limits:
+            cpu: 500m
+          requests:
+            cpu: 500m
+  volumeClaimTemplates:
+  - metadata:
+      name: storage
+      labels:
+        app: loki
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: local-path
+      resources:
+        requests:
+          storage: 20Gi

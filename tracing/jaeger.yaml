@@ -1,0 +1,192 @@
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: jaeger
+  labels:
+    app: jaeger
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: jaeger
+  template:
+    metadata:
+      annotations:
+        prometheus.io/port: metrics
+        prometheus.io/scrape: "true"
+      labels:
+        app: jaeger
+    spec:
+      dnsPolicy: ClusterFirst
+      containers:
+      - name: jaeger
+        # only 1.14+ are compatible with elasticsearch 7.x
+        # https://github.com/jaegertracing/jaeger/issues/2284
+        image: jaegertracing/all-in-one:1.19.2
+        env:
+        - name: SPAN_STORAGE_TYPE
+          value: elasticsearch
+        - name: ES_SERVER_URLS
+          value: http://elasticsearch:9200
+        ports:
+        - name: collection
+          containerPort: 14268
+        - name: metrics
+          containerPort: 14269
+        - name: ui
+          containerPort: 16686
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jaeger
+  labels:
+    app: jaeger
+  annotations:
+    prometheus.io/port: "14269"
+    prometheus.io/scrape: "true"
+spec:
+  selector:
+    app: jaeger
+  ports:
+  - name: collection
+    port: 14268
+  - name: metrics
+    port: 14269
+  - name: ui
+    port: 16686
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: oc-collector-conf
+  labels:
+    app: opencensus
+    component: oc-collector-conf
+data:
+  oc-collector-config: |
+    receivers:
+      opencensus:
+        port: 55678
+        # Changes the maximum msg size that can be received (default is 4MiB)
+        max-recv-msg-size-mib: 32
+        # Limits the maximum number of concurrent streams for each receiver transport (default is 100)
+        max-concurrent-streams: 50
+        # for helping load-balancing
+        keepalive:
+          server-parameters:
+            # the amount of time after which an idle connection would be closed
+            max-connection-idle: 90s
+            # # max-connection-age is the maximum amount of time a connection may exist before it is closed
+            max-connection-age: 180s
+            max-connection-age-grace: 10s
+            # time is a duration for which, if the server doesn't see any activity it pings the client to see
+            # if the transport is still alive. The default is 2 hours.
+            time: 30s
+            # timeout is the wait time after a ping that the server waits for the response before closing the
+            # connection. The default is 20 seconds.
+            timeout: 5s
+      zipkin:
+        port: 9411
+      jaeger:
+        jaeger-thrift-http-port: 14268
+    queued-exporters:
+      jaeger-all-in-one:
+        # the number of queue workers that will be dequeuing batches and sending them out (default is 10)
+        num-workers: 4
+        # default is 5000
+        queue-size: 100
+        # indicates whether queue processor should retry span batches in case of processing failure
+        retry-on-failure: true
+        sender-type: jaeger-thrift-http
+        jaeger-thrift-http:
+          collector-endpoint: http://jaeger:14268/api/traces
+          timeout: 5s
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: oc-collector
+  labels:
+    app: opencesus
+    component: oc-collector
+spec:
+  ports:
+  - name: opencensus
+    port: 55678
+    protocol: TCP
+    targetPort: 55678
+  - name: zipkin
+    port: 9411
+    protocol: TCP
+    targetPort: 9411
+  - name: jaeger
+    port: 14268
+    protocol: TCP
+    targetPort: 14268
+  selector:
+    component: oc-collector
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oc-collector
+  labels:
+    app: opencensus
+    component: oc-collector
+spec:
+  minReadySeconds: 5
+  progressDeadlineSeconds: 120
+  replicas: 3
+  selector:
+    matchLabels:
+      app: opencensus
+  template:
+    metadata:
+      annotations:
+        prometheus.io/path: "/metrics"
+        prometheus.io/port: "8888"
+        prometheus.io/scrape: "true"
+      labels:
+        app: opencensus
+        component: oc-collector
+    spec:
+      containers:
+      - command:
+          - "/occollector_linux"
+          - "--config=/conf/oc-collector-config.yaml"
+        env:
+        - name: GOGC
+          value: "80"
+        image: omnition/opencensus-collector:0.1.10
+        name: oc-collector
+        resources:
+          limits:
+            cpu: 1
+            memory: 2Gi
+          requests:
+            cpu: 200m
+            memory: 400Mi
+        ports:
+        - containerPort: 55678
+        - containerPort: 9411
+        - containerPort: 14268
+        volumeMounts:
+        - name: oc-collector-config-vol
+          mountPath: /conf
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 13133
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 13133
+      volumes:
+        - configMap:
+            name: oc-collector-conf
+            items:
+              - key: oc-collector-config
+                path: oc-collector-config.yaml
+          name: oc-collector-config-vol

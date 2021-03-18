@@ -1,0 +1,12 @@
+namespace: tracing
+resources:
+- elasticsearch-exporter.yaml
+- elasticsearch.yaml
+- jaeger.yaml
+- namespace.yaml
+patches:
+- path: patch.yaml
+  target:
+    kind: StatefulSet
+    name: es-cluster
+    labelSelector: app=elasticsearch

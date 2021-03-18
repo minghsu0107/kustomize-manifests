@@ -1,0 +1,5 @@
+namespace: monitoring
+resources:
+- all-in-one.yaml
+- namespace.yaml
+- pvc.yaml

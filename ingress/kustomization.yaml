@@ -1,0 +1,6 @@
+namespace: default
+resources:
+- crd.yaml
+- namespace.yaml
+- rbac.yaml
+- traefik.yaml

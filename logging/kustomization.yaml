@@ -1,0 +1,17 @@
+namespace: logging
+resources:
+- loki.yaml
+- namespace.yaml
+- promtail-configmap.yaml
+- promtail.yaml
+- rbac.yaml
+configMapGenerator:
+- name: loki-config
+  files:
+  - loki.yaml=configs/loki.yaml
+patches:
+- path: patch.yaml
+  target:
+    kind: StatefulSet
+    name: loki
+    labelSelector: app=loki

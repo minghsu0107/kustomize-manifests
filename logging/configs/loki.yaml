@@ -1,0 +1,50 @@
+auth_enabled: false
+chunk_store_config:
+  # To avoid querying of data beyond the retention period
+  # max_look_back_period must be set to a value less than or equal to 
+  # what is set in table_manager.retention_period
+  max_look_back_period: 0
+ingester:
+  # When this threshold is exceeded the head chunk block will be cut and compressed inside the chunk
+  chunk_block_size: 262144
+  # How long chunks should sit in-memory with no updates before being flushed 
+  # if they don't hit the max block size. This means that half-empty chunks will still be flushed 
+  # after a certain period as long as they receive no further activity.
+  chunk_idle_period: 3m
+  # How long chunks should be retained in-memory after they've been flushed.
+  chunk_retain_period: 1m
+  lifecycler:
+    ring:
+      kvstore:
+        store: inmemory
+      # The number of ingesters to write to and read from
+      replication_factor: 1
+  max_transfer_retries: 0
+limits_config:
+  enforce_metric_name: false
+  reject_old_samples: true
+  reject_old_samples_max_age: 168h
+schema_config:
+  configs:
+  - from: "2018-04-15"
+    index:
+      # Table period
+      period: 168h
+      prefix: index_
+    object_store: filesystem
+    schema: v11
+    store: boltdb
+server:
+  http_listen_port: 3100
+storage_config:
+  boltdb:
+    directory: /data/loki/index
+  filesystem:
+    directory: /data/loki/chunks
+table_manager:
+  # The Table Manager implements the retention deleting the entire tables 
+  # whose data exceeded the retention_period
+  # the Table Manager keeps the last tables alive using this formula:
+  # number_of_tables_to_keep = floor(retention_period / table_period) + 1
+  retention_deletes_enabled: false
+  retention_period: 0
