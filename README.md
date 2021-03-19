@@ -26,7 +26,7 @@ sudo systemctl stop k3s
 sudo vim /etc/systemd/system/k3s.service # add '--no-deploy traefik' to ExecStart
 sudo rm /var/lib/rancher/k3s/server/manifests/traefik.yaml
 sudo systemctl daemon-reload
-sudo service k3s restart
+sudo systemctl restart k3s
 ```
 ## Usage
 ### Network Inspection
