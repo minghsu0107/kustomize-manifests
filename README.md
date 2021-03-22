@@ -3,21 +3,21 @@
 This repository provides one-shot deployment for ingress controller, logging stack, and observability platforms on Kubernetes, including:
 - Ingress controller (Traefik)
 - Logging stack
-  - Loki: log aggregation system
-  - Promtail: daemonset that tails logs from stdout and stderr of all pods
+  - `Loki`: log aggregation system
+  - `Promtail`: daemonset that tails logs from stdout and stderr of all pods
 - Monitoring stack
-  - Cadvisor: exposes container metrics
-  - Prometheus node exporter: scraps metrics from application endpoints and sends to Prometheus server
-  - Kube-state-metrics: server that listens to the Kubernetes API server and generates metrics about the state of Kubernetes components, such as number of running jobs, available replicas, and number of running/stopped/terminated pods, by polling Kubernetes API
-  - Node-directory-size-metrics: daemonset that provides metrics in Prometheus format about disk usage on the nodes
-  - Prometheus: metrics server that collects metrics from Cadvisor, Prometheus node exporter, Kube-state-metrics server and Kubelet metrics
-  - Grafana: web UI that visualizes collected metrics
-  - Alertmanager: server that sends alert to sysadmins when alert conditions are met, based on Prometheus metrics
+  - `Cadvisor`: exposes container metrics
+  - `Prometheus node exporter`: scraps metrics from application endpoints and sends to Prometheus server
+  - `Kube-state-metrics`: server that listens to the Kubernetes API server and generates metrics about the state of Kubernetes components, such as number of running jobs, available replicas, and number of running/stopped/terminated pods, by polling Kubernetes API
+  - `Node-directory-size-metrics`: daemonset that provides metrics in Prometheus format about disk usage on the nodes
+  - `Prometheus`: metrics server that collects metrics from Cadvisor, Prometheus node exporter, Kube-state-metrics server and Kubelet metrics
+  - `Grafana`: web UI that visualizes collected metrics
+  - `Alertmanager`: server that sends alert to sysadmins when alert conditions are met, based on Prometheus metrics
 - Tracing components
-  - Opencensus collector: span collector
-  - Jaeger: distributed tracing system
-  - Elasticsearch: storage backend of Jaeger
-  - Elasticsearch exporter: server that exports metrics of the Elasticsearch cluster
+  - `Opencensus collector`: span collector
+  - `Jaeger`: distributed tracing system
+  - `Elasticsearch`: storage backend of Jaeger
+  - `Elasticsearch exporter`: server that exports metrics of the Elasticsearch cluster
 ## Prerequisites
 1. A Kubernetes cluster
 2. Slack webhook URL
