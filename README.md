@@ -19,7 +19,7 @@ This repository provides one-shot deployment for ingress controller, logging sta
   - `Elasticsearch`: storage backend of Jaeger
   - `Elasticsearch exporter`: server that exports metrics of the Elasticsearch cluster
 ## Prerequisites
-1. A Kubernetes cluster
+1. A Kubernetes cluster with version `1.18+`
 2. Slack webhook URL
 
 You need to replace `slack_api_url` with your webhook URL in `monitoring/all-in-one.yaml` (line 262). You could also set up emails to which Alertmanager sends notification. See details in `monitoring/all-in-one.yaml`.
