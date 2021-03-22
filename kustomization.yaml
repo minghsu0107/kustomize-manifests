@@ -1,0 +1,5 @@
+resources:
+- monitoring/
+- tracing/
+- logging/
+- ingress/
