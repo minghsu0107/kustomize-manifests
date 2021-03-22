@@ -77,8 +77,9 @@ kustomize build tracing | kubectl apply -f -
 - Grafana web will listen on node port `31565`
 - Prometheus web will listen on node port `30830`
 ### Grafana Integration
-Default account: `admin`
-Default password: `admin`
+Default account: `admin`.
+
+Default password: `admin`.
 
 Add the following data sources in Grafana:
 - Jaeger: `http://jaeger.tracing:16686`
