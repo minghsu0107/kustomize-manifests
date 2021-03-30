@@ -648,7 +648,7 @@ spec:
         args:
           - "--storage.tsdb.path=/prometheus/data"
           - "--storage.tsdb.retention.time=7d"
-          - "--storage.tsdb.no-lockfile"
+          # - "--storage.tsdb.no-lockfile"
           - "--web.enable-lifecycle"
           - '--config.file=/etc/prometheus/prometheus.yaml'
         env:
