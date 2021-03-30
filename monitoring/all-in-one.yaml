@@ -488,18 +488,9 @@ data:
       scrape_interval: 10s
       scrape_timeout: 10s
       evaluation_interval: 10s
-      external_labels:
-        cluster: prometheus-ha
-        # Each Prometheus has to have unique labels.
-        replica: $(POD_NAME)
     rule_files:
       - "/etc/prometheus-rules/*rules.yaml"
     alerting:
-      # We want our alerts to be deduplicated
-      # from different replicas.
-      alert_relabel_configs:
-      - regex: replica
-        action: labeldrop
       alertmanagers:
       - scheme: http
         path_prefix: /
