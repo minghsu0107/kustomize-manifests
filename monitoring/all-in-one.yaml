@@ -646,12 +646,16 @@ spec:
       - name: prometheus
         image: prom/prometheus:v2.25.2
         args:
-          # how long samples will be stored in memory before they are flushed
           - "--storage.tsdb.path=/prometheus/data"
           - "--storage.tsdb.retention.time=7d"
           - "--storage.tsdb.no-lockfile"
           - "--web.enable-lifecycle"
           - '--config.file=/etc/prometheus/prometheus.yaml'
+        env:
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
         ports:
         - name: webui
           containerPort: 9090
@@ -1034,6 +1038,32 @@ data:
         for: 2m
         labels:
           severity: page
+    - name: Pods
+      rules:
+      - alert: Container restarted
+        annotations:
+          summary: Container named {{$labels.container}} in {{$labels.pod}} in {{$labels.namespace}} was restarted
+        expr: |
+          sum(increase(kube_pod_container_status_restarts_total{namespace!="kube-system"}[1m])) by (pod,namespace,container) > 0
+        for: 0m
+        labels:
+          severity: warn
+      - alert: High Memory Usage of Container 
+        annotations: 
+          summary: Container named {{$labels.container}} in {{$labels.pod}} in {{$labels.namespace}} is using more than 75% of Memory Limit
+        expr: | 
+          (((sum(container_memory_usage_bytes{image!="", namespace!="kube-system"}) by (namespace,container,pod)  / sum(container_spec_memory_limit_bytes{image!="", namespace!="kube-system"}) by (namespace,container,pod)) * 100) < +Inf) > 75
+        for: 5m
+        labels:
+          severity: warn
+      - alert: High CPU Usage of Container 
+        annotations: 
+          summary: Container named {{$labels.container}} in {{$labels.pod}} in {{$labels.namespace}} is using more than 75% of CPU Limit
+        expr: | 
+          ((sum(irate(container_cpu_usage_seconds_total{image!="", namespace!="kube-system"}[30s])) by (namespace,container,pod) / sum(container_spec_cpu_quota{image!="", namespace!="kube-system"} / container_spec_cpu_period{image!="",namespace!="kube-system"}) by (namespace,container,pod) ) * 100) > 75
+        for: 5m
+        labels:
+          severity: warn
     - name: Instance
       rules:
       - alert: InstanceDown
