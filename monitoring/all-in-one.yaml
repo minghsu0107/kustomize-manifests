@@ -340,10 +340,10 @@ spec:
     spec:
       containers:
       - name: alertmanager
-        image: prom/alertmanager:v0.7.1
+        image: prom/alertmanager:v0.21.0
         args:
-          - '-config.file=/etc/alertmanager/config.yml'
-          - '-storage.path=/alertmanager'
+          - '--config.file=/etc/alertmanager/config.yml'
+          - '--storage.path=/alertmanager'
         ports:
         - name: alertmanager
           containerPort: 9093
@@ -488,10 +488,25 @@ data:
       scrape_interval: 10s
       scrape_timeout: 10s
       evaluation_interval: 10s
+      external_labels:
+        cluster: prometheus-ha
+        # Each Prometheus has to have unique labels.
+        replica: $(POD_NAME)
     rule_files:
-      - "/etc/prometheus-rules/*.rules"
+      - "/etc/prometheus-rules/*rules.yaml"
+    alerting:
+      # We want our alerts to be deduplicated
+      # from different replicas.
+      alert_relabel_configs:
+      - regex: replica
+        action: labeldrop
+      alertmanagers:
+      - scheme: http
+        path_prefix: /
+        static_configs:
+        - targets:
+          - "alertmanager:9093"
     scrape_configs:
-      # https://github.com/prometheus/prometheus/blob/master/documentation/examples/prometheus-kubernetes.yml#L37
       - job_name: 'kubernetes-nodes'
         tls_config:
           ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
@@ -504,7 +519,6 @@ data:
             replacement: '${1}:10255'
             target_label: __address__
     
-      # https://github.com/prometheus/prometheus/blob/master/documentation/examples/prometheus-kubernetes.yml#L79
       - job_name: 'kubernetes-endpoints'
         kubernetes_sd_configs:
           - role: endpoints
@@ -534,7 +548,6 @@ data:
             action: replace
             target_label: kubernetes_name
 
-      # https://github.com/prometheus/prometheus/blob/master/documentation/examples/prometheus-kubernetes.yml#L156
       - job_name: 'kubernetes-pods'
         kubernetes_sd_configs:
           - role: pod
@@ -631,13 +644,14 @@ spec:
       serviceAccountName: prometheus-k8s
       containers:
       - name: prometheus
-        image: prom/prometheus:v1.7.0
+        image: prom/prometheus:v2.25.2
         args:
-          - '-storage.local.retention=720h'
-          - '-storage.local.path=/prometheus/data'
-          - '-storage.local.memory-chunks=500000'
-          - '-config.file=/etc/prometheus/prometheus.yaml'
-          - '-alertmanager.url=http://alertmanager:9093/'
+          # how long samples will be stored in memory before they are flushed
+          - "--storage.tsdb.path=/prometheus/data"
+          - "--storage.tsdb.retention.time=7d"
+          - "--storage.tsdb.no-lockfile"
+          - "--web.enable-lifecycle"
+          - '--config.file=/etc/prometheus/prometheus.yaml'
         ports:
         - name: webui
           containerPort: 9090
@@ -980,60 +994,57 @@ spec:
 ---
 apiVersion: v1
 data:
-  cpu-usage.rules: |
-    ALERT NodeCPUUsage
-      IF (100 - (avg by (instance) (irate(node_cpu_seconds_total{component="node-exporter",mode="idle"}[5m])) * 100)) > 75
-      FOR 2m
-      LABELS {
-        severity="page"
-      }
-      ANNOTATIONS {
-        SUMMARY = "{{$labels.instance}}: High CPU usage detected",
-        DESCRIPTION = "{{$labels.instance}}: CPU usage is above 75% (current value is: {{ $value }})"
-      }
-  instance-availability.rules: |
-    ALERT InstanceDown
-      IF up == 0
-      FOR 1m
-      LABELS { severity = "page" }
-      ANNOTATIONS {
-        summary = "Instance {{ $labels.instance }} down",
-        description = "{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 1 minute.",
-      }
-  # you can monitor other mountpoints by adding rules in this block
-  low-disk-space.rules: |
-    ALERT NodeLowRootDisk
-      IF ((node_filesystem_size_bytes{mountpoint="/"} - node_filesystem_free_bytes{mountpoint="/"} ) / node_filesystem_size_bytes{mountpoint="/"} * 100) > 75
-      FOR 2m
-      LABELS {
-        severity="page"
-      }
-      ANNOTATIONS {
-        SUMMARY = "{{$labels.instance}}: Low root disk space",
-        DESCRIPTION = "{{$labels.instance}}: Root disk usage is above 75% (current value is: {{ $value }})"
-      }
-  mem-usage.rules: |
-    ALERT NodeSwapUsage
-      IF (((node_memory_SwapTotal_bytes-node_memory_SwapFree_bytes)/node_memory_SwapTotal_bytes)*100) > 75
-      FOR 2m
-      LABELS {
-        severity="page"
-      }
-      ANNOTATIONS {
-        SUMMARY = "{{$labels.instance}}: Swap usage detected",
-        DESCRIPTION = "{{$labels.instance}}: Swap usage usage is above 75% (current value is: {{ $value }})"
-      }
-
-    ALERT NodeMemoryUsage
-      IF (((node_memory_MemTotal_bytes-node_memory_MemAvailable_bytes)/(node_memory_MemTotal_bytes)*100)) > 75
-      FOR 2m
-      LABELS {
-        severity="page"
-      }
-      ANNOTATIONS {
-        SUMMARY = "{{$labels.instance}}: High memory usage detected",
-        DESCRIPTION = "{{$labels.instance}}: Memory usage is above 75% (current value is: {{ $value }})"
-      }
+  alert-rules.yaml: |-
+    groups:
+    - name: Nodes
+      rules:
+      - alert: HighCPUUsage
+        annotations:
+          summary: "{{$labels.instance}}: High CPU usage detected"
+          description: "{{$labels.instance}}: CPU usage is above 75% (current value is: {{ $value }})"
+        expr: |
+          (100 - (avg by (instance) (irate(node_cpu_seconds_total{component="node-exporter",mode="idle"}[5m])) * 100)) > 75
+        for: 2m
+        labels:
+          severity: page
+      - alert: NodeLowRootDisk
+        annotations:
+          summary: "{{$labels.instance}}: Low root disk space"
+          description: "{{$labels.instance}}: Root disk usage is above 75% (current value is: {{ $value }})"
+        expr: |
+          ((node_filesystem_size_bytes{mountpoint="/"} - node_filesystem_free_bytes{mountpoint="/"} ) / node_filesystem_size_bytes{mountpoint="/"} * 100) > 75
+        for: 2m
+        labels:
+          severity: page
+      - alert: NodeSwapUsage
+        annotations:
+          summary: "{{$labels.instance}}: Swap usage detected"
+          description: "{{$labels.instance}}: Swap usage usage is above 75% (current value is: {{ $value }})"
+        expr: |
+          (((node_memory_SwapTotal_bytes-node_memory_SwapFree_bytes)/node_memory_SwapTotal_bytes)*100) > 75
+        for: 2m
+        labels:
+          severity: page
+      - alert: HighMemoryUsage
+        annotations:
+          summary: "{{$labels.instance}}: High memory usage detected"
+          description: "{{$labels.instance}}: Memory usage is above 75% (current value is: {{ $value }})"
+        expr: |
+          (((node_memory_MemTotal_bytes-node_memory_MemAvailable_bytes)/(node_memory_MemTotal_bytes)*100)) > 75
+        for: 2m
+        labels:
+          severity: page
+    - name: Instance
+      rules:
+      - alert: InstanceDown
+        annotations:
+          summary: "Instance {{ $labels.instance }} down"
+          description: "{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 1 minute."
+        expr: |
+          up == 0
+        for: 1m
+        labels:
+          severity: page
 kind: ConfigMap
 metadata:
   creationTimestamp: null
