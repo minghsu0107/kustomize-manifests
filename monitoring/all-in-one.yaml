@@ -259,7 +259,7 @@ data:
       smtp_auth_password: 'barfoo'
 
       # The API URL to use for Slack notifications.
-      slack_api_url: 'https://hooks.slack.com/your-webhook'
+      slack_api_url: 'https://hooks.slack.com/services/your-webhook'
 
     # # The directory from which notification templates are read.
     templates:
@@ -862,6 +862,11 @@ spec:
     app: kube-state-metrics
 
 ---
+# This DaemonSet provides metrics in Prometheus format about disk usage on the nodes.
+# The container read-du reads in sizes of all directories below /mnt and writes that to /tmp/metrics. It only reports directories larger then 100M for now.
+# The other container `caddy` just hands out the contents of that file on request via http/ on /metrics at port 9102 which are the defaults for Prometheus.
+# These are scheduled on every node in the Kubernetes cluster.
+# To choose directories from the node to check, just mount them on the read-du container below /mnt.
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
@@ -869,12 +874,8 @@ metadata:
   labels:
     app: node-directory-size-metrics
   annotations:
-    description: |
-      This `DaemonSet` provides metrics in Prometheus format about disk usage on the nodes.
-      The container `read-du` reads in sizes of all directories below /mnt and writes that to `/tmp/metrics`. It only reports directories larger then `100M` for now.
-      The other container `caddy` just hands out the contents of that file on request via `http` on `/metrics` at port `9102` which are the defaults for Prometheus.
-      These are scheduled on every node in the Kubernetes cluster.
-      To choose directories from the node to check, just mount them on the `read-du` container below `/mnt`.
+    prometheus.io/scrape: 'true'
+    prometheus.io/port: '9102'
 spec:
   selector:
     matchLabels:
@@ -883,16 +884,12 @@ spec:
     metadata:
       labels:
         app: node-directory-size-metrics
-      annotations:
-        prometheus.io/scrape: 'true'
-        prometheus.io/port: '9102'
-        description: |
-          This `Pod` provides metrics in Prometheus format about disk usage on the node.
-          The container `read-du` reads in sizes of all directories below /mnt and writes that to `/tmp/metrics`. It only reports directories larger then `100M` for now.
-          The other container `caddy` just hands out the contents of that file on request on `/metrics` at port `9102` which are the defaults for Prometheus.
-          This `Pod` is scheduled on every node in the Kubernetes cluster.
-          To choose directories from the node to check just mount them on `read-du` below `/mnt`.
     spec:
+      # This Pod provides metrics in Prometheus format about disk usage on the node.
+      # The container read-du reads in sizes of all directories below /mnt and writes that to /tmp/metrics. It only reports directories larger then 100M for now.
+      # The other container caddy just hands out the contents of that file on request on /metrics at port 9102 which are the defaults for Prometheus.
+      # This `Pod` is scheduled on every node in the Kubernetes cluster.
+      # To choose directories from the node to check just mount them on read-du below /mnt.
       containers:
       - name: read-du
         image: giantswarm/tiny-tools

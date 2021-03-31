@@ -3,6 +3,9 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: promtail
+  annotations:
+    prometheus.io/port: http-metrics
+    prometheus.io/scrape: "true"
   labels:
     app: promtail
 spec:
@@ -15,9 +18,6 @@ spec:
     metadata:
       labels:
         app: promtail
-      annotations:
-        prometheus.io/port: http-metrics
-        prometheus.io/scrape: "true"
     spec:
       serviceAccount: promtail
       serviceAccountName: promtail

@@ -7,6 +7,9 @@ kind: Deployment
 apiVersion: apps/v1
 metadata:
   name: traefik
+  annotations:
+    prometheus.io/port: http-metrics
+    prometheus.io/scrape: "true"
   labels:
     app: traefik
 spec:
@@ -16,9 +19,6 @@ spec:
       app: traefik
   template:
     metadata:
-      annotations:
-        prometheus.io/port: http-metrics
-        prometheus.io/scrape: "true"
       labels:
         app: traefik
     spec:

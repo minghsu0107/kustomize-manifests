@@ -3,6 +3,9 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: loki
+  annotations:
+    prometheus.io/port: http-metrics
+    prometheus.io/scrape: "true"
   labels:
     app: loki
 spec:
@@ -18,9 +21,6 @@ spec:
     metadata:
       labels:
         app: loki
-      annotations:
-        prometheus.io/port: http-metrics
-        prometheus.io/scrape: "true"
     spec:
       serviceAccountName: loki
       securityContext:
@@ -68,16 +68,13 @@ metadata:
   name: loki-headless
   labels:
     app: loki
-  annotations:
-    prometheus.io/scrape: "true"
-    prometheus.io/port: "3100"
 spec:
   clusterIP: None
   ports:
     - port: 3100
       protocol: TCP
-      name: http-metrics
-      targetPort: http-metrics
+      name: push
+      targetPort: 3100
   selector:
     app: loki
 ---
