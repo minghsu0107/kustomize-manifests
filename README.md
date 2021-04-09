@@ -14,8 +14,9 @@ This repository provides one-shot deployment for ingress controller, logging sta
   - `Grafana`: web UI that visualizes collected metrics
   - `Alertmanager`: server that sends alert to sysadmins when alert conditions are met, based on Prometheus metrics
 - Tracing components
-  - `Opencensus collector`: span collector
-  - `Jaeger`: distributed tracing system
+  - `Opencensus collector`: opencensus span collector
+  - `Jaeger collector`: Jaeger span collector
+  - `Jaeger query`: Jaeger web UI
   - `Elasticsearch`: storage backend of Jaeger
   - `Elasticsearch exporter`: server that exports metrics of the Elasticsearch cluster
 ## Prerequisites
@@ -82,7 +83,7 @@ Default account: `admin`.
 Default password: `admin`.
 
 Add the following data sources in Grafana:
-- Jaeger: `http://jaeger.tracing:16686`
+- Jaeger: `http://jaeger-query.tracing:16686`
 - Loki: `http://loki-headless.logging:3100`
 - Prometheus: `http://prometheus:9090`
 
