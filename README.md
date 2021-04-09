@@ -14,7 +14,7 @@ This repository provides one-shot deployment for ingress controller, logging sta
   - `Grafana`: web UI that visualizes collected metrics
   - `Alertmanager`: server that sends alert to sysadmins when alert conditions are met, based on Prometheus metrics
 - Tracing components
-  - `Opencensus collector`: opencensus span collector
+  - `Opencensus collector`: Opencensus span collector
   - `Jaeger collector`: Jaeger span collector
   - `Jaeger query`: Jaeger web UI
   - `Elasticsearch`: storage backend of Jaeger
