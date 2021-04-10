@@ -390,7 +390,7 @@ metadata:
   name: grafana-core
   labels:
     app: grafana
-    component: core
+    app.kubernetes.io/component: core
 spec:
   replicas: 1
   selector:
@@ -400,7 +400,7 @@ spec:
     metadata:
       labels:
         app: grafana
-        component: core
+        app.kubernetes.io/component: core
     spec:
       containers:
       - image: grafana/grafana:7.3.5
@@ -471,7 +471,7 @@ metadata:
   name: grafana
   labels:
     app: grafana
-    component: core
+    app.kubernetes.io/component: core
 spec:
   type: NodePort
   ports:
@@ -479,7 +479,7 @@ spec:
       nodePort: 31565
   selector:
     app: grafana
-    component: core
+    app.kubernetes.io/component: core
 ---
 apiVersion: v1
 data:
@@ -619,7 +619,7 @@ metadata:
   name: prometheus-core
   labels:
     app: prometheus
-    component: core
+    app.kubernetes.io/component: core
 spec:
   replicas: 1
   selector:
@@ -630,7 +630,7 @@ spec:
       name: prometheus-main
       labels:
         app: prometheus
-        component: core
+        app.kubernetes.io/component: core
     spec:
       serviceAccountName: prometheus-k8s
       containers:
@@ -650,13 +650,6 @@ spec:
         ports:
         - name: webui
           containerPort: 9090
-        resources:
-          requests:
-            cpu: 500m
-            memory: 500M
-          limits:
-            cpu: 1000m
-            memory: 3Gi
         volumeMounts:
         - name: config-volume
           mountPath: /etc/prometheus
@@ -941,7 +934,7 @@ metadata:
   name: prometheus-node-exporter
   labels:
     app: prometheus
-    component: node-exporter
+    app.kubernetes.io/component: node-exporter
 spec:
   selector:
     matchLabels:
@@ -951,7 +944,7 @@ spec:
       name: prometheus-node-exporter
       labels:
         app: prometheus
-        component: node-exporter
+        app.kubernetes.io/component: node-exporter
     spec:
       containers:
       - image: prom/node-exporter:v1.0.1
@@ -972,7 +965,7 @@ metadata:
   name: prometheus-node-exporter
   labels:
     app: prometheus
-    component: node-exporter
+    app.kubernetes.io/component: node-exporter
 spec:
   clusterIP: None
   ports:
@@ -981,7 +974,7 @@ spec:
       protocol: TCP
   selector:
     app: prometheus
-    component: node-exporter
+    app.kubernetes.io/component: node-exporter
   type: ClusterIP
 ---
 apiVersion: v1
@@ -1074,7 +1067,7 @@ metadata:
   name: prometheus
   labels:
     app: prometheus
-    component: core
+    app.kubernetes.io/component: core
   annotations:
     prometheus.io/scrape: 'true'
 spec:
@@ -1086,4 +1079,4 @@ spec:
       name: webui
   selector:
     app: prometheus
-    component: core
+    app.kubernetes.io/component: core

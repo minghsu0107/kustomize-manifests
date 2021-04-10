@@ -3,3 +3,9 @@ resources:
 - all-in-one.yaml
 - namespace.yaml
 - pvc.yaml
+patches:
+- path: patch.yaml
+  target:
+    kind: Deployment
+    name: prometheus-core
+    labelSelector: app=prometheus
