@@ -34,7 +34,7 @@ spec:
           imagePullPolicy: IfNotPresent
           args:
             - "-config.file=/etc/loki/loki.yaml"
-            - "-memberlist.join=loki-0.loki-headless.logging.svc.cluster.local"
+            - "-memberlist.join=loki-headless.logging.svc.cluster.local"
           volumeMounts:
             - name: config
               mountPath: "/etc/loki"
