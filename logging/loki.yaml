@@ -10,7 +10,7 @@ metadata:
     app: loki
 spec:
   podManagementPolicy: OrderedReady
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: loki
@@ -37,8 +37,6 @@ spec:
           volumeMounts:
             - name: config
               mountPath: "/etc/loki"
-            - name: storage
-              mountPath: "/data"
           ports:
             - name: http-metrics
               containerPort: 3100

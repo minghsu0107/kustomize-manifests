@@ -5,6 +5,7 @@ resources:
 - promtail-configmap.yaml
 - promtail.yaml
 - rbac.yaml
+- cassandra/
 configMapGenerator:
 - name: loki-config
   files:

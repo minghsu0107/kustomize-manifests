@@ -1,0 +1,26 @@
+resources:
+- cassandra-sts.yaml
+- cassandra-svc.yaml
+patches:
+- path: patch.yaml
+  target:
+    kind: StatefulSet
+    name: cassandra
+    labelSelector: app=cassandra
+configMapGenerator:
+- name: cassandra-config
+  files:
+  - cassandra.yaml=configs/cassandra.yaml
+  - cassandra-env.ps1=configs/cassandra-env.ps1
+  - cassandra-env.sh=configs/cassandra-env.sh
+  - cassandra-jaas.config=configs/cassandra-jaas.config
+  - cassandra-rackdc.properties=configs/cassandra-rackdc.properties
+  - cassandra-topology.properties=configs/cassandra-topology.properties
+  - commitlog_archiving.properties=configs/commitlog_archiving.properties
+  - cqlshrc.sample=configs/cqlshrc.sample
+  - hotspot_compiler=configs/hotspot_compiler
+  - jvm.options=configs/jvm.options
+  - logback-tools.xml=configs/logback-tools.xml
+  - logback.xml=configs/logback.xml
+  - metrics-reporter-config-sample.yaml=configs/metrics-reporter-config-sample.yaml
+

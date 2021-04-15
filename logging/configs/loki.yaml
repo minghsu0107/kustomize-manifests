@@ -18,7 +18,7 @@ ingester:
       kvstore:
         store: inmemory
       # The number of ingesters to write to and read from
-      replication_factor: 1
+      replication_factor: 3
   max_transfer_retries: 0
 limits_config:
   enforce_metric_name: false
@@ -31,16 +31,23 @@ schema_config:
       # Table period
       period: 168h
       prefix: index_
-    object_store: filesystem
+    chunks:
+      period: 168h
+      prefix: chunks_
+    object_store: cassandra
     schema: v11
-    store: boltdb
+    store: cassandra
+storage_config:
+  cassandra:
+    username: cassandra
+    password: cassandra
+    addresses: cassandra-0.cassandra
+    port: 9042
+    auth: true
+    consistency: QUORUM
+    keyspace: lokiindex
 server:
   http_listen_port: 3100
-storage_config:
-  boltdb:
-    directory: /data/loki/index
-  filesystem:
-    directory: /data/loki/chunks
 table_manager:
   # The Table Manager implements the retention deleting the entire tables 
   # whose data exceeded the retention_period
