@@ -10,7 +10,7 @@ metadata:
     app: loki
 spec:
   podManagementPolicy: OrderedReady
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: loki
@@ -34,12 +34,16 @@ spec:
           imagePullPolicy: IfNotPresent
           args:
             - "-config.file=/etc/loki/loki.yaml"
+            - "-memberlist.join=loki-0.loki-headless.logging.svc.cluster.local"
           volumeMounts:
             - name: config
               mountPath: "/etc/loki"
           ports:
             - name: http-metrics
               containerPort: 3100
+              protocol: TCP
+            - name: gossip
+              containerPort: 7946
               protocol: TCP
           livenessProbe:
             httpGet:
@@ -73,6 +77,10 @@ spec:
       protocol: TCP
       name: push
       targetPort: 3100
+    - port: 7946
+      protocol: TCP
+      name: gossip
+      targetPort: 7946
   selector:
     app: loki
 ---

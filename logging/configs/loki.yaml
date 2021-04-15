@@ -16,7 +16,7 @@ ingester:
   lifecycler:
     ring:
       kvstore:
-        store: inmemory
+        store: memberlist
       # The number of ingesters to write to and read from
       replication_factor: 3
   max_transfer_retries: 0
