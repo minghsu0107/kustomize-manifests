@@ -5,6 +5,7 @@ This repository provides one-shot deployment for ingress controller, logging sta
 - Logging stack
   - `Loki`: log aggregation system
   - `Promtail`: daemonset that tails logs from stdout and stderr of all pods
+  - `Cassandra`: long-term storage backend
 - Monitoring stack
   - `Cadvisor`: exposes container metrics
   - `Prometheus node exporter`: scraps metrics from application endpoints and sends to Prometheus server
@@ -87,4 +88,6 @@ Add the following data sources in Grafana:
 - Loki: `http://loki-headless.logging:3100`
 - Prometheus: `http://prometheus:9090`
 
-In addition, to view metrics collected from the elasticsearch exporter, you could import the [this dashboard](https://grafana.com/grafana/dashboards/2322) in Grafana.
+Dashboards:
+- [Elasticsearch exporter](https://grafana.com/grafana/dashboards/2322)
+- [Cassandra Metrics](https://grafana.com/grafana/dashboards/6258)
