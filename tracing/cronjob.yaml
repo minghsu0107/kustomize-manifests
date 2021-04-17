@@ -1,0 +1,23 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: es-cleaner
+  labels:
+    app: jaeger
+    app.kubernetes.io/component: cleaner
+spec:
+  schedule: "0 12 * * *" # at 12:00
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: es-cleaner
+              image: jaegertracing/jaeger-es-index-cleaner
+              env:
+                - name: TIMEOUT
+                  value: "120"
+              args:
+                - "1"
+                - http://es-cluster-0.elasticsearch:9200
+          restartPolicy: OnFailure

@@ -1,5 +1,6 @@
 namespace: tracing
 resources:
+- cronjob.yaml
 - elasticsearch-exporter.yaml
 - elasticsearch.yaml
 - jaeger.yaml
