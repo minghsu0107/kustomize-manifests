@@ -4,6 +4,7 @@ This repository provides one-shot deployment for ingress controller, logging sta
 - Ingress controller (Traefik)
 - Logging stack
   - `Loki`: log aggregation system
+    - Save logs for 168 hours
   - `Promtail`: daemonset that tails logs from stdout and stderr of all pods
   - `Cassandra`: long-term storage backend
 - Monitoring stack
@@ -12,6 +13,7 @@ This repository provides one-shot deployment for ingress controller, logging sta
   - `Kube-state-metrics`: server that listens to the Kubernetes API server and generates metrics about the state of Kubernetes components, such as number of running jobs, available replicas, and number of running/stopped/terminated pods, by polling Kubernetes API
   - `Node-directory-size-metrics`: daemonset that provides metrics in Prometheus format about disk usage on the nodes
   - `Prometheus`: metrics server that collects metrics from Cadvisor, Prometheus node exporter, Kube-state-metrics server and Kubelet metrics
+      - Save metrics for 7 days
   - `Grafana`: web UI that visualizes collected metrics
   - `Alertmanager`: server that sends alert to sysadmins when alert conditions are met, based on Prometheus metrics
 - Tracing components
@@ -24,8 +26,10 @@ This repository provides one-shot deployment for ingress controller, logging sta
 
 In addition, some common application deployment templates are provided:
 - [Kafka + Zookeeper](app/kafka)
-- [Redis cluster](app/redis-cluster)
+  - Save logs for 72 hours
 - [NATS Streaming](app/nats-streaming)
+  - Save logs for 3 hours
+- [Redis cluster](app/redis-cluster)
 ## Prerequisites
 1. A Kubernetes cluster with version `1.18+`
 2. Slack webhook URL
