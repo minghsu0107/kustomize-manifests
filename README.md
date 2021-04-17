@@ -111,3 +111,5 @@ Dashboards:
 - [Container Metrics](dashboard/container.json)
 - [Prometheus Stats](dashboard/prometheus.json)
 - [Node Exporter Full](https://grafana.com/grafana/dashboards/1860)
+
+Note that Prometheus data source name should be set to `prometheus` for all templates provided in this repository.
