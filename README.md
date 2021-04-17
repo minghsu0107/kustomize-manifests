@@ -20,6 +20,7 @@ This repository provides one-shot deployment for ingress controller, logging sta
   - `Jaeger query`: Jaeger web UI
   - `Elasticsearch`: storage backend of Jaeger
   - `Elasticsearch exporter`: server that exports metrics of the Elasticsearch cluster
+  - `Elasticsearch index cleaner`: cronjob that delete any indices older than 1 day
 ## Prerequisites
 1. A Kubernetes cluster with version `1.18+`
 2. Slack webhook URL
