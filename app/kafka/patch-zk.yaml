@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: zk
+spec:
+  template:
+    spec:
+      containers:
+      - name: zookeeper
+        resources:
+          limits:
+            cpu: 512m
+            memory: 1Gi
+          requests:
+            cpu: 512m
+            memory: 1Gi
+  volumeClaimTemplates:
+  - metadata:
+      name: datadir
+      labels:
+        app: zk
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: local-path
+      resources:
+        requests:
+          storage: 2Gi

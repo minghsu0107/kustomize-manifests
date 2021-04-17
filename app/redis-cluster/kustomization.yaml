@@ -1,0 +1,11 @@
+namespace: infra
+resources:
+- namespace.yaml
+- redis-sts.yaml
+- redis-svc.yaml
+patches:
+- path: patch.yaml
+  target:
+    kind: StatefulSet
+    name: redis-cluster
+    labelSelector: app=redis

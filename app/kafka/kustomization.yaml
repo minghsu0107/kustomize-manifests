@@ -1,0 +1,9 @@
+namespace: kafka
+resources:
+- kafka.yaml
+- namespace.yaml
+- test-client.yaml
+- zookeeper.yaml
+patchesStrategicMerge:
+- patch-kafka.yaml
+- patch-zk.yaml

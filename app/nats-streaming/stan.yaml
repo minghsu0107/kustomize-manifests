@@ -1,0 +1,156 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: stan
+  labels:
+    app: stan
+  annotations:
+    prometheus.io/port: "7777"
+    prometheus.io/scrape: "true"
+spec:
+  selector:
+    app: stan
+  clusterIP: None
+  ports:
+  - name: client
+    port: 4222
+  - name: cluster
+    port: 6222
+  - name: monitor
+    port: 8222
+  - name: metrics
+    port: 7777
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: stan-config
+data:
+  stan.conf: |
+    port: 4222
+    http: 8222
+    cluster {
+      listen: 0.0.0.0:6222
+      routes: ["nats://stan-0.stan:6222", "nats://stan-1.stan:6222", "nats://stan-2.stan:6222"]
+      cluster_advertise: $CLUSTER_ADVERTISE
+      connect_retries: 10
+    }
+    streaming {
+      cluster_id: stan-cluster
+      store: file
+      dir: /data/stan/store
+      file_options {
+          # Size of buffers that can be used to buffer write operations, default: 2mb
+          buffer_size: 32mb
+          # Define if server should perform "file sync" operations during a flush from publisher
+          sync_on_flush: false
+          # Define the file slice maximum size
+          slice_max_bytes: 512mb
+          parallel_recovery: 64
+          # Interval at which the store should be automatically flushed and sync'ed on disk. Default is every minute
+          # auto_sync: "1m"
+      }
+      store_limits {
+          # Maximum number of channels, 0 means unlimited
+          max_channels: 200
+          # Maximum number of messages per channel, 0 means unlimited
+          max_msgs: 0
+          # Total size of messages per channel, 0 means unlimited
+          max_bytes: 256gb
+          # How long messages can stay in the log, default: unlimited
+          max_age: 3h
+          # Maximum number of subscriptions per channel, 0 means unlimited
+          max_subs: 128
+      }
+      cluster {
+          node_id: $POD_NAME
+          log_path: /data/stan/log
+          # Explicit names of resulting peers
+          peers: ["stan-0", "stan-1", "stan-2"]
+      }
+    }
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: stan
+  labels:
+    app: stan
+spec:
+  selector:
+    matchLabels:
+      app: stan
+  serviceName: stan
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: stan
+      annotations:
+        prometheus.io/port: metrics
+        prometheus.io/scrape: "true"
+    spec:
+      # STAN Server
+      terminationGracePeriodSeconds: 30
+
+      containers:
+      - name: stan
+        image: nats-streaming:0.21.2-alpine
+
+        ports:
+        # In case of NATS embedded mode expose these ports
+        - containerPort: 4222
+          name: client
+        - containerPort: 6222
+          name: cluster
+        - containerPort: 8222
+          name: monitor
+        args:
+         - "-sc"
+         - "/etc/stan-config/stan.conf"
+        # Required to be able to define an environment variable
+        # that refers to other environment variables.  This env var
+        # is later used as part of the configuration file.
+        env:
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: CLUSTER_ADVERTISE
+          value: $(POD_NAME).stan.$(POD_NAMESPACE).svc
+        volumeMounts:
+          - name: config-volume
+            mountPath: /etc/stan-config
+          - name: data
+            mountPath: /data/stan
+        resources:
+          requests:
+            cpu: 0
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8222
+          initialDelaySeconds: 10
+          timeoutSeconds: 5
+      - name: metrics
+        image: synadia/prometheus-nats-exporter:0.5.0
+        args:
+        - -connz
+        - -routez
+        - -subz
+        - -varz
+        - -channelz
+        - -serverz
+        - http://localhost:8222
+        ports:
+        - containerPort: 7777
+          name: metrics
+      volumes:
+      - name: config-volume
+        configMap:
+          name: stan-config

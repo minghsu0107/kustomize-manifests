@@ -1,0 +1,10 @@
+namespace: infra
+resources:
+- namespace.yaml
+- stan.yaml
+patches:
+- path: patch.yaml
+  target:
+    kind: StatefulSet
+    name: stan
+    labelSelector: app=stan
