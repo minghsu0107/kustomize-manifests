@@ -1,6 +1,6 @@
 # Kustomize Manifests
 ## Overview
-This repository provides one-shot deployment for ingress controller, logging stack, and observability platforms on Kubernetes, including:
+This repository provides one-shot deployment for ingress controller, logging stack, observability platforms, and some common applications on Kubernetes, including:
 - Ingress controller (Traefik)
 - Logging stack
   - `Loki`: log aggregation system
@@ -23,9 +23,9 @@ This repository provides one-shot deployment for ingress controller, logging sta
   - `Elasticsearch index cleaner`: cronjob that delete any indices older than 1 day
 
 In addition, some common application deployment templates are provided:
-- Kafka cluster
-- Redis cluster
-- NATS Streaming
+- [Kafka cluster](/kustomize-manifests/app/kafka)
+- [Redis cluster](/kustomize-manifests/app/redis-cluster)
+- [NATS Streaming](/kustomize-manifests/app/nats-streaming)
 ## Prerequisites
 1. A Kubernetes cluster with version `1.18+`
 2. Slack webhook URL
@@ -40,7 +40,7 @@ The default storageclass is `local-path` in this template. You need to change it
 
 The service load balancer will create daemon pods listening on port 80 on all nodes and proxy external traffic to the ingress service (Traefik). If you are using K3s, you will already have a service LB out-of-the-box. However, service load balancer is optional. You could add your external IPs to service declaration in `ingress/traefik.yaml`. This way, your Traefik instance can receive external traffics without service LB.
 
-Notes for K3s configurations:
+## Notes for K3s Configurations
 - You need to disable Traefik, which is deployed by default.
 ```bash
 kubectl -n kube-system delete helmcharts.helm.cattle.io traefik
