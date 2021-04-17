@@ -1,4 +1,4 @@
-# Kafka and Zookeeper Cluster
+# Kafka and Zookeeper
 - [reference 1](https://kow3ns.github.io/kubernetes-zookeeper/manifests/)
 - [reference 2](https://kubernetes.io/blog/2017/09/kubernetes-statefulsets-daemonsets/)
 - [cp-kafka](https://github.com/confluentinc/cp-helm-charts/tree/master/charts/cp-kafka)

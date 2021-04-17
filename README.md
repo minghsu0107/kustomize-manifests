@@ -23,7 +23,7 @@ This repository provides one-shot deployment for ingress controller, logging sta
   - `Elasticsearch index cleaner`: cronjob that delete any indices older than 1 day
 
 In addition, some common application deployment templates are provided:
-- [Kafka cluster](app/kafka)
+- [Kafka + Zookeeper](app/kafka)
 - [Redis cluster](app/redis-cluster)
 - [NATS Streaming](app/nats-streaming)
 ## Prerequisites
