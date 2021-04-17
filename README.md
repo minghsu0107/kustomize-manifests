@@ -21,6 +21,11 @@ This repository provides one-shot deployment for ingress controller, logging sta
   - `Elasticsearch`: storage backend of Jaeger
   - `Elasticsearch exporter`: server that exports metrics of the Elasticsearch cluster
   - `Elasticsearch index cleaner`: cronjob that delete any indices older than 1 day
+
+In addition, some common application deployment templates are provided:
+- Kafka cluster
+- Redis cluster
+- NATS Streaming
 ## Prerequisites
 1. A Kubernetes cluster with version `1.18+`
 2. Slack webhook URL
@@ -33,7 +38,7 @@ The default storageclass is `local-path` in this template. You need to change it
 
 4. Service load balancer (optional)
 
-The service load balancer will create daemon pods listening on port 80 on all nodes, and proxy external traffic to the ingress service (Traefik). If you are using K3s, you will already have a service LB out-of-the-box. However, service load balancer is optional. You could add your external IPs to service declaration in `ingress/traefik.yaml`. This way, your Traefik instance can receive external traffics without service LB.
+The service load balancer will create daemon pods listening on port 80 on all nodes and proxy external traffic to the ingress service (Traefik). If you are using K3s, you will already have a service LB out-of-the-box. However, service load balancer is optional. You could add your external IPs to service declaration in `ingress/traefik.yaml`. This way, your Traefik instance can receive external traffics without service LB.
 
 Notes for K3s configurations:
 - You need to disable Traefik, which is deployed by default.
@@ -76,6 +81,13 @@ kustomize build logging | kubectl apply -f -
 kustomize build monitoring | kubectl apply -f -
 kustomize build tracing | kubectl apply -f -
 ```
+Build apps:
+```bash
+kustomize build app/kafka | kubectl apply -f -
+kustomize build app/nats-streaming | kubectl apply -f -
+kustomize build app/redis-cluster | kubectl apply -f -
+```
+- Traefik admin web will listen on port `8082`
 - Alertmanager web will listen on node port `30615`
 - Grafana web will listen on node port `31565`
 - Prometheus web will listen on node port `30830`
@@ -90,5 +102,8 @@ Add the following data sources in Grafana:
 - Prometheus: `http://prometheus:9090`
 
 Dashboards:
-- [Elasticsearch exporter](https://grafana.com/grafana/dashboards/2322)
 - [Cassandra Metrics](https://grafana.com/grafana/dashboards/6258)
+- [Elasticsearch Exporter](https://grafana.com/grafana/dashboards/2322)
+- [Kafka Exporter](https://grafana.com/grafana/dashboards/7589)
+- [NATS Exporter](https://grafana.com/grafana/dashboards/2279)
+- [Zookeeper Exporter](https://grafana.com/grafana/dashboards/11442)
