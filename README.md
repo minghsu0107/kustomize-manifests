@@ -104,6 +104,10 @@ Add the following data sources in Grafana:
 Dashboards:
 - [Cassandra Metrics](https://grafana.com/grafana/dashboards/6258)
 - [Elasticsearch Exporter](https://grafana.com/grafana/dashboards/2322)
-- [Kafka Exporter](https://grafana.com/grafana/dashboards/7589)
-- [NATS Exporter](https://grafana.com/grafana/dashboards/2279)
-- [Zookeeper Exporter](https://grafana.com/grafana/dashboards/11442)
+- [Kafka Exporter](dashboard/kafka.json)
+- [NATS Exporter](dashboard/nats.json)
+- [Redis Exporter](dashboard/redis.json)
+- [Zookeeper Exporter](dashboard/zookeeper.json)
+- [Container Metrics](dashboard/container.json)
+- [Prometheus Stats](dashboard/prometheus.json)
+- [Node Exporter Full](https://grafana.com/grafana/dashboards/1860)

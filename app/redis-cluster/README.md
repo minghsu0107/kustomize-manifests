@@ -22,4 +22,4 @@ kubectl exec -it redis-cluster-0 -n infra -- redis-benchmark -h localhost -p 637
 ```
 ## Note
 - [Rewriting/compacting append-only files](https://redislabs.com/ebook/part-2-core-concepts/chapter-4-keeping-data-safe-and-ensuring-performance/4-1-persistence-options/4-1-3-rewritingcompacting-append-only-files/)
-- [Grafana Dashboard for Redis Exporter](https://grafana.com/grafana/dashboards/763/revisions)
+- [Grafana Dashboard for Redis Exporter](https://grafana.com/grafana/dashboards/763)
