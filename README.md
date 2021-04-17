@@ -23,9 +23,9 @@ This repository provides one-shot deployment for ingress controller, logging sta
   - `Elasticsearch index cleaner`: cronjob that delete any indices older than 1 day
 
 In addition, some common application deployment templates are provided:
-- [Kafka cluster](/kustomize-manifests/app/kafka)
-- [Redis cluster](/kustomize-manifests/app/redis-cluster)
-- [NATS Streaming](/kustomize-manifests/app/nats-streaming)
+- [Kafka cluster](app/kafka)
+- [Redis cluster](app/redis-cluster)
+- [NATS Streaming](app/nats-streaming)
 ## Prerequisites
 1. A Kubernetes cluster with version `1.18+`
 2. Slack webhook URL
