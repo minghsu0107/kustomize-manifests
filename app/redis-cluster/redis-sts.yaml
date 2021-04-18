@@ -64,6 +64,13 @@ spec:
           readOnly: false
       - name: redis-exporter
         image: oliver006/redis_exporter:v1.15.1
+        resources:
+          requests:
+            memory: "200Mi"
+            cpu: "250m"
+          limits:
+            memory: "200Mi"
+            cpu: "250m"
         ports:
         - containerPort: 9121
           name: metrics

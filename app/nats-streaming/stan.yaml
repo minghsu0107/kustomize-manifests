@@ -150,6 +150,13 @@ spec:
         ports:
         - containerPort: 7777
           name: metrics
+        resources:
+          requests:
+            memory: "200Mi"
+            cpu: "250m"
+          limits:
+            memory: "200Mi"
+            cpu: "250m"
       volumes:
       - name: config-volume
         configMap:

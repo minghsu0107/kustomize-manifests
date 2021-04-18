@@ -347,6 +347,13 @@ spec:
         ports:
         - name: alertmanager
           containerPort: 9093
+        resources:
+          limits:
+            cpu: 200m
+            memory: 256Mi
+          requests:
+            cpu: 200m
+            memory: 256Mi
         volumeMounts:
         - name: config-volume
           mountPath: /etc/alertmanager
@@ -1013,7 +1020,7 @@ data:
         annotations: 
           summary: Container named {{$labels.container}} in {{$labels.pod}} in {{$labels.namespace}} is using more than 75% of CPU Limit
         expr: | 
-          ((sum(irate(container_cpu_usage_seconds_total{image!="", namespace!="kube-system"}[30s])) by (namespace,container,pod) / sum(container_spec_cpu_quota{image!="", namespace!="kube-system"} / container_spec_cpu_period{image!="",namespace!="kube-system"}) by (namespace,container,pod) ) * 100) > 75
+          ((sum(irate(container_cpu_usage_seconds_total{image!="", namespace!="kube-system"}[5m])) by (namespace,container,pod) / sum(container_spec_cpu_quota{image!="", namespace!="kube-system"} / container_spec_cpu_period{image!="",namespace!="kube-system"}) by (namespace,container,pod) ) * 100) > 75
         for: 5m
         labels:
           severity: warn
