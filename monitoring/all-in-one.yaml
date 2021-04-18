@@ -960,7 +960,7 @@ data:
           summary: "{{$labels.instance}}: High CPU usage detected"
           description: "{{$labels.instance}}: CPU usage is above 75% (current value is: {{ $value }})"
         expr: |
-          (100 - (avg by (instance) (irate(node_cpu_seconds_total{component="node-exporter",mode="idle"}[5m])) * 100)) > 75
+          (100 - (avg by (instance) (irate(node_cpu_seconds_total{app_kubernetes_io_component="node-exporter",mode="idle"}[5m])) * 100)) > 75
         for: 2m
         labels:
           severity: page
