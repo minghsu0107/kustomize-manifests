@@ -27,6 +27,8 @@ This repository provides one-shot deployment for ingress controller, logging sta
 In addition, some common application deployment templates are provided:
 - [Kafka + Zookeeper](app/kafka)
   - Save logs for 72 hours
+- [Minio](app/minio)
+  - 8 replica servers, each with 10Gi storage
 - [NATS Streaming](app/nats-streaming)
   - Save logs for 3 hours
 - [Redis cluster](app/redis-cluster)
@@ -88,6 +90,7 @@ kustomize build tracing | kubectl apply -f -
 Build apps:
 ```bash
 kustomize build app/kafka | kubectl apply -f -
+kustomize build app/minio | kubectl apply -f -
 kustomize build app/nats-streaming | kubectl apply -f -
 kustomize build app/redis-cluster | kubectl apply -f -
 ```

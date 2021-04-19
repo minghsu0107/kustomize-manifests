@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: minio
+spec:
+  replicas: 8
+  template:
+    spec:
+      containers:
+      - name: minio
+        args:
+        - server
+        - http://minio-0.minio-hl-svc/export
+        - http://minio-1.minio-hl-svc/export
+        - http://minio-2.minio-hl-svc/export
+        - http://minio-3.minio-hl-svc/export
+        - http://minio-4.minio-hl-svc/export
+        - http://minio-5.minio-hl-svc/export
+        - http://minio-6.minio-hl-svc/export
+        - http://minio-7.minio-hl-svc/export
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+      labels:
+        app: minio
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: local-path
+      resources:
+        requests:
+          storage: 10Gi

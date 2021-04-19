@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: minio
+  labels:
+    v1beta1.min.io/instance: minio
+    app: minio
+spec:
+  serviceName: minio-hl-svc
+  podManagementPolicy: Parallel
+  updateStrategy:
+    type: RollingUpdate
+  replicas: 0
+  selector:
+    matchLabels:
+      v1beta1.min.io/instance: minio
+      app: minio
+  template:
+    metadata:
+      labels:
+        v1beta1.min.io/instance: minio
+        app: minio
+      annotations:
+        prometheus.io/path: /minio/prometheus/metrics
+        prometheus.io/port: "9000"
+        prometheus.io/scrape: "true"
+    spec:
+      containers:
+      - name: minio
+        image: docker.io/minio/minio:RELEASE.2021-03-17T02-33-02Z@sha256:d33b2e9559ee59acf7591cd83cb7238837158a316956e6140e6692a8e4e12fe9
+        args:
+        - server
+        env:
+        - name: MINIO_PROMETHEUS_AUTH_TYPE
+          value: public
+        - name: MINIO_BROWSER
+          value: "off"
+        - name: MINIO_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: minio
+              key: accesskey
+        - name: MINIO_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: minio
+              key: secretkey
+        ports:
+        - containerPort: 9000
+          protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: /minio/health/live
+            port: 9000
+          initialDelaySeconds: 120
+          periodSeconds: 20
+        readinessProbe:
+          httpGet:
+            path: /minio/health/ready
+            port: 9000
+          initialDelaySeconds: 30
+          periodSeconds: 20
+        resources:
+          requests:
+            cpu: 10m
+            memory: 25Mi
+        volumeMounts:
+        - mountPath: /export
+          name: data
+
