@@ -111,6 +111,7 @@ Add the following data sources in Grafana:
 Dashboards:
 - [Cassandra Metrics](https://grafana.com/grafana/dashboards/6258)
 - [Elasticsearch Exporter](https://grafana.com/grafana/dashboards/2322)
+- [MinIO Overview](https://grafana.com/grafana/dashboards/13502)
 - [Kafka Exporter](dashboard/kafka.json)
 - [NATS Exporter](dashboard/nats.json)
 - [Redis Exporter](dashboard/redis.json)
