@@ -18,6 +18,13 @@ spec:
         - http://minio-5.minio-hl-svc/export
         - http://minio-6.minio-hl-svc/export
         - http://minio-7.minio-hl-svc/export
+        resources:
+          limits:
+            cpu: 500m
+            memory: 512Mi
+          requests:
+            cpu: 500m
+            memory: 512Mi
   volumeClaimTemplates:
   - metadata:
       name: data
