@@ -1,0 +1,11 @@
+namespace: monitoring
+resources:
+- all-in-one.yaml
+- namespace.yaml
+- pvc.yaml
+patches:
+- path: patch.yaml
+  target:
+    kind: StatefulSet
+    name: prometheus-core
+    labelSelector: app=prometheus

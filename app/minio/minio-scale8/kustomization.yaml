@@ -1,4 +1,12 @@
+namespace: minio
 bases:
 - ../base
+resources:
+- namespace.yaml
 patchesStrategicMerge:
 - minio-scale8.yaml
+secretGenerator:
+- name: minio
+  literals:
+  - accesskey=XJ2hzpkN
+  - secretkey=LkYatYm5Ke4BpnQk

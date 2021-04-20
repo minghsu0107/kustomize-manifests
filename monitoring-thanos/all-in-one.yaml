@@ -495,6 +495,8 @@ data:
       scrape_interval: 10s
       scrape_timeout: 10s
       evaluation_interval: 10s
+      external_labels:
+        cluster: prometheus-ha
     rule_files:
       - "/etc/prometheus-rules/*rules.yaml"
     alerting:
@@ -593,23 +595,29 @@ metadata:
   name: prometheus-core
 ---
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: prometheus-core
   labels:
     app: prometheus
+    thanos: sidecar
     app.kubernetes.io/component: core
 spec:
-  replicas: 1
+  serviceName: thanos-store-gateway
+  replicas: 2
   selector:
     matchLabels:
       app: prometheus
+      thanos: sidecar
+      app.kubernetes.io/component: core
   template:
     metadata:
       name: prometheus-main
       labels:
         app: prometheus
+        thanos: sidecar
         app.kubernetes.io/component: core
+        thanos-store-api: "true"
     spec:
       serviceAccountName: prometheus-k8s
       containers:
@@ -617,7 +625,9 @@ spec:
         image: prom/prometheus:v2.25.2
         args:
           - "--storage.tsdb.path=/prometheus/data"
-          - "--storage.tsdb.retention.time=7d"
+          - "--storage.tsdb.retention.time=3d"
+          - "--storage.tsdb.min-block-duration=2h"
+          - "--storage.tsdb.max-block-duration=2h"
           # - "--storage.tsdb.no-lockfile"
           - "--web.enable-lifecycle"
           - '--config.file=/etc/prometheus/prometheus.yaml'
@@ -634,18 +644,64 @@ spec:
           mountPath: /etc/prometheus
         - name: rules-volume
           mountPath: /etc/prometheus-rules
-        - name: prometheus-persistent-storage
+        - name: prometheus-data
           mountPath: /prometheus/data
+        - name: prometheus-config-shared
+          mountPath: /etc/prometheus-shared
+      - name: thanos
+        image: thanosio/thanos:main-2021-04-15-2a999d25
+        args:
+          - "sidecar"
+          - |
+            --objstore.config=type: S3
+            config:
+              bucket: prometheus-long-term
+              endpoint: minio-hl-svc.minio:9000
+              access_key: XJ2hzpkN
+              secret_key: LkYatYm5Ke4BpnQk
+              insecure: true
+          - "--log.level=debug"
+          - "--tsdb.path=/prometheus/data"
+          - "--prometheus.url=http://127.0.0.1:9090"
+          - "--reloader.rule-dir=/etc/prometheus-rules/"
+          - "--reloader.config-file=/etc/prometheus/prometheus.yaml"
+          - "--reloader.config-envsubst-file=/etc/prometheus-shared/prometheus.yaml"
+        env:
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+        ports:
+          - name: http-sidecar
+            containerPort: 10902
+          - name: grpc
+            containerPort: 10901
+        livenessProbe:
+            httpGet:
+              port: 10902
+              path: /-/healthy
+        readinessProbe:
+          httpGet:
+            port: 10902
+            path: /-/ready
+        volumeMounts:
+          - name: config-volume
+            mountPath: /etc/prometheus
+          - name: rules-volume
+            mountPath: /etc/prometheus-rules
+          - name: prometheus-data
+            mountPath: /prometheus/data
+          - name: prometheus-config-shared
+            mountPath: /etc/prometheus-shared
       volumes:
       - name: config-volume
         configMap:
           name: prometheus-core
+      - name: prometheus-config-shared
+        emptyDir: {}
       - name: rules-volume
         configMap:
           name: prometheus-rules
-      - name: prometheus-persistent-storage
-        persistentVolumeClaim:
-          claimName: prometheus-data
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -1038,6 +1094,680 @@ metadata:
   creationTimestamp: null
   name: prometheus-rules
 ---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: thanos-querier
+  labels:
+    app: thanos-querier
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: thanos-querier
+  template:
+    metadata:
+      labels:
+        app: thanos-querier
+    spec:
+      containers:
+      - name: thanos
+        image: thanosio/thanos:main-2021-04-15-2a999d25
+        args:
+        - query
+        - --log.level=debug
+        - --query.replica-label=replica
+        - --store=dnssrv+thanos-store-gateway:10901
+        ports:
+        - name: http
+          containerPort: 10902
+        - name: grpc
+          containerPort: 10901
+        livenessProbe:
+          httpGet:
+            port: http
+            path: /-/healthy
+        readinessProbe:
+          httpGet:
+            port: http
+            path: /-/ready
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: thanos-store-gateway
+  labels:
+    app: thanos-store-gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: thanos-store-gateway
+  serviceName: thanos-store-gateway
+  template:
+    metadata:
+      labels:
+        app: thanos-store-gateway
+        thanos-store-api: "true"
+    spec:
+      containers:
+        - name: thanos
+          image: thanosio/thanos:main-2021-04-15-2a999d25
+          args:
+          - "store"
+          - "--log.level=debug"
+          - "--data-dir=/data"
+          - |
+            --objstore.config=type: S3
+            config:
+              bucket: prometheus-long-term
+              endpoint: minio-hl-svc.minio:9000
+              access_key: XJ2hzpkN
+              secret_key: LkYatYm5Ke4BpnQk
+              insecure: true
+          - "--index-cache-size=500MB"
+          - "--chunk-pool-size=500MB"
+          ports:
+          - name: http
+            containerPort: 10902
+          - name: grpc
+            containerPort: 10901
+          livenessProbe:
+            httpGet:
+              port: 10902
+              path: /-/healthy
+          readinessProbe:
+            httpGet:
+              port: 10902
+              path: /-/ready
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: thanos-compactor
+  labels:
+    app: thanos-compactor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: thanos-compactor
+  serviceName: thanos-compactor
+  template:
+    metadata:
+      labels:
+        app: thanos-compactor
+    spec:
+      containers:
+      - name: thanos
+        image: thanosio/thanos:main-2021-04-15-2a999d25
+        args:
+          - "compact"
+          - "--log.level=debug"
+          - "--data-dir=/tmp/thanos-compact"
+          - |
+            --objstore.config=type: S3
+            config:
+              bucket: prometheus-long-term
+              endpoint: minio-hl-svc.minio:9000
+              access_key: XJ2hzpkN
+              secret_key: LkYatYm5Ke4BpnQk
+              insecure: true
+          - "--wait"
+          - "--wait-interval=5m"
+        ports:
+          - name: http
+            containerPort: 10902
+        livenessProbe:
+          httpGet:
+            port: 10902
+            path: /-/healthy
+        readinessProbe:
+          httpGet:
+            port: 10902
+            path: /-/ready
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: thanos-ruler-rules
+  namespace: monitoring
+data:
+  alert_down_services.rules.yaml: |
+    groups:
+    - name: thanos-compact
+      rules:
+      - alert: ThanosCompactMultipleRunning
+        annotations:
+          description: No more than one Thanos Compact instance should be running at once.
+            There are {{$value}} instances running.
+          runbook_url: https://github.com/thanos-io/thanos/tree/main/mixin/runbook.md#alert-name-thanoscompactmultiplerunning
+          summary: Thanos Compact has multiple instances running.
+        expr: sum by (app) (up{app="thanos-compactor"}) > 1
+        for: 5m
+        labels:
+          severity: warning
+      - alert: ThanosCompactHalted
+        annotations:
+          description: Thanos Compact {{$labels.instance}} has failed to run and now is halted.
+          runbook_url: https://github.com/thanos-io/thanos/tree/main/mixin/runbook.md#alert-name-thanoscompacthalted
+          summary: Thanos Compact has failed to run ans is now halted.
+        expr: thanos_compact_halted{} == 1
+        for: 5m
+        labels:
+          severity: warning
+      - alert: ThanosCompactHighCompactionFailures
+        annotations:
+          description: Thanos Compact {{$labels.instance}} is failing to execute {{$value | humanize}}%
+            of compactions.
+          runbook_url: https://github.com/thanos-io/thanos/tree/main/mixin/runbook.md#alert-name-thanoscompacthighcompactionfailures
+          summary: Thanos Compact is failing to execute compactions.
+        expr: |
+          (
+            sum by (app) (rate(thanos_compact_group_compactions_failures_total{}[5m]))
+          /
+            sum by (app) (rate(thanos_compact_group_compactions_total{}[5m]))
+          * 100 > 5
+          )
+        for: 15m
+        labels:
+          severity: warning
+      - alert: ThanosCompactBucketHighOperationFailures
+        annotations:
+          description: Thanos Compact {{$labels.instance}} Bucket is failing to execute {{$value
+            | humanize}}% of operations.
+          runbook_url: https://github.com/thanos-io/thanos/tree/main/mixin/runbook.md#alert-name-thanoscompactbuckethighoperationfailures
+          summary: Thanos Compact Bucket is having a high number of operation failures.
+        expr: |
+          (
+            sum by (app) (rate(thanos_objstore_bucket_operation_failures_total{}[5m]))
+          /
+            sum by (app) (rate(thanos_objstore_bucket_operations_total{}[5m]))
+          * 100 > 5
+          )
+        for: 15m
+        labels:
+          severity: warning
+      - alert: ThanosCompactHasNotRun
+        annotations:
+          description: Thanos Compact {{$labels.instance}} has not uploaded anything for 24 hours.
+          runbook_url: https://github.com/thanos-io/thanos/tree/main/mixin/runbook.md#alert-name-thanoscompacthasnotrun
+          summary: Thanos Compact has not uploaded anything for last 24 hours.
+        expr: (time() - max by (job) (max_over_time(thanos_objstore_bucket_last_successful_upload_time{app="thanos-compactor"}[24h])))
+          / 60 / 60 > 24
+        labels:
+          severity: warning
+    - name: thanos-rule
+      rules:
+      - alert: ThanosRuleQueueIsDroppingAlerts
+        annotations:
+          description: Thanos Rule {{$labels.instance}} is failing to queue alerts.
+          runbook_url: https://github.com/thanos-io/thanos/tree/main/mixin/runbook.md#alert-name-thanosrulequeueisdroppingalerts
+          summary: Thanos Rule is failing to queue alerts.
+        expr: |
+          sum by (app, instance) (rate(thanos_alert_queue_alerts_dropped_total{app="thanos-ruler"}[5m])) > 0
+        for: 5m
+        labels:
+          severity: critical
+      - alert: ThanosRuleSenderIsFailingAlerts
+        annotations:
+          description: Thanos Rule {{$labels.instance}} is failing to send alerts to alertmanager.
+          runbook_url: https://github.com/thanos-io/thanos/tree/main/mixin/runbook.md#alert-name-thanosrulesenderisfailingalerts
+          summary: Thanos Rule is failing to send alerts to alertmanager.
+        expr: |
+          sum by (app, instance) (rate(thanos_alert_sender_alerts_dropped_total{app="thanos-ruler"}[5m])) > 0
+        for: 5m
+        labels:
+          severity: critical
+      - alert: ThanosRuleHighRuleEvaluationFailures
+        annotations:
+          description: Thanos Rule {{$labels.instance}} is failing to evaluate rules.
+          runbook_url: https://github.com/thanos-io/thanos/tree/main/mixin/runbook.md#alert-name-thanosrulehighruleevaluationfailures
+          summary: Thanos Rule is failing to evaluate rules.
+        expr: |
+          (
+            sum by (app, instance) (rate(prometheus_rule_evaluation_failures_total{app="thanos-ruler"}[5m]))
+          /
+            sum by (app, instance) (rate(prometheus_rule_evaluations_total{app="thanos-ruler"}[5m]))
+          * 100 > 5
+          )
+        for: 5m
+        labels:
+          severity: critical
+      - alert: ThanosRuleHighRuleEvaluationWarnings
+        annotations:
+          description: Thanos Rule {{$labels.instance}} has high number of evaluation warnings.
+          runbook_url: https://github.com/thanos-io/thanos/tree/main/mixin/runbook.md#alert-name-thanosrulehighruleevaluationwarnings
+          summary: Thanos Rule has high number of evaluation warnings.
+        expr: |
+          sum by (app, instance) (rate(thanos_rule_evaluation_with_warnings_total{app="thanos-ruler"}[5m])) > 0
+        for: 15m
+        labels:
+          severity: info
+      - alert: ThanosRuleRuleEvaluationLatencyHigh
+        annotations:
+          description: Thanos Rule {{$labels.instance}} has higher evaluation latency than
+            interval for {{$labels.rule_group}}.
+          runbook_url: https://github.com/thanos-io/thanos/tree/main/mixin/runbook.md#alert-name-thanosruleruleevaluationlatencyhigh
+          summary: Thanos Rule has high rule evaluation latency.
+        expr: |
+          (
+            sum by (app, instance, rule_group) (prometheus_rule_group_last_duration_seconds{app="thanos-ruler"})
+          >
+            sum by (app, instance, rule_group) (prometheus_rule_group_interval_seconds{app="thanos-ruler"})
+          )
+        for: 5m
+        labels:
+          severity: warning
+      - alert: ThanosRuleGrpcErrorRate
+        annotations:
+          description: Thanos Rule {{$labels.instance}} is failing to handle {{$value | humanize}}%
+            of requests.
+          runbook_url: https://github.com/thanos-io/thanos/tree/main/mixin/runbook.md#alert-name-thanosrulegrpcerrorrate
+          summary: Thanos Rule is failing to handle grpc requests.
+        expr: |
+          (
+            sum by (app, instance) (rate(grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable|DataLoss|DeadlineExceeded", app="thanos-ruler"}[5m]))
+          /
+            sum by (app, instance) (rate(grpc_server_started_total{app="thanos-ruler"}[5m]))
+          * 100 > 5
+          )
+        for: 5m
+        labels:
+          severity: warning
+      - alert: ThanosRuleConfigReloadFailure
+        annotations:
+          description: Thanos Rule {{$labels.instance}} has not been able to reload its configuration.
+          runbook_url: https://github.com/thanos-io/thanos/tree/main/mixin/runbook.md#alert-name-thanosruleconfigreloadfailure
+          summary: Thanos Rule has not been able to reload configuration.
+        expr: avg by (app, instance) (thanos_rule_config_last_reload_successful{app="thanos-ruler"})
+          != 1
+        for: 5m
+        labels:
+          severity: info
+      - alert: ThanosRuleQueryHighDNSFailures
+        annotations:
+          description: Thanos Rule {{$labels.instance}} has {{$value | humanize}}% of failing
+            DNS queries for query endpoints.
+          runbook_url: https://github.com/thanos-io/thanos/tree/main/mixin/runbook.md#alert-name-thanosrulequeryhighdnsfailures
+          summary: Thanos Rule is having high number of DNS failures.
+        expr: |
+          (
+            sum by (app, instance) (rate(thanos_rule_query_apis_dns_failures_total{app="thanos-ruler"}[5m]))
+          /
+            sum by (app, instance) (rate(thanos_rule_query_apis_dns_lookups_total{app="thanos-ruler"}[5m]))
+          * 100 > 1
+          )
+        for: 15m
+        labels:
+          severity: warning
+      - alert: ThanosRuleAlertmanagerHighDNSFailures
+        annotations:
+          description: Thanos Rule {{$labels.instance}} has {{$value | humanize}}% of failing
+            DNS queries for Alertmanager endpoints.
+          runbook_url: https://github.com/thanos-io/thanos/tree/main/mixin/runbook.md#alert-name-thanosrulealertmanagerhighdnsfailures
+          summary: Thanos Rule is having high number of DNS failures.
+        expr: |
+          (
+            sum by (app, instance) (rate(thanos_rule_alertmanagers_dns_failures_total{app="thanos-ruler"}[5m]))
+          /
+            sum by (app, instance) (rate(thanos_rule_alertmanagers_dns_lookups_total{app="thanos-ruler"}[5m]))
+          * 100 > 1
+          )
+        for: 15m
+        labels:
+          severity: warning
+      - alert: ThanosRuleNoEvaluationFor10Intervals
+        annotations:
+          description: Thanos Rule {{$labels.instance}} has {{$value | humanize}}% rule groups
+            that did not evaluate for at least 10x of their expected interval.
+          runbook_url: https://github.com/thanos-io/thanos/tree/main/mixin/runbook.md#alert-name-thanosrulenoevaluationfor10intervals
+          summary: Thanos Rule has rule groups that did not evaluate for 10 intervals.
+        expr: |
+          time() -  max by (app, instance, group) (prometheus_rule_group_last_evaluation_timestamp_seconds{app="thanos-ruler"})
+          >
+          10 * max by (app, instance, group) (prometheus_rule_group_interval_seconds{app="thanos-ruler"})
+        for: 5m
+        labels:
+          severity: info
+      - alert: ThanosNoRuleEvaluations
+        annotations:
+          description: Thanos Rule {{$labels.instance}} did not perform any rule evaluations
+            in the past 10 minutes.
+          runbook_url: https://github.com/thanos-io/thanos/tree/main/mixin/runbook.md#alert-name-thanosnoruleevaluations
+          summary: Thanos Rule did not perform any rule evaluations.
+        expr: |
+          sum by (app, instance) (rate(prometheus_rule_evaluations_total{app="thanos-ruler"}[5m])) <= 0
+            and
+          sum by (app, instance) (thanos_rule_loaded_rules{app="thanos-ruler"}) > 0
+        for: 5m
+        labels:
+          severity: critical
+    - name: thanos-store
+      rules:
+      - alert: ThanosStoreGrpcErrorRate
+        annotations:
+          description: Thanos Store {{$labels.instance}} is failing to handle {{$value | humanize}}%
+            of requests.
+          runbook_url: https://github.com/thanos-io/thanos/tree/main/mixin/runbook.md#alert-name-thanosstoregrpcerrorrate
+          summary: Thanos Store is failing to handle qrpcd requests.
+        expr: |
+          (
+            sum by (app) (rate(grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable|DataLoss|DeadlineExceeded", app="thanos-store-gateway"}[5m]))
+          /
+            sum by (app) (rate(grpc_server_started_total{app="thanos-store-gateway"}[5m]))
+          * 100 > 5
+          )
+        for: 5m
+        labels:
+          severity: warning
+      - alert: ThanosStoreSeriesGateLatencyHigh
+        annotations:
+          description: Thanos Store {{$labels.instance}} has a 99th percentile latency of {{$value}}
+            seconds for store series gate requests.
+          runbook_url: https://github.com/thanos-io/thanos/tree/main/mixin/runbook.md#alert-name-thanosstoreseriesgatelatencyhigh
+          summary: Thanos Store has high latency for store series gate requests.
+        expr: |
+          (
+            histogram_quantile(0.99, sum by (app, le) (rate(thanos_bucket_store_series_gate_duration_seconds_bucket{app="thanos-store-gateway"}[5m]))) > 2
+          and
+            sum by (app) (rate(thanos_bucket_store_series_gate_duration_seconds_count{app="thanos-store-gateway"}[5m])) > 0
+          )
+        for: 10m
+        labels:
+          severity: warning
+      - alert: ThanosStoreBucketHighOperationFailures
+        annotations:
+          description: Thanos Store {{$labels.instance}} Bucket is failing to execute {{$value
+            | humanize}}% of operations.
+          runbook_url: https://github.com/thanos-io/thanos/tree/main/mixin/runbook.md#alert-name-thanosstorebuckethighoperationfailures
+          summary: Thanos Store Bucket is failing to execute operations.
+        expr: |
+          (
+            sum by (app) (rate(thanos_objstore_bucket_operation_failures_total{app="thanos-store-gateway"}[5m]))
+          /
+            sum by (app) (rate(thanos_objstore_bucket_operations_total{app="thanos-store-gateway"}[5m]))
+          * 100 > 5
+          )
+        for: 15m
+        labels:
+          severity: warning
+      - alert: ThanosStoreObjstoreOperationLatencyHigh
+        annotations:
+          description: Thanos Store {{$labels.instance}} Bucket has a 99th percentile latency
+            of {{$value}} seconds for the bucket operations.
+          runbook_url: https://github.com/thanos-io/thanos/tree/main/mixin/runbook.md#alert-name-thanosstoreobjstoreoperationlatencyhigh
+          summary: Thanos Store is having high latency for bucket operations.
+        expr: |
+          (
+            histogram_quantile(0.99, sum by (app, le) (rate(thanos_objstore_bucket_operation_duration_seconds_bucket{app="thanos-store-gateway"}[5m]))) > 2
+          and
+            sum by (app) (rate(thanos_objstore_bucket_operation_duration_seconds_count{app="thanos-store-gateway"}[5m])) > 0
+          )
+        for: 10m
+        labels:
+          severity: warning
+    - name: thanos-sidecar
+      rules:
+      - alert: ThanosSidecarPrometheusDown
+        annotations:
+          description: Thanos Sidecar {{$labels.instance}} cannot connect to Prometheus.
+          runbook_url: https://github.com/thanos-io/thanos/tree/main/mixin/runbook.md#alert-name-thanossidecarprometheusdown
+          summary: Thanos Sidecar cannot connect to Prometheus
+        expr: |
+          thanos_sidecar_prometheus_up{thanos="sidecar"} == 0
+        for: 5m
+        labels:
+          severity: critical
+      - alert: ThanosSidecarBucketOperationsFailed
+        annotations:
+          description: Thanos Sidecar {{$labels.instance}} bucket operations are failing
+          runbook_url: https://github.com/thanos-io/thanos/tree/main/mixin/runbook.md#alert-name-thanossidecarbucketoperationsfailed
+          summary: Thanos Sidecar bucket operations are failing
+        expr: |
+          sum by (thanos, instance) (rate(thanos_objstore_bucket_operation_failures_total{thanos="sidecar"}[5m])) > 0
+        for: 5m
+        labels:
+          severity: critical
+      - alert: ThanosSidecarUnhealthy
+        annotations:
+          description: Thanos Sidecar {{$labels.instance}} is unhealthy for more than {{$value}}
+            seconds.
+          runbook_url: https://github.com/thanos-io/thanos/tree/main/mixin/runbook.md#alert-name-thanossidecarunhealthy
+          summary: Thanos Sidecar is unhealthy.
+        expr: |
+          time() - max by (thanos, instance) (timestamp(thanos_sidecar_last_heartbeat_success_time_seconds{thanos="sidecar"})) >= 240
+        labels:
+          severity: critical
+    - name: thanos-query
+      rules:
+      - alert: ThanosQueryHttpRequestQueryErrorRateHigh
+        annotations:
+          description: Thanos Query {{$labels.instance}} is failing to handle {{$value | humanize}}%
+            of "query" requests.
+          runbook_url: https://github.com/thanos-io/thanos/tree/main/mixin/runbook.md#alert-name-thanosqueryhttprequestqueryerrorratehigh
+          summary: Thanos Query is failing to handle requests.
+        expr: |
+          (
+            sum by (app) (rate(http_requests_total{code=~"5..", app="thanos-querier", handler="query"}[5m]))
+          /
+            sum by (app) (rate(http_requests_total{app="thanos-querier", handler="query"}[5m]))
+          ) * 100 > 5
+        for: 5m
+        labels:
+          severity: critical
+      - alert: ThanosQueryHttpRequestQueryRangeErrorRateHigh
+        annotations:
+          description: Thanos Query {{$labels.instance}} is failing to handle {{$value | humanize}}%
+            of "query_range" requests.
+          runbook_url: https://github.com/thanos-io/thanos/tree/main/mixin/runbook.md#alert-name-thanosqueryhttprequestqueryrangeerrorratehigh
+          summary: Thanos Query is failing to handle requests.
+        expr: |
+          (
+            sum by (app) (rate(http_requests_total{code=~"5..", app="thanos-querier", handler="query_range"}[5m]))
+          /
+            sum by (app) (rate(http_requests_total{app="thanos-querier", handler="query_range"}[5m]))
+          ) * 100 > 5
+        for: 5m
+        labels:
+          severity: critical
+      - alert: ThanosQueryGrpcServerErrorRate
+        annotations:
+          description: Thanos Query {{$labels.instance}} is failing to handle {{$value | humanize}}%
+            of requests.
+          runbook_url: https://github.com/thanos-io/thanos/tree/main/mixin/runbook.md#alert-name-thanosquerygrpcservererrorrate
+          summary: Thanos Query is failing to handle requests.
+        expr: |
+          (
+            sum by (app) (rate(grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable|DataLoss|DeadlineExceeded", app="thanos-querier"}[5m]))
+          /
+            sum by (app) (rate(grpc_server_started_total{app="thanos-querier"}[5m]))
+          * 100 > 5
+          )
+        for: 5m
+        labels:
+          severity: warning
+      - alert: ThanosQueryGrpcClientErrorRate
+        annotations:
+          description: Thanos Query {{$labels.instance}} is failing to send {{$value | humanize}}%
+            of requests.
+          runbook_url: https://github.com/thanos-io/thanos/tree/main/mixin/runbook.md#alert-name-thanosquerygrpcclienterrorrate
+          summary: Thanos Query is failing to send requests.
+        expr: |
+          (
+            sum by (app) (rate(grpc_client_handled_total{grpc_code!="OK", app="thanos-querier"}[5m]))
+          /
+            sum by (app) (rate(grpc_client_started_total{app="thanos-querier"}[5m]))
+          ) * 100 > 5
+        for: 5m
+        labels:
+          severity: warning
+      - alert: ThanosQueryHighDNSFailures
+        annotations:
+          description: Thanos Query {{$labels.instance}} have {{$value | humanize}}% of failing
+            DNS queries for store endpoints.
+          runbook_url: https://github.com/thanos-io/thanos/tree/main/mixin/runbook.md#alert-name-thanosqueryhighdnsfailures
+          summary: Thanos Query is having high number of DNS failures.
+        expr: |
+          (
+            sum by (app) (rate(thanos_query_store_apis_dns_failures_total{app="thanos-querier"}[5m]))
+          /
+            sum by (app) (rate(thanos_query_store_apis_dns_lookups_total{app="thanos-querier"}[5m]))
+          ) * 100 > 1
+        for: 15m
+        labels:
+          severity: warning
+      - alert: ThanosQueryInstantLatencyHigh
+        annotations:
+          description: Thanos Query {{$labels.instance}} has a 99th percentile latency of {{$value}}
+            seconds for instant queries.
+          runbook_url: https://github.com/thanos-io/thanos/tree/main/mixin/runbook.md#alert-name-thanosqueryinstantlatencyhigh
+          summary: Thanos Query has high latency for queries.
+        expr: |
+          (
+            histogram_quantile(0.99, sum by (app, le) (rate(http_request_duration_seconds_bucket{app="thanos-querier", handler="query"}[5m]))) > 40
+          and
+            sum by (app) (rate(http_request_duration_seconds_bucket{app="thanos-querier", handler="query"}[5m])) > 0
+          )
+        for: 10m
+        labels:
+          severity: critical
+      - alert: ThanosQueryRangeLatencyHigh
+        annotations:
+          description: Thanos Query {{$labels.app}} has a 99th percentile latency of {{$value}}
+            seconds for range queries.
+          runbook_url: https://github.com/thanos-io/thanos/tree/main/mixin/runbook.md#alert-name-thanosqueryrangelatencyhigh
+          summary: Thanos Query has high latency for queries.
+        expr: |
+          (
+            histogram_quantile(0.99, sum by (app, le) (rate(http_request_duration_seconds_bucket{app="thanos-querier", handler="query_range"}[5m]))) > 90
+          and
+            sum by (app) (rate(http_request_duration_seconds_count{app="thanos-querier", handler="query_range"}[5m])) > 0
+          )
+        for: 10m
+        labels:
+          severity: critical
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: thanos-ruler
+  name: thanos-ruler
+  annotations:
+    prometheus.io/port: "10902"
+    prometheus.io/scrape: "true"
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: thanos-ruler
+  serviceName: thanos-ruler
+  template:
+    metadata:
+      labels:
+        app: thanos-ruler
+        thanos-store-api: "true"
+    spec:
+      containers:
+        - name: thanos
+          image: thanosio/thanos:main-2021-04-15-2a999d25
+          args:
+            - rule
+            - --log.level=debug
+            - --data-dir=/data
+            - --eval-interval=20s
+            - --rule-file=/etc/thanos-ruler/*.rules.yaml
+            - --alertmanagers.url=http://alertmanager:9093
+            - --query=thanos-querier:9090
+            - |
+              --objstore.config=type: S3
+              config:
+                bucket: thanos-ruler
+                endpoint: minio-hl-svc.minio:9000
+                access_key: XJ2hzpkN
+                secret_key: LkYatYm5Ke4BpnQk
+                insecure: true
+            - --label=ruler_cluster="prometheus-ha"
+            - --label=replica="$(POD_NAME)"
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          ports:
+            - name: http
+              containerPort: 10902
+            - name: grpc
+              containerPort: 10901
+          livenessProbe:
+            httpGet:
+              port: http
+              path: /-/healthy
+          readinessProbe:
+            httpGet:
+              port: http
+              path: /-/ready
+          volumeMounts:
+            - mountPath: /etc/thanos-ruler
+              name: config
+      volumes:
+        - configMap:
+            name: thanos-ruler-rules
+          name: config
+---
+# This service creates a srv record for querier to find about store-api's
+apiVersion: v1
+kind: Service
+metadata:
+  name: thanos-store-gateway
+spec:
+  type: ClusterIP
+  clusterIP: None
+  ports:
+    - name: grpc
+      port: 10901
+      targetPort: grpc
+  selector:
+    thanos-store-api: "true"
+---
+# prometheus service for thanos-store
+apiVersion: v1
+kind: Service
+metadata:
+  name: thanos-store-gateway-prom
+  labels:
+    app: thanos-store-gateway
+  annotations:
+    prometheus.io/port: "10902"
+    prometheus.io/scrape: "true"
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 10902
+      targetPort: http
+  selector:
+    app: thanos-store-gateway
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: thanos-compactor
+  name: thanos-compactor
+  annotations:
+    prometheus.io/port: "10902"
+    prometheus.io/scrape: "true"
+spec:
+  ports:
+    - port: 10902
+      protocol: TCP
+      targetPort: http
+      name: http
+  selector:
+    app: thanos-compactor
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -1046,7 +1776,8 @@ metadata:
     app: prometheus
     app.kubernetes.io/component: core
   annotations:
-    prometheus.io/scrape: 'true'
+    prometheus.io/port: "9090"
+    prometheus.io/scrape: "true"
 spec:
   type: NodePort
   ports:
@@ -1057,3 +1788,61 @@ spec:
   selector:
     app: prometheus
     app.kubernetes.io/component: core
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: thanos-sidecar
+  labels:
+    thanos: sidecar
+  annotations:
+    prometheus.io/port: "10902"
+    prometheus.io/scrape: "true"
+spec:
+  type: ClusterIP
+  ports:
+    - port: 10902
+      protocol: TCP
+      name: http
+  selector:
+    thanos: sidecar
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: thanos-querier
+  labels:
+    app: thanos-querier
+  annotations:
+    prometheus.io/port: "10902"
+    prometheus.io/scrape: "true"
+spec:
+  type: NodePort
+  ports:
+  - port: 10902
+    protocol: TCP
+    targetPort: http
+    nodePort: 30831
+    name: http
+  selector:
+    app: thanos-querier
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: thanos-ruler
+  labels:
+    app: thanos-ruler
+  annotations:
+    prometheus.io/port: "10902"
+    prometheus.io/scrape: "true"
+spec:
+  type: NodePort
+  ports:
+    - port: 10902
+      protocol: TCP
+      targetPort: http
+      nodePort: 30832
+      name: http
+  selector:
+    app: thanos-ruler
