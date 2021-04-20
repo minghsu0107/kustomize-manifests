@@ -31,6 +31,7 @@ spec:
         args:
         - server
         env:
+        # allow public access without authentication for prometheus metrics
         - name: MINIO_PROMETHEUS_AUTH_TYPE
           value: public
         # disable browser

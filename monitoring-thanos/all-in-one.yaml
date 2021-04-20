@@ -657,8 +657,8 @@ spec:
             config:
               bucket: prometheus-long-term
               endpoint: minio-hl-svc.minio:9000
-              access_key: XJ2hzpkN
-              secret_key: LkYatYm5Ke4BpnQk
+              access_key: "$(AWS_ACCESS_KEY_ID)"
+              secret_key: "$(AWS_SECRET_KEY)"
               insecure: true
           - "--log.level=debug"
           - "--tsdb.path=/prometheus/data"
@@ -671,6 +671,16 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: metadata.name
+          - name: AWS_ACCESS_KEY_ID
+            valueFrom:
+              secretKeyRef:
+                name: s3-secret
+                key: accesskey
+          - name: AWS_SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: s3-secret
+                key: secretkey
         ports:
           - name: http-sidecar
             containerPort: 10902
@@ -1162,11 +1172,22 @@ spec:
             config:
               bucket: prometheus-long-term
               endpoint: minio-hl-svc.minio:9000
-              access_key: XJ2hzpkN
-              secret_key: LkYatYm5Ke4BpnQk
+              access_key: "$(AWS_ACCESS_KEY_ID)"
+              secret_key: "$(AWS_SECRET_KEY)"
               insecure: true
           - "--index-cache-size=500MB"
           - "--chunk-pool-size=500MB"
+          env:
+          - name: AWS_ACCESS_KEY_ID
+            valueFrom:
+              secretKeyRef:
+                name: s3-secret
+                key: accesskey
+          - name: AWS_SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: s3-secret
+                key: secretkey
           ports:
           - name: http
             containerPort: 10902
@@ -1210,11 +1231,22 @@ spec:
             config:
               bucket: prometheus-long-term
               endpoint: minio-hl-svc.minio:9000
-              access_key: XJ2hzpkN
-              secret_key: LkYatYm5Ke4BpnQk
+              access_key: "$(AWS_ACCESS_KEY_ID)"
+              secret_key: "$(AWS_SECRET_KEY)"
               insecure: true
           - "--wait"
           - "--wait-interval=5m"
+        env:
+          - name: AWS_ACCESS_KEY_ID
+            valueFrom:
+              secretKeyRef:
+                name: s3-secret
+                key: accesskey
+          - name: AWS_SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: s3-secret
+                key: secretkey
         ports:
           - name: http
             containerPort: 10902
@@ -1685,8 +1717,8 @@ spec:
               config:
                 bucket: thanos-ruler
                 endpoint: minio-hl-svc.minio:9000
-                access_key: XJ2hzpkN
-                secret_key: LkYatYm5Ke4BpnQk
+                access_key: "$(AWS_ACCESS_KEY_ID)"
+                secret_key: "$(AWS_SECRET_KEY)"
                 insecure: true
             - --label=ruler_cluster="prometheus-ha"
             - --label=replica="$(POD_NAME)"
@@ -1695,6 +1727,16 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: s3-secret
+                  key: accesskey
+            - name: AWS_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: s3-secret
+                  key: secretkey
           ports:
             - name: http
               containerPort: 10902
