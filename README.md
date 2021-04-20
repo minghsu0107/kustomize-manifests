@@ -16,6 +16,31 @@ This repository provides one-shot deployment for ingress controller, logging sta
       - Save metrics for 7 days
   - `Grafana`: web UI that visualizes collected metrics
   - `Alertmanager`: server that sends alert to sysadmins when alert conditions are met, based on Prometheus metrics
+  - `Thanos components` (optional): a set of components that can be composed into a highly available metric system with unlimited storage capacity
+    - Sidecar
+      - The main component that runs along Prometheus
+      - Reads and archives data on the object store
+      - Manages Prometheus’s configuration and lifecycle
+      - Injects external labels into the Prometheus configuration to distinguish each Prometheus instance
+      - Listens in on Thanos gRPC protocol and translates queries between gRPC and REST
+    - Ruler
+      - Basically does the same thing as the querier but for Prometheus’ rules. The only difference is that it can communicate with Thanos components.
+      - Rule results are written back to disk in the Prometheus 2.0 storage format.
+      - Rule nodes at the same time participate in the system as source store nodes, which means that they expose StoreAPI and upload their generated TSDB blocks to an object store.
+    - Store
+      - Implements the Store API on top of historical data in an object storage bucket
+      - Acts primarily as an API gateway and therefore does not need significant amounts of local disk space
+      - Joins a Thanos cluster on startup and advertises the data it can access 
+      - Keeps a small amount of information about all remote blocks on a local disk in sync with the bucket
+      - This data is generally safe to delete across restarts at the cost of increased startup times
+    - Querier
+      - Listens in on HTTP and translates queries to Thanos gRPC format
+      - Aggregates and deduplicate the query result from different sources
+      - Can read data from Sidecar, Ruler, and Store
+    - Compactor 
+      - applies the compaction procedure of the Prometheus 2.0 storage engine to block data stored in object storage
+      - Generally not concurrent with safe semantics and must be deployed as a singleton against a bucket
+      - Responsible for downsampling data: 5 minute downsampling after 40 hours and 1 hour downsampling after 10 days
 - Tracing components
   - `Opencensus collector`: Opencensus span collector
   - `Jaeger collector`: Jaeger span collector
@@ -84,7 +109,11 @@ Alternatively, you could deploy them separately:
 ```bash
 kustomize build ingress | kubectl apply -f -
 kustomize build logging | kubectl apply -f -
+
 kustomize build monitoring | kubectl apply -f -
+# you could also deploy prometheus with thanos
+# kustomize build monitoring-thanos | kubectl apply -f -
+
 kustomize build tracing | kubectl apply -f -
 ```
 Build apps:
