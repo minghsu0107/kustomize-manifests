@@ -33,8 +33,9 @@ spec:
         env:
         - name: MINIO_PROMETHEUS_AUTH_TYPE
           value: public
-        - name: MINIO_BROWSER
-          value: "off"
+        # disable browser
+        # - name: MINIO_BROWSER
+        # value: "off"
         - name: MINIO_ACCESS_KEY
           valueFrom:
             secretKeyRef:
