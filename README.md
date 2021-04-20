@@ -127,6 +127,9 @@ kustomize build app/redis-cluster | kubectl apply -f -
 - Alertmanager web will listen on node port `30615`
 - Grafana web will listen on node port `31565`
 - Prometheus web will listen on node port `30830`
+- Thanos querier web will listen on node port `30831`
+- Thanos ruler web will listen on node port `30832`
+- Minio web will listen on node port `30120`
 ### Grafana Integration
 Default account: `admin`.
 

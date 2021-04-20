@@ -1,3 +1,4 @@
 resources:
 - minio-hl-svc.yaml
 - minio-statefulset.yaml
+- minio-web-svc.yaml
