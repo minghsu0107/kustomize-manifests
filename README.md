@@ -136,6 +136,7 @@ Add the following data sources in Grafana:
 - Jaeger: `http://jaeger-query.tracing:16686`
 - Loki: `http://loki-headless.logging:3100`
 - Prometheus: `http://prometheus:9090`
+- Thanos (optional): `http://thanos-querier:10902`
 
 Dashboards:
 - [Cassandra Metrics](https://grafana.com/grafana/dashboards/6258)
