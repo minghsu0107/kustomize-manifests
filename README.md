@@ -41,6 +41,7 @@ This repository provides one-shot deployment for ingress controller, logging sta
       - applies the compaction procedure of the Prometheus 2.0 storage engine to block data stored in object storage
       - Generally not concurrent with safe semantics and must be deployed as a singleton against a bucket
       - Responsible for downsampling data: 5 minute downsampling after 40 hours and 1 hour downsampling after 10 days
+    - Two buckets: `prometheus-long-term` and `thanos-ruler` on S3
 - Tracing components
   - `Opencensus collector`: Opencensus span collector
   - `Jaeger collector`: Jaeger span collector
