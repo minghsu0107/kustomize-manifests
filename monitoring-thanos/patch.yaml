@@ -3,17 +3,26 @@ kind: StatefulSet
 metadata:
   name: prometheus-core
 spec:
+  replicas: 2
   template:
     spec:
       containers:
       - name: prometheus
         resources:
           limits:
-            cpu: 800m
+            cpu: 512m
             memory: 5Gi
           requests:
-            cpu: 800m
+            cpu: 512m
             memory: 5Gi
+      - name: thanos
+        resources:
+          limits:
+            cpu: 128m
+            memory: 128Mi
+          requests:
+            cpu: 128m
+            memory: 128Mi
   volumeClaimTemplates:
   - metadata:
       name: prometheus-data
@@ -25,3 +34,75 @@ spec:
       resources:
         requests:
           storage: 10Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: thanos-querier
+spec:
+  replicas: 2
+  template:
+    spec:
+      containers:
+      - name: thanos
+        resources:
+          limits:
+            cpu: 512m
+            memory: 512Mi
+          requests:
+            cpu: 512m
+            memory: 512Mi
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: thanos-store-gateway
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+      - name: thanos
+        resources:
+          limits:
+            cpu: 256m
+            memory: 256Mi
+          requests:
+            cpu: 256m
+            memory: 256Mi
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: thanos-ruler
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+      - name: thanos
+        resources:
+          limits:
+            cpu: 512m
+            memory: 1Gi
+          requests:
+            cpu: 512m
+            memory: 1Gi
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: thanos-compactor
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+      - name: thanos
+        resources:
+          limits:
+            cpu: 128m
+            memory: 128Mi
+          requests:
+            cpu: 128m
+            memory: 128Mi

@@ -30,13 +30,6 @@ spec:
         # only 1.14+ are compatible with elasticsearch 7.x
         # https://github.com/jaegertracing/jaeger/issues/2284
         image: jaegertracing/all-in-one:1.22.0
-        resources:
-          limits:
-            cpu: 256m
-            memory: 512Mi
-          requests:
-            cpu: 256m
-            memory: 512Mi
         env:
         - name: SPAN_STORAGE_TYPE
           value: elasticsearch
@@ -98,13 +91,6 @@ spec:
       containers:
       - image: jaegertracing/jaeger-query:1.22.0
         name: jaeger-query
-        resources:
-          limits:
-            cpu: 256m
-            memory: 512Mi
-          requests:
-            cpu: 256m
-            memory: 512Mi
         ports:
         - containerPort: 16686
           protocol: TCP
@@ -246,13 +232,6 @@ spec:
           value: "80"
         image: omnition/opencensus-collector:0.1.10
         name: oc-collector
-        resources:
-          limits:
-            cpu: 256m
-            memory: 512Mi
-          requests:
-            cpu: 256m
-            memory: 512Mi
         ports:
         - containerPort: 8888
         - containerPort: 55678

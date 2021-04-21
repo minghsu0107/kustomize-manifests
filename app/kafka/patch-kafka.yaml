@@ -3,6 +3,7 @@ kind: StatefulSet
 metadata:
   name: kafka
 spec:
+  replicas: 3
   template:
     spec:
       containers:

@@ -3,6 +3,7 @@ kind: StatefulSet
 metadata:
   name: zk
 spec:
+  replicas: 3
   template:
     spec:
       containers:

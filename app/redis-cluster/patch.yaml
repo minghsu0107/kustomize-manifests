@@ -3,6 +3,7 @@ kind: StatefulSet
 metadata:
   name: redis-cluster
 spec:
+  replicas: 6
   template:
     spec:
       containers:

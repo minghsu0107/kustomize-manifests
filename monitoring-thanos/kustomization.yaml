@@ -3,12 +3,8 @@ resources:
 - all-in-one.yaml
 - namespace.yaml
 - pvc.yaml
-patches:
-- path: patch.yaml
-  target:
-    kind: StatefulSet
-    name: prometheus-core
-    labelSelector: app=prometheus
+patchesStrategicMerge:
+- patch.yaml
 secretGenerator:
 - name: s3-secret
   literals:
