@@ -113,6 +113,8 @@ kustomize build logging | kubectl apply -f -
 
 kustomize build monitoring | kubectl apply -f -
 # you could also deploy prometheus with thanos
+# thanos ues s3 as storage backend
+# kustomize build app/minio | kubectl apply -f -
 # kustomize build monitoring-thanos | kubectl apply -f -
 
 kustomize build tracing | kubectl apply -f -
