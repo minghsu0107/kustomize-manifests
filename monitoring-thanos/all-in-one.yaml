@@ -496,7 +496,7 @@ data:
       scrape_timeout: 10s
       evaluation_interval: 10s
       external_labels:
-        cluster: prometheus-ha
+        prom-cluster: prometheus-ha
     rule_files:
       - "/etc/prometheus-rules/*rules.yaml"
     alerting:
