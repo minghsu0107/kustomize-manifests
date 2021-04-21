@@ -1201,6 +1201,9 @@ spec:
             httpGet:
               port: 10902
               path: /-/ready
+          volumeMounts:
+          - name: thanos-store-data
+            mountPath: /data
 ---
 apiVersion: apps/v1
 kind: StatefulSet

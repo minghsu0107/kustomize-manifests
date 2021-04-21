@@ -70,6 +70,17 @@ spec:
           requests:
             cpu: 256m
             memory: 256Mi
+  volumeClaimTemplates:
+  - metadata:
+      name: thanos-store-data
+      labels:
+        app: thanos-store-gateway
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: local-path
+      resources:
+        requests:
+          storage: 10Gi
 ---
 apiVersion: apps/v1
 kind: StatefulSet
