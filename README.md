@@ -2,6 +2,8 @@
 ## Overview
 This repository provides one-shot deployment for ingress controller, logging stack, observability platforms, and some common applications on Kubernetes, including:
 - Ingress controller (Traefik)
+  - With distributed tracing enabled using Zipkin protocol
+  - Send spans to Opencensus span collector: `http://oc-collector.tracing:9411/api/v2/spans`
 - Logging stack
   - `Loki`: log aggregation system
     - Save logs for 168 hours
