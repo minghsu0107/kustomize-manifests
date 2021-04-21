@@ -145,9 +145,9 @@ Add the following data sources in Grafana:
 - Thanos (optional): `http://thanos-querier:10902`
 
 Dashboards:
-- [Cassandra Metrics](https://grafana.com/grafana/dashboards/6258)
 - [Elasticsearch Exporter](https://grafana.com/grafana/dashboards/2322)
 - [MinIO Overview](https://grafana.com/grafana/dashboards/13502)
+- [Cassandra Metrics](dashboard/cassandra.json)
 - [Kafka Exporter](dashboard/kafka.json)
 - [NATS Exporter](dashboard/nats.json)
 - [Redis Exporter](dashboard/redis.json)
