@@ -9,3 +9,8 @@ patches:
     kind: Deployment
     name: prometheus-core
     labelSelector: app=prometheus
+secretGenerator:
+- name: grafana
+  literals:
+  - admin-password=admin
+  - admin-username=admin

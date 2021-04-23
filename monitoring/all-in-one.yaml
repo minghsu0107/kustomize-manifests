@@ -463,16 +463,6 @@ spec:
             mountPath: /var/lib/grafana
 ---
 apiVersion: v1
-kind: Secret
-data:
-  # admin
-  admin-password: YWRtaW4=
-  admin-username: YWRtaW4=
-metadata:
-  name: grafana
-type: Opaque
----
-apiVersion: v1
 kind: Service
 metadata:
   name: grafana
@@ -505,19 +495,7 @@ data:
         - targets:
           - "alertmanager:9093"
     scrape_configs:
-      - job_name: 'kubernetes-nodes'
-        tls_config:
-          ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
-        bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
-        kubernetes_sd_configs:
-          - role: node
-        relabel_configs:
-          - source_labels: [__address__]
-            regex: '(.*):10250'
-            replacement: '${1}:10255'
-            target_label: __address__
-    
-      - job_name: 'kubernetes-endpoints'
+      - job_name: 'kubernetes-pods'
         kubernetes_sd_configs:
           - role: endpoints
         relabel_configs:
@@ -562,30 +540,30 @@ data:
             regex: (.+)
             target_label: __metrics_path__
             replacement: /api/v1/nodes/${1}/proxy/metrics/cadvisor
-
-      - job_name: kubernetes-node-exporter
-        scheme: https
-        tls_config:
-          ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
-          insecure_skip_verify: true
-        bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+      
+      - job_name: 'kubernetes-services'
+        metrics_path: /probe
+        params:
+          module: [http_2xx]
         kubernetes_sd_configs:
-          - role: node
+        - role: service
         relabel_configs:
+        # monitor only services with prometheus.io/probe: 'true'
+        # - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_probe]
+        #   action: keep
+        #   regex: 'true'
         - source_labels: [__address__]
-          regex: ^(.*):\d+$
-          target_label: __address__
-          replacement: $1:9100
-        - target_label: __scheme__
-          replacement: http
-        # Host name
-        - source_labels: [__meta_kubernetes_node_name]
+          target_label: __param_target
+        - target_label: __address__
+          replacement: blackbox-exporter.monitoring:9115
+        - source_labels: [__param_target]
           target_label: instance
-        # Extract some labels
-        - source_labels: [__meta_kubernetes_node_label_failure_domain_beta_kubernetes_io_zone]
-          target_label: zone
-        - source_labels: [__meta_kubernetes_node_label_cloud_google_com_gke_nodepool]
-          target_label: gke_nodepool
+        - action: labelmap
+          regex: __meta_kubernetes_service_label_(.+)
+        - source_labels: [__meta_kubernetes_namespace]
+          target_label: kubernetes_namespace
+        - source_labels: [__meta_kubernetes_service_name]
+          target_label: kubernetes_service_name
 
 kind: ConfigMap
 metadata:
