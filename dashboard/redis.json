@@ -16,8 +16,8 @@
   "editable": true,
   "gnetId": 763,
   "graphTooltip": 0,
-  "id": 15,
-  "iteration": 1618679207338,
+  "id": 20,
+  "iteration": 1619195308791,
   "links": [],
   "panels": [
     {
@@ -186,7 +186,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "redis_connected_clients{instance=~\"$instance\",job=\"kubernetes-endpoints\"}",
+          "expr": "redis_connected_clients{instance=~\"$instance\"}",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 2,
@@ -283,7 +283,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "100 * (redis_memory_used_bytes{instance=~\"$instance\",job=\"kubernetes-endpoints\"}  / redis_memory_max_bytes{instance=~\"$instance\",job=\"kubernetes-endpoints\"} )",
+          "expr": "100 * (redis_memory_used_bytes{instance=~\"$instance\"}  / redis_memory_max_bytes{instance=~\"$instance\"} )",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 2,
@@ -1230,8 +1230,8 @@
         "allValue": null,
         "current": {
           "selected": false,
-          "text": "10.42.0.226:9121",
-          "value": "10.42.0.226:9121"
+          "text": "10.42.0.89:9121",
+          "value": "10.42.0.89:9121"
         },
         "datasource": "prometheus",
         "definition": "label_values(redis_up, instance)",
@@ -1256,7 +1256,7 @@
     ]
   },
   "time": {
-    "from": "now-15m",
+    "from": "now-3h",
     "to": "now"
   },
   "timepicker": {
@@ -1287,5 +1287,5 @@
   "timezone": "browser",
   "title": "Redis Dashboard for Prometheus Redis Exporter 1.x",
   "uid": "vOT9G-uMz",
-  "version": 2
+  "version": 3
 }

@@ -16,7 +16,7 @@
   "editable": true,
   "gnetId": 2,
   "graphTooltip": 0,
-  "id": 7,
+  "id": 23,
   "links": [
     {
       "icon": "info",
@@ -107,7 +107,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "(time() - process_start_time_seconds{app=\"prometheus\",component=\"core\"})",
+          "expr": "min(time() - process_start_time_seconds{app=\"prometheus\",app_kubernetes_io_component=\"core\"})",
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "",
@@ -748,7 +748,7 @@
     "list": []
   },
   "time": {
-    "from": "now-15m",
+    "from": "now-1h",
     "to": "now"
   },
   "timepicker": {
@@ -780,5 +780,5 @@
   "timezone": "browser",
   "title": "Prometheus Stats",
   "uid": "chLAZRuGk",
-  "version": 8
+  "version": 2
 }
