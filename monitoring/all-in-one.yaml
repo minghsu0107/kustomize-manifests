@@ -573,9 +573,9 @@ data:
         - role: service
         relabel_configs:
         # monitor only services with prometheus.io/probe: 'true'
-        # - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_probe]
-        #   action: keep
-        #   regex: 'true'
+        - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_probe]
+          action: keep
+          regex: 'true'
         - source_labels: [__address__]
           target_label: __param_target
         - target_label: __address__
