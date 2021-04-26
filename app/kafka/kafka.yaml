@@ -144,7 +144,7 @@ spec:
         # If 'false', producer retries due to broker failures, etc., may write duplicates of the retried message in the stream
         # enabling idempotence requires max.in.flight.requests.per.connection <= 5 (default=5), retries > 0 (default=2147483647) and acks must be 'all'
         - name: KAFKA_ENABLE_IDEMPOTENCE
-          value: "true"
+          value: "false"
         # The number of threads that the server uses for processing requests, which may include disk I/O
         # default=8
         - name: KAFKA_NUM_IO_THREADS
