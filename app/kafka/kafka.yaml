@@ -133,6 +133,7 @@ spec:
           value: "3"
         # The number of acknowledgments the producer requires the leader to have received
         # all means the leader will wait for the full set of in-sync replicas to acknowledge the record
+        # default=1
         - name: KAFKA_ACKS
           value: "all"
         # min.insync.replicas specifies the minimum number of replicas that must acknowledge the write
