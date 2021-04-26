@@ -118,6 +118,9 @@ spec:
           value: PLAINTEXT://kafka-hs:9092
         - name: KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR
           value: "3"
+        # set to 256GB
+        - name: KAFKA_LOG_RETENTION_BYTES
+          value: "274877906944"
         - name: KAFKA_LOG_RETENTION_HOURS
           value: "72"
         - name: KAFKA_BACKGROUND_THREADS
@@ -126,6 +129,32 @@ spec:
           value: "true"
         - name: KAFKA_AUTO_LEADER_REBALANCE_ENABLE
           value: "true"
+        - name: KAFKA_DEFAULT_REPLICATION_FACTOR
+          value: "3"
+        # The number of acknowledgments the producer requires the leader to have received
+        # all means the leader will wait for the full set of in-sync replicas to acknowledge the record
+        - name: KAFKA_ACKS
+          value: "all"
+        # min.insync.replicas specifies the minimum number of replicas that must acknowledge the write
+        # set to 2 to ensure quorum acknowledgement under relication factor = 3 and acks = all
+        - name: KAFKA_MIN_INSYNC_REPLICAS
+          value: "2"
+        # When set to 'true', the producer will ensure that exactly one copy of each message is written in the stream (using an internal sequence number)
+        # If 'false', producer retries due to broker failures, etc., may write duplicates of the retried message in the stream
+        # enabling idempotence requires max.in.flight.requests.per.connection <= 5 (default=5), retries > 0 (default=2147483647) and acks must be 'all'
+        - name: KAFKA_ENABLE_IDEMPOTENCE
+          value: "true"
+        # The number of threads that the server uses for processing requests, which may include disk I/O
+        # default=8
+        - name: KAFKA_NUM_IO_THREADS
+          value: "8"
+        # The number of threads that the server uses for receiving requests from the network and sending responses to the network
+        # default=3
+        - name: KAFKA_NUM_NETWORK_THREADS
+          value: "4"
+        # default=1048588 (1MB)
+        - name: KAFKA_MESSAGE_MAX_BYTES
+          value: "1048588"
         command:
         - sh
         - -exc

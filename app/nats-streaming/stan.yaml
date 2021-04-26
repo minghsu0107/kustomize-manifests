@@ -45,7 +45,8 @@ data:
           buffer_size: 32mb
           # Define if server should perform "file sync" operations during a flush from publisher
           sync_on_flush: false
-          # Define the file slice maximum size
+          # you can configure message logs to be split in individual files (called file slices)
+          # Define the file slice maximum size (default:64mb)
           slice_max_bytes: 512mb
           parallel_recovery: 64
           # Interval at which the store should be automatically flushed and sync'ed on disk. Default is every minute
