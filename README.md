@@ -85,7 +85,7 @@ sudo rm /var/lib/rancher/k3s/server/manifests/traefik.yaml
 sudo systemctl daemon-reload
 sudo systemctl restart k3s
 ```
-- You need to enable Kubelet metrics on read-only port `10255`.
+- (Optional) You can enable/disable the read-only port for the Kubelet to serve on with no authentication/authorization (set to `0` to disable). Default: 10255.
 ```bash
 # K3s server
 server --kubelet-arg "read-only-port=10255"
