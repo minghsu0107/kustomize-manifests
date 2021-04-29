@@ -84,6 +84,7 @@ spec:
             memory: "200Mi"
             cpu: "250m"
       - name: kafka
+        # if KAFKA_BROKER_ID is not specified, it will automatically be generated
         image: confluentinc/cp-enterprise-kafka:6.0.1
         imagePullPolicy: IfNotPresent
         ports:
@@ -162,7 +163,6 @@ spec:
         - sh
         - -exc
         - |
-          export KAFKA_BROKER_ID=${HOSTNAME##*-} && \
           export KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://${POD_NAME}.kafka-hs:9092 && \
           exec /etc/confluent/docker/run
         volumeMounts:
