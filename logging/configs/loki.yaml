@@ -45,7 +45,9 @@ storage_config:
     port: 9042
     auth: true
     consistency: QUORUM
-    keyspace: lokiindex
+    keyspace: lokidata
+    replication_factor: 1
+    SSL: false
 server:
   http_listen_port: 3100
 table_manager:
