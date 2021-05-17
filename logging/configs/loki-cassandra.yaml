@@ -3,7 +3,7 @@ chunk_store_config:
   # To avoid querying of data beyond the retention period
   # max_look_back_period must be set to a value less than or equal to 
   # what is set in table_manager.retention_period
-  max_look_back_period: 0s
+  max_look_back_period: 0
 ingester:
   # When this threshold is exceeded the head chunk block will be cut and compressed inside the chunk
   chunk_block_size: 262144
@@ -57,4 +57,4 @@ table_manager:
   # number_of_tables_to_keep = floor(retention_period / table_period) + 1
   retention_deletes_enabled: false
   # The retention period must be a multiple of the index or chunks table period
-  retention_period: 0s
+  retention_period: 0
