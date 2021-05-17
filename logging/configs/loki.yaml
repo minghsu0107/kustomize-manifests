@@ -19,7 +19,7 @@ ingester:
         store: memberlist
       # The number of ingesters to write to and read from
       replication_factor: 3
-  max_transfer_retries: 0
+  max_transfer_retries: 10
 limits_config:
   enforce_metric_name: false
   reject_old_samples: true
