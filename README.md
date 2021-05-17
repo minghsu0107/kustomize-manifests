@@ -6,7 +6,7 @@ This repository provides one-shot deployment for ingress controller, logging sta
   - Send spans to Opencensus span collector: `http://oc-collector.tracing:9411/api/v2/spans`
 - Logging stack
   - `Loki`: log aggregation system
-    - Save logs for 168 hours
+    - Save logs for 72 hours
   - `Promtail`: daemonset that tails logs from stdout and stderr of all pods
 - Monitoring stack
   - `Kubelet Cadvisor`: exposes container metrics
