@@ -58,11 +58,3 @@ table_manager:
   retention_deletes_enabled: true
   # The retention period must be a multiple of the index or chunks table period
   retention_period: 72h
-# This component periodically compacts index shards to more performant forms.
-compactor:
-  # Directory where files can be downloaded for compaction.
-  working_directory: /loki/compactor
-  # The shared store used for storing boltdb files.
-  shared_store: s3
-  # default = 2h
-  compaction_interval: 5m

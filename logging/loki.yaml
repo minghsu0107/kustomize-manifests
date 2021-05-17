@@ -8,12 +8,14 @@ metadata:
     prometheus.io/scrape: "true"
   labels:
     app: loki
+    app.kubernetes.io/component: core
 spec:
   podManagementPolicy: OrderedReady
   replicas: 3
   selector:
     matchLabels:
       app: loki
+      app.kubernetes.io/component: core
   serviceName: loki-headless
   updateStrategy:
     type: RollingUpdate
@@ -21,6 +23,7 @@ spec:
     metadata:
       labels:
         app: loki
+        app.kubernetes.io/component: core
     spec:
       serviceAccountName: loki
       securityContext:
@@ -30,7 +33,7 @@ spec:
         runAsUser: 10001
       containers:
         - name: loki
-          image: grafana/loki:master-0208071
+          image: grafana/loki:2.2.1
           imagePullPolicy: IfNotPresent
           args:
             - "-config.file=/etc/loki/loki.yaml"
@@ -57,8 +60,68 @@ spec:
               path: /ready
               port: http-metrics
             initialDelaySeconds: 45
-          securityContext:
-            readOnlyRootFilesystem: true
+      terminationGracePeriodSeconds: 4800
+      volumes:
+        - name: config
+          configMap:
+            name: loki-config
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: loki-compactor
+  annotations:
+    prometheus.io/port: http-metrics
+    prometheus.io/scrape: "true"
+  labels:
+    app: loki
+    app.kubernetes.io/component: compactor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: loki
+      app.kubernetes.io/component: compactor
+  template:
+    metadata:
+      labels:
+        app: loki
+        app.kubernetes.io/component: compactor
+    spec:
+      serviceAccountName: loki
+      securityContext:
+        fsGroup: 10001
+        runAsGroup: 10001
+        runAsNonRoot: true
+        runAsUser: 10001
+      containers:
+        - name: loki
+          image: grafana/loki:2.2.1
+          imagePullPolicy: IfNotPresent
+          args:
+            - "-target=compactor"
+            - "-config.file=/etc/loki/loki.yaml"
+            - "-boltdb.shipper.compactor.shared-store=s3"
+            # Directory where files can be downloaded for compaction.
+            - "-boltdb.shipper.compactor.working-directory=/loki/compactor"
+            - "-boltdb.shipper.compactor.compaction-interval=5m"
+          volumeMounts:
+            - name: config
+              mountPath: "/etc/loki"
+          ports:
+            - name: http-metrics
+              containerPort: 3100
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /ready
+              port: http-metrics
+            initialDelaySeconds: 45
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: http-metrics
+            initialDelaySeconds: 45
       terminationGracePeriodSeconds: 4800
       volumes:
         - name: config
@@ -85,6 +148,7 @@ spec:
       targetPort: 7946
   selector:
     app: loki
+    app.kubernetes.io/component: core
 ---
 apiVersion: v1
 kind: Service
