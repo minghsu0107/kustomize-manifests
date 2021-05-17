@@ -8,7 +8,6 @@ This repository provides one-shot deployment for ingress controller, logging sta
   - `Loki`: log aggregation system
     - Save logs for 168 hours
   - `Promtail`: daemonset that tails logs from stdout and stderr of all pods
-  - `Cassandra`: long-term storage backend
 - Monitoring stack
   - `Kubelet Cadvisor`: exposes container metrics
   - `Prometheus node exporter`: scraps metrics from application endpoints and sends to Prometheus server
@@ -61,6 +60,7 @@ In addition, some common application deployment templates are provided:
 - [NATS Streaming](app/nats-streaming)
   - Save logs for 3 hours
 - [Redis cluster](app/redis-cluster)
+- [Cassandra cluster](app/cassandra)
 ## Prerequisites
 1. A Kubernetes cluster with version `1.18+`
 2. Slack webhook URL
@@ -128,6 +128,7 @@ kustomize build app/kafka | kubectl apply -f -
 kustomize build app/minio | kubectl apply -f -
 kustomize build app/nats-streaming | kubectl apply -f -
 kustomize build app/redis-cluster | kubectl apply -f -
+kustomize build app/cassandra | kubectl apply -f -
 ```
 - Traefik admin web will listen on port `8082`
 - Alertmanager web will listen on node port `30615`

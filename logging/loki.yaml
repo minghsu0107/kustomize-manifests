@@ -38,6 +38,8 @@ spec:
           volumeMounts:
             - name: config
               mountPath: "/etc/loki"
+            - name: data
+              mountPath: "/loki"
           ports:
             - name: http-metrics
               containerPort: 3100

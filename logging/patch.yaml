@@ -15,3 +15,14 @@ spec:
           requests:
             cpu: 500m
             memory: 512Mi
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+      labels:
+        app: loki
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: local-path
+      resources:
+        requests:
+          storage: 5Gi
