@@ -79,7 +79,7 @@ data:
       # multiple alerts coming in for cluster=A and alertname=LatencyHigh would
       # be batched into a single group.
 
-      group_by: ['alertname', 'prom_cluster']
+      group_by: ['alertname', 'prom_cluster', 'ruler_cluster']
 
       # When a new group of alerts is created by an incoming alert, wait at
       # least 'group_wait' to send the initial notification.
