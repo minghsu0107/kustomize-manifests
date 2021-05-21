@@ -16,7 +16,6 @@ This repository provides one-shot deployment for ingress controller, logging sta
   - `Prometheus node exporter`: scraps metrics from application endpoints and sends to Prometheus server
   - `Prometheus blackbox exporter`: allows blackbox probing of endpoints over HTTP, HTTPS, DNS, TCP and ICMP. It is used to monitor K8s services here.
   - `Kube-state-metrics`: server that listens to the Kubernetes API server and generates metrics about the state of Kubernetes components, such as number of running jobs, available replicas, and number of running/stopped/terminated pods, by polling Kubernetes API
-  - `Node-directory-size-metrics`: daemonset that provides metrics in Prometheus format about disk usage on the nodes
   - `Prometheus`: metrics server that collects metrics from Cadvisor, Prometheus node exporter, Kube-state-metrics server and Kubelet metrics
       - Save metrics for 7 days
   - `Grafana`: web UI that visualizes collected metrics
@@ -68,9 +67,9 @@ In addition, some common application deployment templates are provided:
 1. A Kubernetes cluster with version `1.18+`
 2. Slack webhook URL
 
-You need to replace `slack_api_url` with your webhook URL in `monitoring/all-in-one.yaml` (line 262). You could also set up emails to which Alertmanager sends notification. See details in `monitoring/all-in-one.yaml`.
+Take `monitoring-thanos` for example. You need to replace `slack_api_url` with your webhook URL in `monitoring-thanos/alertmanager-configmap.yaml`. You could also set up emails to which Alertmanager sends notification.
 
-3. Dynamic volume provisoner (optional)
+1. Dynamic volume provisoner (optional)
 
 The default storageclass is `local-path` in this template. You need to change it to the storageclass of your provisioner in `patch.yaml`. However, K3s has a local path provisioner out-of-the-box. So if you are using K3s, you don't have to do any modification.
 
@@ -109,20 +108,16 @@ kubectl apply -f testing/overlaytest.sh
 ./pingtest.sh
 ```
 ### One-Shot Deployment
-```bash
-kustomize build . | kubectl apply -f -
-```
-Alternatively, you could deploy them separately:
+You could adjust the resources of each container as well as storage class and mounted volume size by simply modifying `patch.yaml`.
+
 ```bash
 kustomize build ingress | kubectl apply -f -
+
+# logging and thanos need s3 as storage backend
+kustomize build app/minio | kubectl apply -f -
+
 kustomize build logging | kubectl apply -f -
-
-kustomize build monitoring | kubectl apply -f -
-# you could also deploy prometheus with thanos
-# thanos ues s3 as storage backend
-# kustomize build app/minio | kubectl apply -f -
-# kustomize build monitoring-thanos | kubectl apply -f -
-
+kustomize build monitoring-thanos | kubectl apply -f -
 kustomize build tracing | kubectl apply -f -
 ```
 Build apps:

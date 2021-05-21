@@ -1,9 +1,18 @@
 namespace: monitoring
 resources:
 - blackbox-exporter/
-- all-in-one.yaml
+- alertmanager-configmap.yaml
+- alertmanager.yaml
+- grafana.yaml
+- kube-state-metrics.yaml
 - namespace.yaml
+- prometheus-configmap.yaml
+- prometheus-node-exporter.yaml
+- prometheus-rules.yaml
 - pvc.yaml
+- rbac.yaml
+- thanos-ruler-rules.yaml
+- thanos.yaml
 patchesStrategicMerge:
 - patch.yaml
 secretGenerator:
@@ -15,3 +24,15 @@ secretGenerator:
   literals:
   - accesskey=XJ2hzpkN
   - secretkey=LkYatYm5Ke4BpnQk
+configMapGenerator:
+- name: cluster-config
+  envs:
+  - configs/config.properties
+vars:
+- name: CLUSTER_NAME
+  objref:
+    kind: ConfigMap
+    name: cluster-config
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.cluster_name

@@ -1,0 +1,87 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: alertmanager
+spec:
+  serviceName: alertmanager-gossip
+  replicas: 3
+  selector:
+    matchLabels:
+      app: alertmanager
+  template:
+    metadata:
+      name: alertmanager
+      labels:
+        app: alertmanager
+    spec:
+      containers:
+      - name: alertmanager
+        image: prom/alertmanager:v0.21.0
+        args:
+          - --config.file=/etc/alertmanager/config.yml
+          - --storage.path=/alertmanager
+          - --web.listen-address=:9093
+          - --cluster.listen-address=0.0.0.0:9094
+          - --cluster.peer=alertmanager-0.alertmanager-gossip:9094
+        ports:
+        - name: alertmanager
+          containerPort: 9093
+        resources:
+          limits:
+            cpu: 200m
+            memory: 256Mi
+          requests:
+            cpu: 200m
+            memory: 256Mi
+        volumeMounts:
+        - name: config-volume
+          mountPath: /etc/alertmanager
+        - name: templates-volume
+          mountPath: /etc/alertmanager-templates
+        - name: alertmanager
+          mountPath: /alertmanager
+      volumes:
+      - name: config-volume
+        configMap:
+          name: alertmanager
+      - name: templates-volume
+        configMap:
+          name: alertmanager-templates
+      - name: alertmanager
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    prometheus.io/scrape: 'true'
+    prometheus.io/path: '/metrics'
+  labels:
+    name: alertmanager
+  name: alertmanager
+spec:
+  selector:
+    app: alertmanager
+  type: NodePort
+  ports:
+  - name: alertmanager
+    protocol: TCP
+    port: 9093
+    nodePort: 30615
+    targetPort: 9093
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: alertmanager
+  name: alertmanager-gossip
+spec:
+  selector:
+    app: alertmanager
+  clusterIP: None
+  ports:
+  - name: gossip
+    protocol: TCP
+    port: 9094

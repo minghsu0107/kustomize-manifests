@@ -23,6 +23,14 @@ spec:
           requests:
             cpu: 128m
             memory: 128Mi
+      - name: configmap-reload
+        resources:
+          limits:
+            cpu: 30m
+            memory: 32Mi
+          requests:
+            cpu: 30m
+            memory: 32Mi
   volumeClaimTemplates:
   - metadata:
       name: prometheus-data
