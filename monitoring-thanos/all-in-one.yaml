@@ -1716,7 +1716,7 @@ spec:
             - --eval-interval=20s
             - --rule-file=/etc/thanos-ruler/*.rules.yaml
             - --alertmanagers.url=http://alertmanager:9093
-            - --query=thanos-querier:9090
+            - --query=thanos-querier:10902
             - |
               --objstore.config=type: S3
               config:
