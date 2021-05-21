@@ -112,7 +112,27 @@ data:
           target_label: kubernetes_namespace
         - source_labels: [__meta_kubernetes_service_name]
           target_label: kubernetes_service_name
+      
+      # federate linkerd metrics
+      # - job_name: 'linkerd'
+      #   kubernetes_sd_configs:
+      #   - role: pod
+      #     namespaces:
+      #       names: ['linkerd-viz']
 
+      #   relabel_configs:
+      #   - source_labels:
+      #     - __meta_kubernetes_pod_container_name
+      #     action: keep
+      #     regex: ^prometheus$
+
+      #   honor_labels: true
+      #   metrics_path: '/federate'
+
+      #   params:
+      #     'match[]':
+      #       - '{job="linkerd-proxy"}'
+      #       - '{job="linkerd-controller"}'
 kind: ConfigMap
 metadata:
   creationTimestamp: null
