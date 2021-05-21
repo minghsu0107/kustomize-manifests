@@ -115,11 +115,11 @@ spec:
           runAsNonRoot: true
           runAsUser: 65534
         args:
-          - --volume-dir=/etc/prometheus
+          - --volume-dir=/etc/prometheus-shared
           - --webhook-url=http://localhost:9090/-/reload
         volumeMounts:
-          - mountPath: /etc/prometheus
-            name: config-volume
+          - mountPath: /etc/prometheus-shared
+            name: prometheus-config-shared
             readOnly: true
       volumes:
       - name: config-volume
