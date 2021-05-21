@@ -13,7 +13,7 @@ spec:
         spec:
           containers:
             - name: es-cleaner
-              image: jaegertracing/jaeger-es-index-cleaner
+              image: jaegertracing/jaeger-es-index-cleaner:1.22.0
               env:
                 - name: TIMEOUT
                   value: "120"
