@@ -19,15 +19,16 @@ data:
         for: 5m
         labels:
           severity: warning
-      - alert: ThanosCompactHalted
-        annotations:
-          description: Thanos Compact {{$labels.instance}} has failed to run and is now halted.
-          runbook_url: https://github.com/thanos-io/thanos/tree/main/mixin/runbook.md#alert-name-thanoscompacthalted
-          summary: Thanos Compact has failed to run and is now halted.
-        expr: thanos_compact_halted{} == 1
-        for: 5m
-        labels:
-          severity: warning
+      # we don't need this rule since we eanble wait
+      # - alert: ThanosCompactHalted
+      #   annotations:
+      #     description: Thanos Compact {{$labels.instance}} has failed to run and is now halted.
+      #     runbook_url: https://github.com/thanos-io/thanos/tree/main/mixin/runbook.md#alert-name-thanoscompacthalted
+      #     summary: Thanos Compact has failed to run and is now halted.
+      #   expr: thanos_compact_halted{} == 1
+      #   for: 5m
+      #   labels:
+      #     severity: warning
       - alert: ThanosCompactHighCompactionFailures
         annotations:
           description: Thanos Compact {{$labels.instance}} is failing to execute {{$value | humanize}}%
