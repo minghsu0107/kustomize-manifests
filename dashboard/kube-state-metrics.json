@@ -16,8 +16,8 @@
   "editable": true,
   "gnetId": 13332,
   "graphTooltip": 1,
-  "id": 25,
-  "iteration": 1618714143602,
+  "id": 50,
+  "iteration": 1621773444095,
   "links": [
     {
       "asDropdown": true,
@@ -113,9 +113,10 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "sum(kube_pod_info{cluster=\"$cluster\",node=~\"$node\"}) / sum(kube_node_status_allocatable{cluster=\"$cluster\",resource=\"pods\",node=~\"$node\"})",
+          "expr": "sum(kube_pod_info{prom_cluster=\"$cluster\",node=~\"$node\"}) / sum(kube_node_status_allocatable{prom_cluster=\"$cluster\",resource=\"pods\",node=~\"$node\"})",
           "format": "time_series",
           "intervalFactor": 1,
+          "legendFormat": "",
           "refId": "A"
         }
       ],
@@ -199,9 +200,10 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "sum(kube_pod_container_resource_requests{cluster=\"$cluster\",resource=\"cpu\",node=~\"$node\"})/ sum(kube_node_status_allocatable{node=~\"$node\",cluster=\"$cluster\",resource=\"cpu\"})",
+          "expr": "sum(kube_pod_container_resource_requests{prom_cluster=\"$cluster\",resource=\"cpu\",node=~\"$node\"})/ sum(kube_node_status_allocatable{node=~\"$node\",prom_cluster=\"$cluster\",resource=\"cpu\"})",
           "format": "time_series",
           "intervalFactor": 1,
+          "legendFormat": "",
           "refId": "A"
         }
       ],
@@ -285,9 +287,10 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "sum(kube_pod_container_resource_requests{cluster=\"$cluster\",resource=\"memory\",node=~\"$node\"}) / sum(kube_node_status_allocatable{node=~\"$node\",cluster=\"$cluster\",resource=\"memory\"})",
+          "expr": "sum(kube_pod_container_resource_requests{prom_cluster=\"$cluster\",resource=\"memory\",node=~\"$node\"}) / sum(kube_node_status_allocatable{node=~\"$node\",prom_cluster=\"$cluster\",resource=\"memory\"})",
           "format": "time_series",
           "intervalFactor": 1,
+          "legendFormat": "",
           "refId": "A"
         }
       ],
@@ -353,14 +356,14 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(kube_node_status_allocatable{cluster=\"$cluster\",resource=\"pods\",node=~\"$node\"})",
+          "expr": "sum(kube_node_status_allocatable{prom_cluster=\"$cluster\",resource=\"pods\",node=~\"$node\"})",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "allocatable",
           "refId": "A"
         },
         {
-          "expr": "sum(kube_pod_info{node=~\"$node\",cluster=\"$cluster\"})",
+          "expr": "sum(kube_pod_info{node=~\"$node\",prom_cluster=\"$cluster\"})",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "requested",
@@ -457,28 +460,28 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(kube_node_status_capacity{node=~\"$node\",cluster=\"$cluster\",resource=\"cpu\"})",
+          "expr": "sum(kube_node_status_capacity{node=~\"$node\",prom_cluster=\"$cluster\",resource=\"cpu\"})",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "allocatable",
           "refId": "A"
         },
         {
-          "expr": "sum(kube_node_status_allocatable{node=~\"$node\",cluster=\"$cluster\",resource=\"cpu\"})",
+          "expr": "sum(kube_node_status_allocatable{node=~\"$node\",prom_cluster=\"$cluster\",resource=\"cpu\"})",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "capacity",
           "refId": "B"
         },
         {
-          "expr": "sum(kube_pod_container_resource_requests{cluster=\"$cluster\",resource=\"cpu\",node=~\"$node\"})",
+          "expr": "sum(kube_pod_container_resource_requests{prom_cluster=\"$cluster\",resource=\"cpu\",node=~\"$node\"})",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "requested",
           "refId": "C"
         },
         {
-          "expr": "sum(kube_pod_container_resource_limits{cluster=\"$cluster\",resource=\"cpu\",node=~\"$node\"})",
+          "expr": "sum(kube_pod_container_resource_limits{prom_cluster=\"$cluster\",resource=\"cpu\",node=~\"$node\"})",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "limited",
@@ -576,28 +579,28 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(kube_node_status_allocatable{node=~\"$node\",cluster=\"$cluster\",resource=\"memory\"})",
+          "expr": "sum(kube_node_status_allocatable{node=~\"$node\",prom_cluster=\"$cluster\",resource=\"memory\"})",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "allocatable",
           "refId": "A"
         },
         {
-          "expr": "sum(kube_node_status_capacity{node=~\"$node\",cluster=\"$cluster\",resource=\"memory\"})",
+          "expr": "sum(kube_node_status_capacity{node=~\"$node\",prom_cluster=\"$cluster\",resource=\"memory\"})",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "capacity",
           "refId": "B"
         },
         {
-          "expr": "sum(kube_pod_container_resource_requests{cluster=\"$cluster\",resource=\"memory\",node=~\"$node\"})",
+          "expr": "sum(kube_pod_container_resource_requests{prom_cluster=\"$cluster\",resource=\"memory\",node=~\"$node\"})",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "requested",
           "refId": "C"
         },
         {
-          "expr": "sum(kube_pod_container_resource_limits{cluster=\"$cluster\",resource=\"memory\",node=~\"$node\"})",
+          "expr": "sum(kube_pod_container_resource_limits{prom_cluster=\"$cluster\",resource=\"memory\",node=~\"$node\"})",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "limited",
@@ -726,9 +729,10 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "sum(kube_node_info{node=~\"$node\",cluster=\"$cluster\"})",
+          "expr": "sum(kube_node_info{node=~\"$node\",prom_cluster=\"$cluster\"})",
           "format": "time_series",
           "intervalFactor": 1,
+          "legendFormat": "",
           "refId": "A"
         }
       ],
@@ -812,9 +816,10 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "sum(kube_node_spec_unschedulable{node=~\"$node\",cluster=\"$cluster\"})",
+          "expr": "sum(kube_node_spec_unschedulable{node=~\"$node\",prom_cluster=\"$cluster\"})",
           "format": "time_series",
           "intervalFactor": 1,
+          "legendFormat": "",
           "refId": "A"
         }
       ],
@@ -984,7 +989,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "kube_node_status_condition{condition=\"DiskPressure\",node=~\"$node\",cluster=\"$cluster\",status=\"true\"}>0",
+          "expr": "kube_node_status_condition{condition=\"DiskPressure\",node=~\"$node\",prom_cluster=\"$cluster\",status=\"true\"}>0",
           "format": "time_series",
           "instant": false,
           "intervalFactor": 1,
@@ -992,14 +997,14 @@
           "refId": "A"
         },
         {
-          "expr": "kube_node_status_condition{condition=\"MemoryPressure\",node=~\"$node\",cluster=\"$cluster\",status=\"true\"}",
+          "expr": "kube_node_status_condition{condition=\"MemoryPressure\",node=~\"$node\",prom_cluster=\"$cluster\",status=\"true\"}",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "{{node}} {{condition}}",
           "refId": "B"
         },
         {
-          "expr": "kube_node_status_condition{condition=~\"PIDPressure\",node=~\"$node\",cluster=\"$cluster\",status=\"true\"}",
+          "expr": "kube_node_status_condition{condition=~\"PIDPressure\",node=~\"$node\",prom_cluster=\"$cluster\",status=\"true\"}",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "{{node}} {{condition}}",
@@ -1137,7 +1142,7 @@
       ],
       "targets": [
         {
-          "expr": "kube_deployment_status_replicas{namespace=~\"$namespace\",cluster=\"$cluster\"}",
+          "expr": "kube_deployment_status_replicas{namespace=~\"$namespace\",prom_cluster=\"$cluster\"}",
           "format": "time_series",
           "instant": true,
           "interval": "",
@@ -1217,9 +1222,10 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "sum(kube_deployment_status_replicas{namespace=~\"$namespace\",cluster=\"$cluster\"})",
+          "expr": "sum(kube_deployment_status_replicas{namespace=~\"$namespace\",prom_cluster=\"$cluster\"})",
           "format": "time_series",
           "intervalFactor": 1,
+          "legendFormat": "",
           "refId": "A"
         }
       ],
@@ -1303,9 +1309,10 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "sum(kube_deployment_status_replicas_updated{namespace=~\"$namespace\",cluster=\"$cluster\"})",
+          "expr": "sum(kube_deployment_status_replicas_updated{namespace=~\"$namespace\",prom_cluster=\"$cluster\"})",
           "format": "time_series",
           "intervalFactor": 1,
+          "legendFormat": "",
           "refId": "A"
         }
       ],
@@ -1389,9 +1396,10 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "sum(kube_deployment_status_replicas_unavailable{namespace=~\"$namespace\",cluster=\"$cluster\"})",
+          "expr": "sum(kube_deployment_status_replicas_unavailable{namespace=~\"$namespace\",prom_cluster=\"$cluster\"})",
           "format": "time_series",
           "intervalFactor": 1,
+          "legendFormat": "",
           "refId": "A"
         }
       ],
@@ -1497,7 +1505,7 @@
       ],
       "targets": [
         {
-          "expr": "kube_statefulset_status_replicas_ready{namespace=~\"$namespace\",cluster=\"$cluster\"}",
+          "expr": "kube_statefulset_status_replicas_ready{namespace=~\"$namespace\",prom_cluster=\"$cluster\"}",
           "format": "time_series",
           "instant": true,
           "interval": "",
@@ -1560,7 +1568,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "kube_statefulset_status_replicas_ready{namespace=~\"$namespace\",cluster=\"$cluster\"}/kube_statefulset_status_replicas{namespace=~\"$namespace\",cluster=\"$cluster\"}*100",
+          "expr": "kube_statefulset_status_replicas_ready{namespace=~\"$namespace\",prom_cluster=\"$cluster\"}/kube_statefulset_status_replicas{namespace=~\"$namespace\",prom_cluster=\"$cluster\"}*100",
           "format": "time_series",
           "instant": false,
           "intervalFactor": 1,
@@ -1624,86 +1632,6 @@
       "type": "row"
     },
     {
-      "cacheTimeout": null,
-      "columns": [],
-      "datasource": "$datasource",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
-        "overrides": []
-      },
-      "fontSize": "100%",
-      "gridPos": {
-        "h": 9,
-        "w": 6,
-        "x": 0,
-        "y": 30
-      },
-      "id": 68,
-      "links": [],
-      "pageSize": null,
-      "pluginVersion": "6.2.5",
-      "scroll": true,
-      "showHeader": true,
-      "sort": {
-        "col": 2,
-        "desc": true
-      },
-      "styles": [
-        {
-          "alias": "Time",
-          "align": "auto",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 2,
-          "mappingType": 1,
-          "pattern": "Time",
-          "thresholds": [],
-          "type": "hidden",
-          "unit": "short"
-        },
-        {
-          "alias": "",
-          "align": "auto",
-          "colorMode": null,
-          "colors": [
-            "#56A64B",
-            "#73BF69",
-            "#B877D9"
-          ],
-          "decimals": 2,
-          "pattern": "/.*/",
-          "thresholds": [
-            ""
-          ],
-          "type": "number",
-          "unit": "short"
-        }
-      ],
-      "targets": [
-        {
-          "expr": "changes(kube_pod_container_status_restarts_total{namespace=~\"$namespace\",cluster=\"$cluster\"}[30m])>1",
-          "format": "time_series",
-          "instant": true,
-          "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "{{pod}}",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Pods restart in 30m",
-      "transform": "timeseries_to_rows",
-      "type": "table-old"
-    },
-    {
       "aliasColors": {},
       "bars": false,
       "cacheTimeout": null,
@@ -1720,8 +1648,8 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 9,
-        "w": 6,
-        "x": 6,
+        "w": 12,
+        "x": 0,
         "y": 30
       },
       "hiddenSeries": false,
@@ -1755,7 +1683,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "kube_pod_status_reason{cluster=\"$cluster\",namespace=~\"$namespace\", reason=\"Evicted\"}",
+          "expr": "kube_pod_status_reason{prom_cluster=\"$cluster\",namespace=~\"$namespace\", reason=\"Evicted\"}",
           "format": "time_series",
           "instant": false,
           "interval": "",
@@ -1873,10 +1801,11 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "sum(kube_pod_status_phase{cluster=\"$cluster\",namespace=~\"$namespace\", phase=\"Running\"})",
+          "expr": "sum(kube_pod_status_phase{prom_cluster=\"$cluster\",namespace=~\"$namespace\", phase=\"Running\"})",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
+          "legendFormat": "",
           "refId": "A"
         }
       ],
@@ -1960,10 +1889,11 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "sum(kube_pod_status_phase{cluster=\"$cluster\",namespace=~\"$namespace\", phase=\"Succeeded\"})",
+          "expr": "sum(kube_pod_status_phase{prom_cluster=\"$cluster\",namespace=~\"$namespace\", phase=\"Succeeded\"})",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
+          "legendFormat": "",
           "refId": "A"
         }
       ],
@@ -2047,10 +1977,11 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "sum(kube_pod_status_phase{cluster=\"$cluster\",namespace=~\"$namespace\", phase=\"Failed\"})",
+          "expr": "sum(kube_pod_status_phase{prom_cluster=\"$cluster\",namespace=~\"$namespace\", phase=\"Failed\"})",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
+          "legendFormat": "",
           "refId": "A"
         }
       ],
@@ -2134,10 +2065,11 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "sum(kube_pod_status_phase{cluster=\"$cluster\",namespace=~\"$namespace\", phase=\"Pending\"})",
+          "expr": "sum(kube_pod_status_phase{prom_cluster=\"$cluster\",namespace=~\"$namespace\", phase=\"Pending\"})",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
+          "legendFormat": "",
           "refId": "A"
         }
       ],
@@ -2221,10 +2153,11 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "sum(kube_pod_status_phase{cluster=\"$cluster\",namespace=~\"$namespace\", phase=\"Unknown\"})",
+          "expr": "sum(kube_pod_status_phase{prom_cluster=\"$cluster\",namespace=~\"$namespace\", phase=\"Unknown\"})",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
+          "legendFormat": "",
           "refId": "A"
         }
       ],
@@ -2323,9 +2256,10 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "sum(kube_pod_container_status_running{namespace=~\"$namespace\",cluster=\"$cluster\"})",
+          "expr": "sum(kube_pod_container_status_running{namespace=~\"$namespace\",prom_cluster=\"$cluster\"})",
           "format": "time_series",
           "intervalFactor": 1,
+          "legendFormat": "",
           "refId": "A"
         }
       ],
@@ -2409,9 +2343,10 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "sum(kube_pod_container_status_waiting{namespace=~\"$namespace\",cluster=\"$cluster\"})",
+          "expr": "sum(kube_pod_container_status_waiting{namespace=~\"$namespace\",prom_cluster=\"$cluster\"})",
           "format": "time_series",
           "intervalFactor": 1,
+          "legendFormat": "",
           "refId": "A"
         }
       ],
@@ -2495,9 +2430,10 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "sum(kube_pod_container_status_terminated{namespace=~\"$namespace\",cluster=\"$cluster\"})",
+          "expr": "sum(kube_pod_container_status_terminated{namespace=~\"$namespace\",prom_cluster=\"$cluster\"})",
           "format": "time_series",
           "intervalFactor": 1,
+          "legendFormat": "",
           "refId": "A"
         }
       ],
@@ -2581,9 +2517,10 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "sum(changes(kube_pod_container_status_restarts_total{namespace=~\"$namespace\",cluster=\"$cluster\"}[30m]))",
+          "expr": "sum(changes(kube_pod_container_status_restarts_total{namespace=~\"$namespace\",prom_cluster=\"$cluster\"}[30m]))",
           "format": "time_series",
           "intervalFactor": 1,
+          "legendFormat": "",
           "refId": "A"
         }
       ],
@@ -2667,7 +2604,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "sum(kube_pod_container_resource_requests{namespace=~\"$namespace\",cluster=\"$cluster\",unit=\"core\"})",
+          "expr": "sum(kube_pod_container_resource_requests{namespace=~\"$namespace\",prom_cluster=\"$cluster\",unit=\"core\"})",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "",
@@ -2754,7 +2691,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "sum(kube_pod_container_resource_requests{namespace=~\"$namespace\" ,cluster=\"$cluster\",unit=\"byte\"})",
+          "expr": "sum(kube_pod_container_resource_requests{namespace=~\"$namespace\",prom_cluster=\"$cluster\",unit=\"byte\"})",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "",
@@ -2855,9 +2792,10 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "sum(kube_job_status_succeeded{namespace=~\"$namespace\",cluster=\"$cluster\"})",
+          "expr": "sum(kube_job_status_succeeded{namespace=~\"$namespace\",prom_cluster=\"$cluster\"})",
           "format": "time_series",
           "intervalFactor": 1,
+          "legendFormat": "",
           "refId": "A"
         }
       ],
@@ -2946,7 +2884,7 @@
       ],
       "targets": [
         {
-          "expr": "(time()-kube_job_status_completion_time{namespace=~\"$namespace\",cluster=\"$cluster\"})/60/60/24>1",
+          "expr": "(time()-kube_job_status_completion_time{namespace=~\"$namespace\",prom_cluster=\"$cluster\"})/60/60/24>1",
           "format": "time_series",
           "instant": true,
           "interval": "",
@@ -3034,7 +2972,7 @@
       ],
       "targets": [
         {
-          "expr": "kube_job_status_failed{namespace=~\"$namespace\",cluster=\"$cluster\"}>1",
+          "expr": "kube_job_status_failed{namespace=~\"$namespace\",prom_cluster=\"$cluster\"}",
           "format": "time_series",
           "instant": true,
           "interval": "",
@@ -3117,9 +3055,10 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "sum(kube_job_status_active{namespace=~\"$namespace\",cluster=\"$cluster\"})",
+          "expr": "sum(kube_job_status_active{namespace=~\"$namespace\",prom_cluster=\"$cluster\"})",
           "format": "time_series",
           "intervalFactor": 1,
+          "legendFormat": "",
           "refId": "A"
         }
       ],
@@ -3203,9 +3142,10 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "sum(kube_job_status_failed{namespace=~\"$namespace\",cluster=\"$cluster\"})",
+          "expr": "sum(kube_job_status_failed{namespace=~\"$namespace\",prom_cluster=\"$cluster\"})",
           "format": "time_series",
           "intervalFactor": 1,
+          "legendFormat": "",
           "refId": "A"
         }
       ],
@@ -3304,7 +3244,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "sum(kube_persistentvolumeclaim_status_phase{phase=\"Bound\"}==1)",
+          "expr": "sum(kube_persistentvolumeclaim_status_phase{phase=\"Bound\",prom_cluster=\"$cluster\"}==1)",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "{{persistentvolumeclaim=}}",
@@ -3394,7 +3334,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "sum(kube_persistentvolumeclaim_status_phase{phase!=\"Bound\"})",
+          "expr": "sum(kube_persistentvolumeclaim_status_phase{phase!=\"Bound\",prom_cluster=\"$cluster\"})",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "{{persistentvolumeclaim=}}",
@@ -3469,7 +3409,7 @@
       ],
       "targets": [
         {
-          "expr": "kube_persistentvolumeclaim_resource_requests_storage_bytes/1024/1024/1024",
+          "expr": "kube_persistentvolumeclaim_resource_requests_storage_bytes{prom_cluster=\"$cluster\"}/1024/1024/1024",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
@@ -3496,13 +3436,12 @@
       {
         "allValue": null,
         "current": {
-          "isNone": true,
-          "selected": true,
-          "text": "None",
-          "value": ""
+          "selected": false,
+          "text": "mycluster-1",
+          "value": "mycluster-1"
         },
-        "datasource": "$datasource",
-        "definition": "label_values(kube_node_info, cluster)",
+        "datasource": "prometheus",
+        "definition": "label_values(kube_node_info, prom_cluster)",
         "error": null,
         "hide": 0,
         "includeAll": false,
@@ -3510,7 +3449,7 @@
         "multi": false,
         "name": "cluster",
         "options": [],
-        "query": "label_values(kube_node_info, cluster)",
+        "query": "label_values(kube_node_info, prom_cluster)",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -3528,8 +3467,8 @@
           "text": "All",
           "value": "$__all"
         },
-        "datasource": "$datasource",
-        "definition": "label_values(kube_node_info{cluster=\"$cluster\"}, node)",
+        "datasource": "prometheus",
+        "definition": "label_values(kube_node_info{prom_cluster=\"$cluster\"}, node)",
         "error": null,
         "hide": 0,
         "includeAll": true,
@@ -3537,7 +3476,7 @@
         "multi": false,
         "name": "node",
         "options": [],
-        "query": "label_values(kube_node_info{cluster=\"$cluster\"}, node)",
+        "query": "label_values(kube_node_info{prom_cluster=\"$cluster\"}, node)",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -3555,8 +3494,8 @@
           "text": "All",
           "value": "$__all"
         },
-        "datasource": "$datasource",
-        "definition": "",
+        "datasource": "prometheus",
+        "definition": "label_values(kube_namespace_created{prom_cluster=\"$cluster\"}, namespace)",
         "error": null,
         "hide": 0,
         "includeAll": true,
@@ -3564,7 +3503,7 @@
         "multi": false,
         "name": "namespace",
         "options": [],
-        "query": "label_values(kube_namespace_created{cluster=\"$cluster\"}, namespace)",
+        "query": "label_values(kube_namespace_created{prom_cluster=\"$cluster\"}, namespace)",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -3628,5 +3567,5 @@
   "timezone": "browser",
   "title": "kube-state-metrics-v2",
   "uid": "garysdevil-kube-state-metrics-v2",
-  "version": 3
+  "version": 2
 }
