@@ -39,6 +39,7 @@ rules:
       - ingressrouteudps
       - tlsoptions
       - tlsstores
+      - serverstransports
     verbs:
       - get
       - list
