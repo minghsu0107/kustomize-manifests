@@ -36,7 +36,7 @@ spec:
   template:
     spec:
       containers:
-      - name: thanos
+      - name: jaeger
         resources:
           limits:
             cpu: 256m
