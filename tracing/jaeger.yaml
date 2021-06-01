@@ -148,9 +148,9 @@ data:
         keepalive:
           server-parameters:
             # the amount of time after which an idle connection would be closed
-            max-connection-idle: 90s
+            max-connection-idle: 900s
             # # max-connection-age is the maximum amount of time a connection may exist before it is closed
-            max-connection-age: 180s
+            max-connection-age: 3600s
             max-connection-age-grace: 10s
             # time is a duration for which, if the server doesn't see any activity it pings the client to see
             # if the transport is still alive. The default is 2 hours.
