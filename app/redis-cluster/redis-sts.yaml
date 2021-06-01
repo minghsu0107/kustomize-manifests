@@ -14,6 +14,8 @@ data:
     cluster-require-full-coverage no
     cluster-node-timeout 15000
     cluster-config-file /data/nodes.conf
+    masterauth mypass123
+    requirepass mypass123
     cluster-migration-barrier 1
     appendonly yes
     appendfsync everysec
