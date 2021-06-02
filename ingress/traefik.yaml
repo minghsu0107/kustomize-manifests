@@ -39,6 +39,7 @@ spec:
             - --ping.entryPoint=web
             - --tracing=true
             - --tracing.zipkin=true
+            # --tracing.zipkin.httpEndpoint=http://collector.linkerd-jaeger:9411/api/v2/spans
             - --tracing.zipkin.httpEndpoint=http://oc-collector.tracing:9411/api/v2/spans
             - --tracing.zipkin.sameSpan=true
             - --tracing.zipkin.id128Bit=true
