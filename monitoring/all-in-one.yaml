@@ -215,6 +215,16 @@ spec:
         app: grafana
         app.kubernetes.io/component: core
     spec:
+      initContainers:
+      - name: fix-permissions
+        image: busybox
+        # Grafana needs a user that has 472 user ID
+        command: ["sh", "-c", "chown -R 472:472 /var/lib/grafana"]
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - name: grafana-persistent-storage
+          mountPath: /var/lib/grafana
       containers:
       - image: grafana/grafana:7.3.5
         name: grafana-core
@@ -257,16 +267,6 @@ spec:
       - name: grafana-persistent-storage
         persistentVolumeClaim:
           claimName: grafana-data
-      initContainers:
-        - name: fix-permissions
-          image: busybox
-          # Grafana needs a user that has 472 user ID
-          command: ["sh", "-c", "chown -R 472:472 /var/lib/grafana"]
-          securityContext:
-            privileged: true
-          volumeMounts:
-          - name: grafana-persistent-storage
-            mountPath: /var/lib/grafana
 ---
 apiVersion: v1
 kind: Service
@@ -420,6 +420,16 @@ spec:
         app.kubernetes.io/component: core
     spec:
       serviceAccountName: prometheus-k8s
+      initContainers:
+      - name: fix-permissions
+        image: busybox
+        # Prometheus needs a user (noody) that has 65534 user ID
+        command: ["sh", "-c", "chown -R 65534:65534 /prometheus/data"]
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - name: prometheus-persistent-storage
+          mountPath: /prometheus/data
       containers:
       - name: prometheus
         image: prom/prometheus:v2.25.2

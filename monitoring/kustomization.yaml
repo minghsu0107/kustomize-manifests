@@ -1,5 +1,6 @@
 namespace: monitoring
 resources:
+- blackbox-exporter/
 - all-in-one.yaml
 - namespace.yaml
 - pvc.yaml
