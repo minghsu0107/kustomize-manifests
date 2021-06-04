@@ -10,11 +10,11 @@ spec:
       - name: zookeeper
         resources:
           limits:
-            cpu: 512m
-            memory: 1Gi
+            cpu: 256m
+            memory: 256Mi
           requests:
-            cpu: 512m
-            memory: 1Gi
+            cpu: 256m
+            memory: 256Mi
   volumeClaimTemplates:
   - metadata:
       name: datadir

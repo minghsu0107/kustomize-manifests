@@ -54,6 +54,15 @@ spec:
       securityContext:
         runAsUser: 1000
         fsGroup: 1000
+      initContainers:
+      - name: clean-datadir
+        image: busybox
+        command: ["sh", "-c", "rm -rf /var/lib/kafka/data/*"]
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - name: datadir
+          mountPath: /var/lib/kafka/data
       containers:
       - name: kafka-exporter
         image: danielqsj/kafka-exporter:v1.2.0

@@ -69,11 +69,11 @@ spec:
         image: bitnami/zookeeper-exporter:0.1.5
         resources:
           requests:
-            memory: "200Mi"
-            cpu: "250m"
+            memory: "100Mi"
+            cpu: "100m"
           limits:
-            memory: "200Mi"
-            cpu: "250m"
+            memory: "100Mi"
+            cpu: "100m"
         ports:
         - name: metrics
           containerPort: 8080
