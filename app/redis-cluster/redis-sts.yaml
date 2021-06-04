@@ -79,6 +79,8 @@ spec:
         env:
         - name: REDIS_ADDR
           value: redis://localhost:6379
+        - name: REDIS_PASSWORD
+          value: mypass123
       volumes:
       - name: conf
         configMap:
