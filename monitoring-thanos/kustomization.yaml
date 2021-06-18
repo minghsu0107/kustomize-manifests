@@ -13,6 +13,7 @@ resources:
 - rbac.yaml
 - thanos-ruler-rules.yaml
 - thanos.yaml
+- thanos-svc.yaml
 patchesStrategicMerge:
 - patch.yaml
 secretGenerator:

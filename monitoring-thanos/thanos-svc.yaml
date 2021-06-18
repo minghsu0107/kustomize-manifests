@@ -1,0 +1,131 @@
+---
+# This service creates a srv record for querier to find about store-api's
+apiVersion: v1
+kind: Service
+metadata:
+  name: thanos-store-gateway
+spec:
+  type: ClusterIP
+  clusterIP: None
+  ports:
+    - name: grpc
+      port: 10901
+      targetPort: grpc
+  selector:
+    thanos-store-api: "true"
+---
+# prometheus service for thanos-store
+apiVersion: v1
+kind: Service
+metadata:
+  name: thanos-store-gateway-prom
+  labels:
+    app: thanos-store-gateway
+  annotations:
+    prometheus.io/port: "10902"
+    prometheus.io/scrape: "true"
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 10902
+      targetPort: http
+  selector:
+    app: thanos-store-gateway
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: thanos-compactor
+  name: thanos-compactor
+  annotations:
+    prometheus.io/port: "10902"
+    prometheus.io/scrape: "true"
+spec:
+  ports:
+    - port: 10902
+      protocol: TCP
+      targetPort: http
+      name: http
+  selector:
+    app: thanos-compactor
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus
+  labels:
+    app: prometheus
+    app.kubernetes.io/component: core
+  annotations:
+    prometheus.io/port: "9090"
+    prometheus.io/scrape: "true"
+spec:
+  type: NodePort
+  ports:
+    - port: 9090
+      nodePort: 30830
+      protocol: TCP
+      name: webui
+  selector:
+    app: prometheus
+    app.kubernetes.io/component: core
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: thanos-sidecar
+  labels:
+    thanos: sidecar
+  annotations:
+    prometheus.io/port: "10902"
+    prometheus.io/scrape: "true"
+spec:
+  type: ClusterIP
+  ports:
+    - port: 10902
+      protocol: TCP
+      name: http
+  selector:
+    thanos: sidecar
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: thanos-querier
+  labels:
+    app: thanos-querier
+  annotations:
+    prometheus.io/port: "10902"
+    prometheus.io/scrape: "true"
+spec:
+  type: NodePort
+  ports:
+  - port: 10902
+    protocol: TCP
+    targetPort: http
+    nodePort: 30831
+    name: http
+  selector:
+    app: thanos-querier
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: thanos-ruler
+  labels:
+    app: thanos-ruler
+  annotations:
+    prometheus.io/port: "10902"
+    prometheus.io/scrape: "true"
+spec:
+  type: NodePort
+  ports:
+    - port: 10902
+      protocol: TCP
+      targetPort: http
+      nodePort: 30832
+      name: http
+  selector:
+    app: thanos-ruler
