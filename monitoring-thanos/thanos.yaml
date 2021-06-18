@@ -65,17 +65,20 @@ spec:
           - |
             --objstore.config=type: S3
             config:
-              bucket: prometheus-long-term
-              endpoint: minio-hl-svc.minio:9000
+              bucket: "$(STORE_BUCKET)"
+              endpoint: "$(ENDPOINT)"
               access_key: "$(AWS_ACCESS_KEY_ID)"
               secret_key: "$(AWS_SECRET_KEY)"
-              insecure: true
+              insecure: $(INSECURE)
           - "--log.level=debug"
           - "--tsdb.path=/prometheus/data"
           - "--prometheus.url=http://127.0.0.1:9090"
           - "--reloader.rule-dir=/etc/prometheus-rules/"
           - "--reloader.config-file=/etc/prometheus/prometheus.yaml"
           - "--reloader.config-envsubst-file=/etc/prometheus-shared/prometheus.yaml"
+        envFrom:
+          - configMapRef:
+              name: s3-config
         env:
           - name: POD_NAME
             valueFrom:
@@ -207,13 +210,16 @@ spec:
           - |
             --objstore.config=type: S3
             config:
-              bucket: prometheus-long-term
-              endpoint: minio-hl-svc.minio:9000
+              bucket: "$(STORE_BUCKET)"
+              endpoint: "$(ENDPOINT)"
               access_key: "$(AWS_ACCESS_KEY_ID)"
               secret_key: "$(AWS_SECRET_KEY)"
-              insecure: true
+              insecure: $(INSECURE)
           - "--index-cache-size=500MB"
           - "--chunk-pool-size=500MB"
+          envFrom:
+            - configMapRef:
+                name: s3-config
           env:
           - name: AWS_ACCESS_KEY_ID
             valueFrom:
@@ -269,13 +275,16 @@ spec:
           - |
             --objstore.config=type: S3
             config:
-              bucket: prometheus-long-term
-              endpoint: minio-hl-svc.minio:9000
+              bucket: "$(STORE_BUCKET)"
+              endpoint: "$(ENDPOINT)"
               access_key: "$(AWS_ACCESS_KEY_ID)"
               secret_key: "$(AWS_SECRET_KEY)"
-              insecure: true
+              insecure: $(INSECURE)
           - "--wait"
           - "--wait-interval=5m"
+        envFrom:
+          - configMapRef:
+              name: s3-config
         env:
           - name: AWS_ACCESS_KEY_ID
             valueFrom:
@@ -334,13 +343,16 @@ spec:
             - |
               --objstore.config=type: S3
               config:
-                bucket: thanos-ruler
-                endpoint: minio-hl-svc.minio:9000
+                bucket: "$(RULE_BUCKET)"
+                endpoint: "$(ENDPOINT)"
                 access_key: "$(AWS_ACCESS_KEY_ID)"
                 secret_key: "$(AWS_SECRET_KEY)"
-                insecure: true
+                insecure: $(INSECURE)
             - --label=ruler_cluster="$(CLUSTER_NAME)"
             - --label=replica="$(POD_NAME)"
+          envFrom:
+            - configMapRef:
+                name: s3-config
           env:
             - name: POD_NAME
               valueFrom:

@@ -28,7 +28,10 @@ secretGenerator:
 configMapGenerator:
 - name: cluster-config
   envs:
-  - configs/config.properties
+  - configs/cluster-config.properties
+- name: s3-config
+  envs:
+  - configs/s3-config.properties
 vars:
 - name: CLUSTER_NAME
   objref:
