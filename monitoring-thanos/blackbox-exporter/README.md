@@ -1,5 +1,5 @@
 # Blackbox Exporter
-Example Prometheus scraping configurations:
+Example Prometheus scraping configurations for monitoring specific endpoints, such as `google.com` and `api.stripe.com`, with blackbox exporter:
 ```yaml
 scrape_configs:
   ...
