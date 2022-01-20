@@ -50,6 +50,7 @@ This repository provides one-shot deployment for ingress controller, logging sta
   - `Opencensus collector`: Opencensus span collector
   - `Jaeger collector`: Jaeger span collector
   - `Jaeger query`: Jaeger web UI
+      - To connect to web UI from `localhost:30188`, run `kubectl -n tracing port-forward deploy/jaeger-query 30188:16686 --address 0.0.0.0`
   - `Elasticsearch`: storage backend of Jaeger
   - `Elasticsearch exporter`: server that exports metrics of the Elasticsearch cluster
   - `Elasticsearch index cleaner`: cronjob that delete any indices older than 1 day
