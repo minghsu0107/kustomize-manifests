@@ -66,6 +66,7 @@ In addition, some common application deployment templates are provided:
 - [Cassandra cluster](app/cassandra)
 - [Kibana](app/kibana)
   - Can be used to visualize data in `elasticsearch.tracing`
+  - To connect to web UI from `localhost:30100`, run `kubectl -n kibana port-forward deploy/kibana 30100:5601 --address 0.0.0.0`
 ## Prerequisites
 1. A Kubernetes cluster with version `1.18+`
 2. Slack webhook URL
