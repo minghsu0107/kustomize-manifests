@@ -1,0 +1,11 @@
+namespace: kibana
+resources:
+- namespace.yaml
+- kibana-svc.yaml
+- kibana-deployment.yaml
+patches:
+- path: patch.yaml
+  target:
+    kind: Deployment
+    name: kibana
+    labelSelector: app=kibana

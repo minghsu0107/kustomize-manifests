@@ -14,7 +14,7 @@ spec:
       tolerations:
       - operator: Exists
       containers:
-      - image: busybox:1.28
+      - image: busybox:1.34.1
         imagePullPolicy: Always
         name: alpine
         command: ["sh", "-c", "tail -f /dev/null"]

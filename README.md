@@ -64,6 +64,8 @@ In addition, some common application deployment templates are provided:
   - Save logs for 3 hours
 - [Redis cluster](app/redis-cluster)
 - [Cassandra cluster](app/cassandra)
+- [Kibana](app/kibana)
+  - Can be used to visualize data in `elasticsearch.tracing`
 ## Prerequisites
 1. A Kubernetes cluster with version `1.18+`
 2. Slack webhook URL
