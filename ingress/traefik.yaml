@@ -38,12 +38,17 @@ spec:
             - --ping
             - --ping.entryPoint=web
             - --tracing=true
-            - --tracing.zipkin=true
-            # --tracing.zipkin.httpEndpoint=http://collector.linkerd-jaeger:9411/api/v2/spans
-            - --tracing.zipkin.httpEndpoint=http://oc-collector.tracing:9411/api/v2/spans
-            - --tracing.zipkin.sameSpan=true
-            - --tracing.zipkin.id128Bit=true
-            - --tracing.zipkin.sampleRate=1
+            - --tracing.jaeger=true
+            - --tracing.jaeger.collector.endpoint=http://jaeger-collector.tracing:14268/api/traces?format=jaeger.thrift
+            - --tracing.jaeger.traceContextHeaderName=uber-trace-id
+            - --tracing.jaeger.gen128Bit
+            - --tracing.jaeger.samplingParam=1.0
+            # - --tracing.zipkin=true
+            # - --tracing.zipkin.httpEndpoint=http://collector.linkerd-jaeger:9411/api/v2/spans
+            # - --tracing.zipkin.httpEndpoint=http://oc-collector.tracing:9411/api/v2/spans
+            # - --tracing.zipkin.sameSpan=true
+            # - --tracing.zipkin.id128Bit=true
+            # - --tracing.zipkin.sampleRate=1
             - --accesslog=true # output log to stdout
           ports:
             - name: web
