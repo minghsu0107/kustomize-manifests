@@ -29,7 +29,7 @@ spec:
       - name: jaeger
         # only 1.14+ are compatible with elasticsearch 7.x
         # https://github.com/jaegertracing/jaeger/issues/2284
-        image: jaegertracing/all-in-one:1.22.0
+        image: jaegertracing/jaeger-collector:1.29
         env:
         - name: SPAN_STORAGE_TYPE
           value: elasticsearch
@@ -89,7 +89,7 @@ spec:
         app.kubernetes.io/component: query
     spec:
       containers:
-      - image: jaegertracing/jaeger-query:1.22.0
+      - image: jaegertracing/jaeger-query:1.29
         name: jaeger-query
         ports:
         - containerPort: 16686
