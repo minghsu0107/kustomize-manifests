@@ -1,7 +1,7 @@
 # Kustomize Manifests
 ## Overview
 This repository provides one-shot deployment for ingress controller, logging stack, observability platforms, and some common applications on Kubernetes, including:
-- Ingress controller (Traefik)
+- Ingress controller (`Traefik`)
   - With distributed tracing enabled using Jaeger
   - Send spans to Jaeger collector: `http://jaeger-collector.tracing:14268/api/traces?format=jaeger.thrift`
 - Logging stack
@@ -47,13 +47,27 @@ This repository provides one-shot deployment for ingress controller, logging sta
       - Responsible for downsampling data: 5 minute downsampling after 40 hours and 1 hour downsampling after 10 days
     - Two buckets: `prometheus-long-term` and `thanos-ruler` on S3
 - Tracing components
-  - `Opencensus collector`: Opencensus span collector
-  - `Jaeger collector`: Jaeger span collector
-  - `Jaeger query`: Jaeger web UI
-      - To connect to web UI from `localhost:30188`, run `kubectl -n tracing port-forward deploy/jaeger-query 30188:16686 --address 0.0.0.0`
-  - `Elasticsearch`: storage backend of Jaeger
-  - `Elasticsearch exporter`: server that exports metrics of the Elasticsearch cluster
-  - `Elasticsearch index cleaner`: cronjob that delete any indices older than 1 day
+  - `Jaeger`: distributed tracing system for monitoring and troubleshooting microservices-based distributed systems
+    - Collector: tracing span collector
+    - Query: web UI
+        - To connect to web UI from `localhost:30188`, run `kubectl -n tracing port-forward deploy/jaeger-query 30188:16686 --address 0.0.0.0`
+    - `Elasticsearch`: storage backend of Jaeger
+    - `Elasticsearch exporter`: server that exports metrics of the Elasticsearch cluster
+    - `Elasticsearch index cleaner`: cronjob that delete any indices older than 1 day
+  - `Tempo`: high-volume distributed tracing system that takes advantage of 100% sampling, and only requires an object storage backend
+    - Distributor
+      - Accepts spans in multiple formats including Jaeger, OpenTelemetry, Zipkin
+      - Routes spans to ingesters by hashing the traceID and using a distributed consistent hash ring
+    - Ingester
+      - Batches trace into blocks, creates bloom filters and indexes, and then flushes it all to the backend
+    - Querier
+      - Responsible for finding the requested trace id in either the ingesters or the backend storage
+      - Depending on parameters it will query both the ingesters and pull bloom/indexes from the backend to search blocks in object storage
+    - Query Frontend
+      - Queries should be sent to the Query Frontend; responsible for sharding the search space for an incoming query
+      - Internally, the Query Frontend splits the blockID space into a configurable number of shards and queues these requests; queriers connect to the Query Frontend via a streaming gRPC connection to process these sharded queries
+    - Compactor
+      - Streams blocks to and from the backend storage to reduce the total number of blocks
 
 In addition, some common application deployment templates are provided:
 - [Kafka + Zookeeper](app/kafka)
@@ -126,7 +140,11 @@ kustomize build logging | kubectl apply -f -
 # remember to create needed buckets in minio beforehand
 kustomize build monitoring-thanos | kubectl apply -f -
 
+# use jaeger as tracing platform
 kustomize build tracing | kubectl apply -f -
+
+# or use tempo as tracing platform
+kustomize build tracing-tempo | kubectl apply -f -
 ```
 Build apps:
 ```bash
@@ -150,11 +168,15 @@ Default account: `admin`.
 Default password: `admin`.
 
 Add the following data sources in Grafana:
-- Jaeger: `http://jaeger-query.tracing:16686`
-- Loki: `http://loki-headless.logging:3100`
-- Prometheus (Thanos): `http://thanos-querier:10902` (datasource name: `prometheus`)
-    - Thanos does deduplication and uses external labels for identifying Prometheus replicas.
-    - If you use `http://prometheus:9090` as data source, then metrics may duplicate and external labels will become invisible since external labels are added to time series or alerts only when communicating with external systems, such as federation, remote storage, and Alertmanager.
+- Tracing
+  - Jaeger: `http://jaeger-query.tracing:16686`
+  - Tempo: `http://query-frontend.tracing`
+- Logging
+  - Loki: `http://loki-headless.logging:3100`
+- Monitoring
+  - Prometheus (Thanos): `http://thanos-querier:10902` (datasource name: `prometheus`)
+      - Thanos does deduplication and uses external labels for identifying Prometheus replicas.
+      - If you use `http://prometheus:9090` as data source, then metrics may duplicate and external labels will become invisible since external labels are added to time series or alerts only when communicating with external systems, such as federation, remote storage, and Alertmanager.
 
 Dashboards:
 - [Elasticsearch Exporter](https://grafana.com/grafana/dashboards/2322)
@@ -168,5 +190,6 @@ Dashboards:
 - [Prometheus Stats](dashboard/prometheus.json)
 - [Kube-State Metrics](dashboard/kube-state-metrics.json)
 - [Node Exporter Full](https://grafana.com/grafana/dashboards/1860)
+- [Jaeger](https://grafana.com/grafana/dashboards/10001)
 
 Note that Prometheus data source name should be set to `prometheus` for all templates provided in this repository.
