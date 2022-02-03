@@ -152,7 +152,7 @@ Default password: `admin`.
 Add the following data sources in Grafana:
 - Jaeger: `http://jaeger-query.tracing:16686`
 - Loki: `http://loki-headless.logging:3100`
-- Prometheus: `http://prometheus:9090`
+- Prometheus: `http://prometheus:9090` (datasource name: `prometheus`)
 - Thanos (optional): `http://thanos-querier:10902`
 
 Dashboards:
