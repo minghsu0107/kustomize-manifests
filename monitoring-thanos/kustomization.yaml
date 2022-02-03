@@ -26,6 +26,12 @@ secretGenerator:
   - accesskey=XJ2hzpkN
   - secretkey=LkYatYm5Ke4BpnQk
 configMapGenerator:
+- name: grafana-config
+  files:
+  - grafana.ini=configs/grafana.ini
+- name: grafana-datasources
+  files:
+  - grafana-datasources.yaml=configs/grafana-datasources.yaml
 - name: cluster-config
   envs:
   - configs/cluster-config.properties
