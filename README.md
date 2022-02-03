@@ -2,8 +2,8 @@
 ## Overview
 This repository provides one-shot deployment for ingress controller, logging stack, observability platforms, and some common applications on Kubernetes, including:
 - Ingress controller (Traefik)
-  - With distributed tracing enabled using Zipkin protocol
-  - Send spans to Opencensus span collector: `http://oc-collector.tracing:9411/api/v2/spans`
+  - With distributed tracing enabled using Jaeger
+  - Send spans to Jaeger collector: `http://jaeger-collector.tracing:14268/api/traces?format=jaeger.thrift`
 - Logging stack
   - `Loki`: log aggregation system
     - Save logs on S3 for 72 hours
@@ -122,7 +122,10 @@ kustomize build ingress | kubectl apply -f -
 kustomize build app/minio | kubectl apply -f -
 
 kustomize build logging | kubectl apply -f -
+
+# remember to create needed buckets in minio beforehand
 kustomize build monitoring-thanos | kubectl apply -f -
+
 kustomize build tracing | kubectl apply -f -
 ```
 Build apps:
