@@ -7,9 +7,6 @@ metadata:
     app: jaeger
     app.kubernetes.io/name: jaeger
     app.kubernetes.io/component: collector
-  annotations:
-    prometheus.io/port: metrics
-    prometheus.io/scrape: "true"
 spec:
   replicas: 2
   selector:
@@ -23,6 +20,9 @@ spec:
         app: jaeger
         app.kubernetes.io/name: jaeger
         app.kubernetes.io/component: collector
+      annotations:
+        prometheus.io/port: metrics
+        prometheus.io/scrape: "true"
     spec:
       dnsPolicy: ClusterFirst
       containers:
@@ -70,9 +70,6 @@ metadata:
   labels:
     app: jaeger
     app.kubernetes.io/component: query
-  annotations:
-    prometheus.io/scrape: "true"
-    prometheus.io/port: "16687"
 spec:
   selector:
     matchLabels:
@@ -87,6 +84,9 @@ spec:
         app: jaeger
         app.kubernetes.io/name: jaeger
         app.kubernetes.io/component: query
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "16687"
     spec:
       containers:
       - image: jaegertracing/jaeger-query:1.29
@@ -181,10 +181,6 @@ spec:
 # kind: Deployment
 # metadata:
 #   name: oc-collector
-#   annotations:
-#     prometheus.io/path: "/metrics"
-#     prometheus.io/port: "8888"
-#     prometheus.io/scrape: "true"
 #   labels:
 #     app: opencensus
 #     component: oc-collector
@@ -200,6 +196,10 @@ spec:
 #       labels:
 #         app: opencensus
 #         component: oc-collector
+#       annotations:
+#         prometheus.io/path: "/metrics"
+#         prometheus.io/port: "8888"
+#         prometheus.io/scrape: "true"
 #     spec:
 #       containers:
 #       - command:

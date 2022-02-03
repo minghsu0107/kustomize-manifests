@@ -3,9 +3,6 @@ kind: Deployment
 apiVersion: apps/v1
 metadata:
   name: elasticsearch-exporter
-  annotations:
-    prometheus.io/port: metrics
-    prometheus.io/scrape: "true"
   labels:
     app: elasticsearch
     type: exporter
@@ -20,6 +17,9 @@ spec:
       labels:
         app: elasticsearch
         type: exporter
+      annotations:
+        prometheus.io/port: metrics
+        prometheus.io/scrape: "true"
     spec:
       containers:
       - name: es-exporter
