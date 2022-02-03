@@ -98,7 +98,7 @@ The default storageclass is `local-path` in this template. You need to change it
 The service load balancer will create a daemonset with each pod listening on node ports specified by sevices of type `LoadBalancer` (eg. Traefik service). Those daemon pods will proxy external traffic to these services. If you are using K3s, you will have a service LB out-of-the-box. However, service load balancer is optional. You could add your external IPs to Traefik service declaration (in `ingress/traefik.yaml`). This way, your Traefik instance can receive external traffics without service LB.
 
 ## Notes for K3s Configurations
-- You need to disable Traefik, which is deployed by default.
+You need to disable Traefik, which is deployed by default.
 ```bash
 kubectl -n kube-system delete helmcharts.helm.cattle.io traefik
 sudo systemctl stop k3s
