@@ -73,7 +73,7 @@ In addition, some common application deployment templates are provided:
 
 Take `monitoring-thanos` for example. You need to replace `slack_api_url` with your webhook URL in `monitoring-thanos/alertmanager-configmap.yaml`. You could also set up emails to which Alertmanager sends notification.
 
-1. Dynamic volume provisoner (optional)
+3. Dynamic volume provisoner (optional)
 
 The default storageclass is `local-path` in this template. You need to change it to the storageclass of your provisioner in `patch.yaml`. However, K3s has a local path provisioner out-of-the-box. So if you are using K3s, you don't have to do any modification.
 
@@ -91,6 +91,7 @@ sudo rm /var/lib/rancher/k3s/server/manifests/traefik.yaml
 sudo systemctl daemon-reload
 sudo systemctl restart k3s
 ```
+Or you can start K3s server without deploying Traefik by add `--no-deploy traefik`.
 - (Optional) You can enable/disable the read-only port for the Kubelet to serve on with no authentication/authorization (set to `0` to disable). Default: 10255.
 ```bash
 # K3s server
@@ -131,6 +132,7 @@ kustomize build app/minio | kubectl apply -f -
 kustomize build app/nats-streaming | kubectl apply -f -
 kustomize build app/redis-cluster | kubectl apply -f -
 kustomize build app/cassandra | kubectl apply -f -
+kustomize build app/kibana | kubectl apply -f -
 ```
 - Traefik admin web will listen on port `8082`
 - Alertmanager web will listen on node port `30615`
