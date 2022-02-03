@@ -34,9 +34,6 @@ metadata:
   name: kafka
   labels:
     app: kafka
-  annotations:
-    prometheus.io/port: metrics
-    prometheus.io/scrape: "true"
 spec:
   serviceName: kafka-hs
   replicas: 3
@@ -50,6 +47,9 @@ spec:
     metadata:
       labels:
         app: kafka
+      annotations:
+        prometheus.io/port: metrics
+        prometheus.io/scrape: "true"
     spec:
       securityContext:
         runAsUser: 1000

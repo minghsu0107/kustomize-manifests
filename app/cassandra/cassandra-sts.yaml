@@ -3,9 +3,6 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: cassandra
-  annotations:
-    prometheus.io/port: metrics
-    prometheus.io/scrape: "true"
   labels:
     app: cassandra
 spec:
@@ -18,6 +15,9 @@ spec:
     metadata:
       labels:
         app: cassandra
+      annotations:
+        prometheus.io/port: metrics
+        prometheus.io/scrape: "true"
     spec:
       initContainers:
       - name: copy-scripts
