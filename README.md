@@ -170,6 +170,10 @@ Default account: `admin`.
 Default password: `admin`.
 
 Add the following data sources in Grafana:
+- Monitoring
+  - Prometheus (Thanos): `http://thanos-querier:10902` (datasource name: `prometheus`)
+      - Thanos does deduplication and uses external labels for identifying Prometheus replicas.
+      - If you use `http://prometheus:9090` as data source, then metrics may duplicate and external labels will become invisible since external labels are added to time series or alerts only when communicating with external systems, such as federation, remote storage, and Alertmanager.
 - Tracing
   - Jaeger: `http://jaeger-query.tracing:16686`
   - Tempo
@@ -177,11 +181,12 @@ Add the following data sources in Grafana:
     - Grafana version 7.4.x or lower: `http://query-frontend.tracing:16686` (need `tempo-query` as adapter)
 - Logging
   - Loki: `http://loki-headless.logging:3100`
-- Monitoring
-  - Prometheus (Thanos): `http://thanos-querier:10902` (datasource name: `prometheus`)
-      - Thanos does deduplication and uses external labels for identifying Prometheus replicas.
-      - If you use `http://prometheus:9090` as data source, then metrics may duplicate and external labels will become invisible since external labels are added to time series or alerts only when communicating with external systems, such as federation, remote storage, and Alertmanager.
 
+Thanos and Tempo data sources are added by default. If you are using different data sources, such as Jaeger, you can modify [Grafana data sources configuration](monitoring-thanos/configs/grafana-datasources.yaml).
+
+To obtain correlation between logs and traces, one can use [Loki derived fields](https://grafana.com/docs/grafana/latest/datasources/loki/#derived-fields) to parse traceID from logs and link to the tracing web UI. For example, we can link to Jaeger Explore in Grafana:
+
+![](https://i.imgur.com/FasRgsr.png)
 
 Dashboards:
 - [Elasticsearch Exporter](https://grafana.com/grafana/dashboards/2322)
