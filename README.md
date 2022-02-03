@@ -18,7 +18,7 @@ This repository provides one-shot deployment for ingress controller, logging sta
   - `Kube-state-metrics`: server that listens to the Kubernetes API server and generates metrics about the state of Kubernetes components, such as number of running jobs, available replicas, and number of running/stopped/terminated pods, by polling Kubernetes API
   - `Prometheus`: metrics server that collects metrics from Cadvisor, Prometheus node exporter, Kube-state-metrics server and Kubelet metrics
       - Save metrics for 7 days
-  - `Grafana`: web UI that visualizes collected metrics
+  - `Grafana`: web UI that visualizes collected metrics (version 8.3.4)
   - `Alertmanager`: server that sends alert to sysadmins when alert conditions are met, based on Prometheus metrics
   - `Thanos components` (optional): a set of components that can be composed into a highly available metric system with unlimited storage capacity
     - Sidecar
@@ -173,7 +173,7 @@ Add the following data sources in Grafana:
 - Tracing
   - Jaeger: `http://jaeger-query.tracing:16686`
   - Tempo
-    - Grafana version 7.5.x or higher: `http://query-frontend.tracing:3200`
+    - Grafana version 7.5.x or higher: `http://query-frontend.tracing:3200` (which is the case in this repository)
     - Grafana version 7.4.x or lower: `http://query-frontend.tracing:16686` (need `tempo-query` as adapter)
 - Logging
   - Loki: `http://loki-headless.logging:3100`
