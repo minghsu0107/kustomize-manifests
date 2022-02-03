@@ -69,7 +69,7 @@ This repository provides one-shot deployment for ingress controller, logging sta
     - Compactor
       - Streams blocks to and from the backend storage to reduce the total number of blocks
     - Vulture
-      - Monitors Grafana Tempo's performance
+      - Monitors Grafana Tempo's performance; it pushes traces, queries Tempo, and metrics 404s and traces with missing spans
 
 In addition, some common application deployment templates are provided:
 - [Kafka + Zookeeper](app/kafka)
