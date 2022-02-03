@@ -7,9 +7,6 @@ kind: Deployment
 apiVersion: apps/v1
 metadata:
   name: traefik
-  annotations:
-    prometheus.io/port: http-metrics
-    prometheus.io/scrape: "true"
   labels:
     app: traefik
 spec:
@@ -21,6 +18,9 @@ spec:
     metadata:
       labels:
         app: traefik
+      annotations:
+        prometheus.io/port: http-metrics
+        prometheus.io/scrape: "true"
     spec:
       serviceAccountName: traefik-ingress-controller
       containers:
