@@ -1,0 +1,33 @@
+apiVersion: v1
+data:
+  tempo.yaml: |
+    compactor: {}
+    distributor:
+        receivers:
+            jaeger:
+                protocols:
+                    grpc:
+                        endpoint: 0.0.0.0:14250
+            otlp:
+                protocols:
+                    grpc:
+                        endpoint: 0.0.0.0:55680
+    http_api_prefix: ""
+    ingester:
+        lifecycler:
+            ring:
+                replication_factor: 3
+    memberlist:
+        abort_if_cluster_join_fails: false
+        bind_port: 7946
+        join_members:
+            - gossip-ring.tracing.svc.cluster.local:7946
+    overrides:
+        per_tenant_override_config: /overrides/overrides.yaml
+    search_enabled: false
+    server:
+        http_listen_port: 3200
+    storage: {}
+kind: ConfigMap
+metadata:
+  name: tempo-distributor

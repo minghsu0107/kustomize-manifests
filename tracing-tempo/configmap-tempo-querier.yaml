@@ -1,0 +1,36 @@
+apiVersion: v1
+data:
+  tempo.yaml: |
+    compactor: {}
+    distributor: {}
+    http_api_prefix: ""
+    ingester:
+        lifecycler:
+            ring:
+                replication_factor: 3
+    memberlist:
+        abort_if_cluster_join_fails: false
+        bind_port: 7946
+        join_members:
+            - gossip-ring.tracing.svc.cluster.local:7946
+    overrides:
+        per_tenant_override_config: /overrides/overrides.yaml
+    querier:
+        frontend_worker:
+            frontend_address: query-frontend-discovery.tracing.svc.cluster.local:9095
+    search_enabled: false
+    server:
+        http_listen_port: 3200
+        log_level: debug
+    storage:
+        trace:
+            backend: s3
+            s3:
+                bucket: tempo
+                endpoint: minio-hl-svc.minio:9000
+                access_key: XJ2hzpkN
+                secret_key: LkYatYm5Ke4BpnQk
+                insecure: true
+kind: ConfigMap
+metadata:
+  name: tempo-querier

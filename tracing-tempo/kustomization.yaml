@@ -1,0 +1,25 @@
+namespace: tracing
+resources:
+- configmap-tempo-compactor.yaml
+- configmap-tempo-distributor.yaml
+- configmap-tempo-ingester.yaml
+- configmap-tempo-overrides.yaml
+- configmap-tempo-querier.yaml
+- configmap-tempo-query-frontend.yaml
+- configmap-tempo-query.yaml
+- deployment-compactor.yaml
+- deployment-distributor.yaml
+- deployment-querier.yaml
+- deployment-query-frontend.yaml
+- deployment-vulture.yaml
+- namespace.yaml
+- service-compactor.yaml
+- service-distributor.yaml
+- service-gossip-ring.yaml
+- service-ingester.yaml
+#- service-memcached.yaml
+- service-querier.yaml
+- service-query-frontend-discovery.yaml
+- service-query-frontend.yaml
+- statefulSet-ingester.yaml
+#- statefulSet-memcached.yaml
