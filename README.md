@@ -172,8 +172,9 @@ Default password: `admin`.
 Add the following data sources in Grafana:
 - Tracing
   - Jaeger: `http://jaeger-query.tracing:16686`
-  - Tempo: `http://query-frontend.tracing:16686`
-    - If your Grafana has version 7.5.x or higher, it can query Tempo frontend directly via `http://query-frontend.tracing:3200` without passing through `tempo-query` 
+  - Tempo
+    - Grafana version 7.5.x or higher: `http://query-frontend.tracing:3200`
+    - Grafana version 7.4.x or lower: `http://query-frontend.tracing:16686` (need `tempo-query` as adapter)
 - Logging
   - Loki: `http://loki-headless.logging:3100`
 - Monitoring
