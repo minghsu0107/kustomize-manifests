@@ -68,6 +68,8 @@ This repository provides one-shot deployment for ingress controller, logging sta
       - Internally, the Query Frontend splits the blockID space into a configurable number of shards and queues these requests; queriers connect to the Query Frontend via a streaming gRPC connection to process these sharded queries
     - Compactor
       - Streams blocks to and from the backend storage to reduce the total number of blocks
+    - Vulture
+      - Monitors Grafana Tempo's performance
 
 In addition, some common application deployment templates are provided:
 - [Kafka + Zookeeper](app/kafka)
@@ -170,7 +172,8 @@ Default password: `admin`.
 Add the following data sources in Grafana:
 - Tracing
   - Jaeger: `http://jaeger-query.tracing:16686`
-  - Tempo: `http://query-frontend.tracing`
+  - Tempo: `http://query-frontend.tracing:16686`
+    - If your Grafana has version 7.5.x or higher, it can query Tempo frontend directly via `http://query-frontend.tracing:3200` without passing through `tempo-query` 
 - Logging
   - Loki: `http://loki-headless.logging:3100`
 - Monitoring
