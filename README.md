@@ -152,8 +152,9 @@ Default password: `admin`.
 Add the following data sources in Grafana:
 - Jaeger: `http://jaeger-query.tracing:16686`
 - Loki: `http://loki-headless.logging:3100`
-- Prometheus: `http://prometheus:9090` (datasource name: `prometheus`)
-- Thanos (optional): `http://thanos-querier:10902`
+- Prometheus (Thanos): `http://thanos-querier:10902` (datasource name: `prometheus`)
+    - Thanos does deduplication and uses external labels for identifying Prometheus servers.
+    - If you use `http://prometheus:9090` as data source, then metrics may duplicate and external labels will become invisible since external labels are added to time series or alerts only when communicating with external systems, such as federation, remote storage, and Alertmanager.
 
 Dashboards:
 - [Elasticsearch Exporter](https://grafana.com/grafana/dashboards/2322)
