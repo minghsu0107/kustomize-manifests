@@ -32,7 +32,7 @@ spec:
         - name: grafana-persistent-storage
           mountPath: /var/lib/grafana
       containers:
-      - image: grafana/grafana:7.3.5
+      - image: grafana/grafana:8.3.4
         name: grafana-core
         imagePullPolicy: IfNotPresent
         # env:
