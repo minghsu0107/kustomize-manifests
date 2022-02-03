@@ -314,9 +314,6 @@ metadata:
   labels:
     app: thanos-ruler
   name: thanos-ruler
-  annotations:
-    prometheus.io/port: "10902"
-    prometheus.io/scrape: "true"
 spec:
   replicas: 1
   selector:

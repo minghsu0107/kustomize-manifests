@@ -16,6 +16,10 @@ spec:
       labels:
         app: grafana
         app.kubernetes.io/component: core
+      annotations:
+        prometheus.io/port: grafana
+        prometheus.io/scrape: 'true'
+        prometheus.io/path: '/metrics'
     spec:
       initContainers:
       - name: fix-permissions
@@ -40,6 +44,9 @@ spec:
           requests:
             cpu: 100m
             memory: 100Mi
+        ports:
+          - name: grafana
+            containerPort: 3000
         env:
           # The following env variables set up basic auth twith the default admin user and admin password.
           - name: GF_AUTH_BASIC_ENABLED
@@ -77,6 +84,10 @@ metadata:
   labels:
     app: grafana
     app.kubernetes.io/component: core
+  annotations:
+    prometheus.io/port: '3000'
+    prometheus.io/scrape: 'true'
+    prometheus.io/path: '/metrics'
 spec:
   type: NodePort
   ports:

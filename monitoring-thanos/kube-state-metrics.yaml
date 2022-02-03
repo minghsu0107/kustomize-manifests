@@ -14,13 +14,23 @@ spec:
     metadata:
       labels:
         app: kube-state-metrics
+      annotations:
+        prometheus.io/port: telemetry
+        prometheus.io/scrape: 'true'
+        prometheus.io/path: '/metrics'
     spec:
       serviceAccountName: kube-state-metrics
       containers:
       - name: kube-state-metrics
-        image: k8s.gcr.io/kube-state-metrics/kube-state-metrics:v2.0.0-rc.0
+        image: k8s.gcr.io/kube-state-metrics/kube-state-metrics:v2.2.4
+        args:
+          - --port=8080
+          - --telemetry-port=8081
         ports:
-        - containerPort: 8080
+        - name: kube-state
+          containerPort: 8080
+        - name: telemetry
+          containerPort: 8081
 ---
 apiVersion: v1
 kind: Service
