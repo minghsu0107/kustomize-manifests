@@ -181,6 +181,7 @@ Add the following data sources in Grafana:
       - Thanos does deduplication and uses external labels for identifying Prometheus replicas.
       - If you use `http://prometheus:9090` as data source, then metrics may duplicate and external labels will become invisible since external labels are added to time series or alerts only when communicating with external systems, such as federation, remote storage, and Alertmanager.
 
+
 Dashboards:
 - [Elasticsearch Exporter](https://grafana.com/grafana/dashboards/2322)
 - [MinIO Overview](https://grafana.com/grafana/dashboards/13502)

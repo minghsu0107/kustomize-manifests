@@ -17,9 +17,11 @@ resources:
 - service-distributor.yaml
 - service-gossip-ring.yaml
 - service-ingester.yaml
-#- service-memcached.yaml
+# - service-memcached.yaml
 - service-querier.yaml
 - service-query-frontend-discovery.yaml
 - service-query-frontend.yaml
-- statefulSet-ingester.yaml
-#- statefulSet-memcached.yaml
+- statefulset-ingester.yaml
+# - statefulset-memcached.yaml
+patchesStrategicMerge:
+- patch.yaml

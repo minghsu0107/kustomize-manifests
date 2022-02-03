@@ -33,19 +33,16 @@ spec:
         ports:
         - containerPort: 3200
           name: prom-metrics
+        - containerPort: 14250
+          name: jaeger-grpc
+        - containerPort: 14268
+          name: jaeger-http
         readinessProbe:
           httpGet:
             path: /ready
             port: 3200
           initialDelaySeconds: 15
           timeoutSeconds: 1
-        resources:
-          limits:
-            cpu: "5"
-            memory: 5Gi
-          requests:
-            cpu: 500m
-            memory: 300Mi
         volumeMounts:
         - mountPath: /conf
           name: tempo-conf

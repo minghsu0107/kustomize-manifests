@@ -37,13 +37,6 @@ spec:
             port: 3200
           initialDelaySeconds: 15
           timeoutSeconds: 1
-        resources:
-          limits:
-            cpu: "1"
-            memory: 5Gi
-          requests:
-            cpu: 500m
-            memory: 300Mi
         volumeMounts:
         - mountPath: /conf
           name: tempo-conf

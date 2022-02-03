@@ -1,0 +1,118 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: ingester
+spec:
+  replicas: 2
+  template:
+    spec:
+      containers:
+      - name: ingester
+        resources:
+          limits:
+            cpu: "5"
+            memory: 5Gi
+          requests:
+            cpu: 200m
+            memory: 200Mi
+  volumeClaimTemplates:
+  - metadata:
+      name: ingester-data
+      labels:
+        app: ingester
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: local-path
+      resources:
+        requests:
+          storage: 10Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: compactor
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+      - name: compactor
+        resources:
+          limits:
+            cpu: "1"
+            memory: 5Gi
+          requests:
+            cpu: 500m
+            memory: 300Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: distributor
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+      - name: distributor
+        resources:
+          limits:
+            cpu: "5"
+            memory: 5Gi
+          requests:
+            cpu: 500m
+            memory: 300Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: querier
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+      - name: querier
+        resources:
+          limits:
+            cpu: "1"
+            memory: 2Gi
+          requests:
+            cpu: 500m
+            memory: 500Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: query-frontend
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+      - name: query-frontend
+        resources:
+          limits:
+            cpu: "1"
+            memory: 2Gi
+          requests:
+            cpu: 500m
+            memory: 300Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vulture
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+      - name: vulture
+        resources:
+          limits:
+            cpu: 100m
+            memory: 500Mi
+          requests:
+            cpu: 50m
+            memory: 100Mi
