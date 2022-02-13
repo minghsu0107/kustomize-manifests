@@ -39,7 +39,7 @@ spec:
             - --ping.entryPoint=web
             - --tracing=true
             - --tracing.jaeger=true
-            - --tracing.jaeger.collector.endpoint=http://jaeger-collector.tracing:14268/api/traces?format=jaeger.thrift
+            - --tracing.jaeger.collector.endpoint=http://distributor.tracing:14268/api/traces?format=jaeger.thrift
             - --tracing.jaeger.traceContextHeaderName=uber-trace-id
             - --tracing.jaeger.gen128Bit
             - --tracing.jaeger.samplingParam=1.0
