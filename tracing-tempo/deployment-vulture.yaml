@@ -26,7 +26,7 @@ spec:
         - -tempo-search-backoff-duration=5s
         - -tempo-read-backoff-duration=10s
         - -tempo-write-backoff-duration=10s
-        image: grafana/tempo-vulture:1.3.1
+        image: grafana/tempo-vulture:main-fe9a5e9
         imagePullPolicy: IfNotPresent
         name: vulture
         ports:
