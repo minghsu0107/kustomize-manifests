@@ -43,7 +43,7 @@ spec:
       - args:
         - --grpc-storage-plugin.configuration-file=/conf/tempo-query.yaml
         - --query.bearer-token-propagation=true
-        image: grafana/tempo-query:1.3.1
+        image: grafana/tempo-query:main-fe9a5e9
         imagePullPolicy: IfNotPresent
         name: tempo-query
         ports:
