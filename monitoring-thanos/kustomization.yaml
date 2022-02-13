@@ -29,8 +29,6 @@ configMapGenerator:
 - name: grafana-config
   files:
   - grafana.ini=configs/grafana.ini
-- name: grafana-datasources
-  files:
   - grafana-datasources.yaml=configs/grafana-datasources.yaml
 - name: cluster-config
   envs:
