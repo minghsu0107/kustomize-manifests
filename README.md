@@ -3,7 +3,9 @@
 This repository provides one-shot deployment for ingress controller, logging stack, observability platforms, and some common applications on Kubernetes, including:
 - Ingress controller (`Traefik`)
   - With distributed tracing enabled using Jaeger
-  - Send spans to Jaeger collector: `http://jaeger-collector.tracing:14268/api/traces?format=jaeger.thrift`
+  - Send spans
+    - To Tempo: `http://distributor.tracing:14268/api/traces?format=jaeger.thrift`
+    - To Jaeger collector: `http://jaeger-collector.tracing:14268/api/traces?format=jaeger.thrift`
 - Logging stack
   - `Loki`: log aggregation system
     - Save logs on S3 for 72 hours
