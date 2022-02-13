@@ -203,5 +203,6 @@ Dashboards:
 - [Kube-State Metrics](dashboard/kube-state-metrics.json)
 - [Node Exporter Full](https://grafana.com/grafana/dashboards/1860)
 - [Jaeger](https://grafana.com/grafana/dashboards/10001)
+- [Tempo](dashboard/tempo.json)
 
 Note that Prometheus data source name should be set to `prometheus` for all templates provided in this repository.
