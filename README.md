@@ -184,7 +184,7 @@ Add the following data sources in Grafana:
 - Logging
   - Loki: `http://loki-headless.logging:3100`
 
-Thanos and Tempo data sources are added by default. If you are using different data sources, such as Jaeger for tracing, you can modify [Grafana data sources configuration](monitoring-thanos/configs/grafana-datasources.yaml).
+Thanos and Tempo data sources are added to Grafana by default. If you are using different data sources, such as Jaeger for tracing, you can modify [Grafana data sources configuration](monitoring-thanos/configs/grafana-datasources.yaml).
 
 To obtain correlation between logs and traces, one can use [Loki derived fields](https://grafana.com/docs/grafana/latest/datasources/loki/#derived-fields) to parse traceID from logs and link to the tracing web UI. For example, we can link to Jaeger Explore in Grafana:
 
