@@ -168,9 +168,9 @@ spec:
         # default=1048588 (1MB)
         - name: KAFKA_MESSAGE_MAX_BYTES
           value: "1048588"
-        # The amount of time the group coordinator will wait for more consumers to join a new group before performing the first rebalance
+        # The amount of time the group coordinator will wait for more consumers to join a new group before performing the first rebalance (default=3000)
         - name: KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS
-          value: "100"
+          value: "3500"
         - name: KAFKA_LOG4J_ROOT_LOGLEVEL
           value: "WARN"
         - name: KAFKA_TOOLS_LOG4J_LOGLEVEL
