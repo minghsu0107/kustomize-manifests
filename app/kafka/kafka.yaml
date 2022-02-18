@@ -94,7 +94,7 @@ spec:
             cpu: "250m"
       - name: kafka
         # if KAFKA_BROKER_ID is not specified, it will automatically be generated
-        image: confluentinc/cp-enterprise-kafka:7.0.1
+        image: confluentinc/cp-kafka:7.0.1
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 9092
