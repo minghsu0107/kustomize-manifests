@@ -131,8 +131,10 @@ spec:
         # set to 256GB
         - name: KAFKA_LOG_RETENTION_BYTES
           value: "274877906944"
-        - name: KAFKA_LOG_RETENTION_HOURS
-          value: "72"
+        # - name: KAFKA_LOG_RETENTION_HOURS
+        #   value: "72"
+        - name: KAFKA_LOG_RETENTION_MINUTES
+          value: "4320"
         - name: KAFKA_BACKGROUND_THREADS
           value: "15"
         - name: KAFKA_AUTO_CREATE_TOPICS_ENABLE
