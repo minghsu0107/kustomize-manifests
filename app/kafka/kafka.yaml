@@ -168,6 +168,12 @@ spec:
         # default=1048588 (1MB)
         - name: KAFKA_MESSAGE_MAX_BYTES
           value: "1048588"
+        - name: KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS
+          value: "100"
+        - name: KAFKA_LOG4J_ROOT_LOGLEVEL
+          value: "WARN"
+        - name: KAFKA_TOOLS_LOG4J_LOGLEVEL
+          value: "ERROR"
         command:
         - sh
         - -exc
