@@ -122,10 +122,6 @@ spec:
           value: zk-cs:2181
         - name: KAFKA_LOG_DIRS
           value: /var/lib/kafka/data
-        - name: KAFKA_METRIC_REPORTERS
-          value: "io.confluent.metrics.reporter.ConfluentMetricsReporter"
-        - name: CONFLUENT_METRICS_REPORTER_BOOTSTRAP_SERVERS
-          value: PLAINTEXT://kafka-hs:9092
         - name: KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR
           value: "3"
         # set to 256GB
