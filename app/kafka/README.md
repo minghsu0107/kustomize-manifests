@@ -17,9 +17,9 @@ for i in 0 1 2; do echo "myid zk-$i";kubectl exec zk-$i -n kafka -- cat /var/lib
 # show config
 kubectl exec zk-0 -n kafka -- cat /opt/zookeeper/conf/zoo.cfg
 # write world to the path /hello on the zk-0 Pod in the ensemble
-kubectl exec zk-0 -n kafka zkCli.sh create /hello world
+kubectl exec zk-0 -n kafka -- zkCli.sh create /hello world
 # get the data from the zk-1 Pod
-kubectl exec zk-1 -n kafka zkCli.sh get /hello
+kubectl exec zk-1 -n kafka -- zkCli.sh get /hello
 ```
 Test broker and topic operations:
 ```bash
