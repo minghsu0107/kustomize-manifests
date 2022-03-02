@@ -139,14 +139,14 @@ kustomize build ingress | kubectl apply -f -
 # logging, thanos and tempo need s3 as storage backend
 kustomize build app/minio | kubectl apply -f -
 
-# remember to create needed buckets in minio beforehand
+# remember to create needed buckets in minio beforehand (loki)
 kustomize build logging | kubectl apply -f -
 
-# remember to create needed buckets in minio beforehand
+# remember to create needed buckets in minio beforehand (prometheus-long-term, thanos-ruler)
 kustomize build monitoring-thanos | kubectl apply -f -
 
 # use tempo as tracing platform
-# remember to create needed buckets in minio beforehand
+# remember to create needed buckets in minio beforehand (tempo)
 kustomize build tracing-tempo | kubectl apply -f -
 
 # or use jaeger as tracing platform
