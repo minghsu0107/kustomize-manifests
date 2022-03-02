@@ -136,19 +136,21 @@ You could adjust the resources of each container as well as storage class and mo
 ```bash
 kustomize build ingress | kubectl apply -f -
 
-# logging and thanos need s3 as storage backend
+# logging, thanos and tempo need s3 as storage backend
 kustomize build app/minio | kubectl apply -f -
 
+# remember to create needed buckets in minio beforehand
 kustomize build logging | kubectl apply -f -
 
 # remember to create needed buckets in minio beforehand
 kustomize build monitoring-thanos | kubectl apply -f -
 
-# use jaeger as tracing platform
-kustomize build tracing | kubectl apply -f -
-
-# or use tempo as tracing platform
+# use tempo as tracing platform
+# remember to create needed buckets in minio beforehand
 kustomize build tracing-tempo | kubectl apply -f -
+
+# or use jaeger as tracing platform
+kustomize build tracing | kubectl apply -f -
 ```
 Build apps:
 ```bash
