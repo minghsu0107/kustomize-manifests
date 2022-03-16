@@ -28,6 +28,11 @@ spec:
           mountPath: /etc/cassandra
         - name: scripts
           mountPath: /scripts
+      - name: increase-vm-max-map
+        image: busybox:1.34.1
+        command: ["sysctl", "-w", "vm.max_map_count=1048575"]
+        securityContext:
+          privileged: true
       containers:
         - name: cassandra-exporter
           image: criteord/cassandra_exporter:2.3.6
