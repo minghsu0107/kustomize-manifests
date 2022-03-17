@@ -1,0 +1,11 @@
+namespace: cassandra
+resources:
+- cassandra-sts.yaml
+- cassandra-svc.yaml
+- namespace.yaml
+patches:
+- path: patch.yaml
+  target:
+    kind: StatefulSet
+    name: cassandra
+    labelSelector: app=cassandra
