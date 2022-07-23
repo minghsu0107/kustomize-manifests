@@ -20,6 +20,14 @@ spec:
         prometheus.io/scrape: "true"
     spec:
       initContainers:
+      - name: copy-scripts
+        image: busybox:1.34.1
+        command: ['sh', '-c', 'cp /scripts/* /etc/cassandra/']
+        volumeMounts:
+        - name: config
+          mountPath: /etc/cassandra
+        - name: scripts
+          mountPath: /scripts
       - name: increase-vm-max-map
         image: busybox:1.34.1
         command: ["sysctl", "-w", "vm.max_map_count=1048575"]
@@ -69,3 +77,11 @@ spec:
           volumeMounts:
             - name: cassandra-data
               mountPath: /var/lib/cassandra/data
+            - name: config
+              mountPath: /etc/cassandra
+      volumes:
+        - name: config
+          emptyDir: {}
+        - name: scripts
+          configMap:
+            name: cassandra-config
