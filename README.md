@@ -89,7 +89,7 @@ In addition, some common application deployment templates are provided:
 1. A Kubernetes cluster with version `1.18+`
 2. Slack webhook URL
 
-Take `monitoring-thanos` for example. You need to replace `slack_api_url` with your webhook URL in `monitoring-thanos/alertmanager-configmap.yaml`. You could also set up emails to which Alertmanager sends notification.
+Take `monitoring-thanos` for example. You need to replace `slack_api_url` with your webhook URL in `monitoring-thanos/alertmanager-configmap.yaml`. You should also change the slack channel name to yours. In addition, you could set up emails to which Alertmanager sends notification.
 
 3. Dynamic volume provisoner (optional)
 
