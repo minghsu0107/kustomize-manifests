@@ -50,6 +50,7 @@ spec:
             # - --tracing.zipkin.id128Bit=true
             # - --tracing.zipkin.sampleRate=1
             - --accesslog=true # output log to stdout
+            - --entryPoints.web.forwardedHeaders.insecure # always trust forwarded headers
           ports:
             - name: web
               containerPort: 80
