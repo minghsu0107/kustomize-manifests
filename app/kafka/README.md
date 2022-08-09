@@ -1,7 +1,8 @@
 # Kafka and Zookeeper
-- [reference 1](https://kow3ns.github.io/kubernetes-zookeeper/manifests/)
-- [reference 2](https://kubernetes.io/blog/2017/09/kubernetes-statefulsets-daemonsets/)
-- [cp-kafka](https://github.com/confluentinc/cp-helm-charts/tree/master/charts/cp-kafka)
+- [Reference 1](https://kow3ns.github.io/kubernetes-zookeeper/manifests/)
+- [Reference 2](https://kubernetes.io/blog/2017/09/kubernetes-statefulsets-daemonsets/)
+- [Helm chart for cp-kafka](https://github.com/confluentinc/cp-helm-charts/tree/master/charts/cp-kafka)
+- [Confluent Platform and Apache Kafka Compatibility](https://docs.confluent.io/platform/current/installation/versions-interoperability.html)
 ## Usage
 ```bash
 kustomize build . | kubectl apply -f -
