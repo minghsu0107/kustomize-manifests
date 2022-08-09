@@ -50,6 +50,7 @@ spec:
             # - --tracing.zipkin.id128Bit=true
             # - --tracing.zipkin.sampleRate=1
             - --accesslog=true # output log to stdout
+            - --accesslog.bufferingsize=100 # configure a buffer of 100 lines to improve performance
             - --entryPoints.web.forwardedHeaders.insecure # always trust forwarded headers
           ports:
             - name: web
