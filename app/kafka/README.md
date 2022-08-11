@@ -16,34 +16,36 @@ for i in 0 1 2; do kubectl exec zk-$i -n kafka -- hostname -f; done
 # Store each server's identifier in a file called myid in the server's data directory
 for i in 0 1 2; do echo "myid zk-$i";kubectl exec zk-$i -n kafka -- cat /var/lib/zookeeper/data/myid; done
 # show config
-kubectl exec zk-0 -n kafka -- cat /opt/zookeeper/conf/zoo.cfg
+kubectl exec zk-0 -n kafka -c zookeeper -- cat /opt/zookeeper/conf/zoo.cfg
 # write world to the path /hello on the zk-0 Pod in the ensemble
-kubectl exec zk-0 -n kafka -- zkCli.sh create /hello world
+kubectl exec zk-0 -n kafka -c zookeeper -- zkCli.sh create /hello world
 # get the data from the zk-1 Pod
-kubectl exec zk-1 -n kafka -- zkCli.sh get /hello
+kubectl exec zk-1 -n kafka -c zookeeper -- zkCli.sh get /hello
 ```
 Test broker and topic operations:
 ```bash
 # create a topic
-kubectl -n kafka exec -ti testclient -- ./bin/kafka-topics.sh --zookeeper zk-cs.kafka.svc.cluster.local:2181 --topic messages --create --partitions 1 --replication-factor 3 --config retention.ms=86400000
-# alter topic
-kubectl -n kafka exec -ti testclient -- ./bin/kafka-topics.sh --zookeeper zk-cs.kafka.svc.cluster.local:2181 --topic messages --alter --config retention.ms=86400000
-# list topics, should have __consumer_offsets and messages etc.
-kubectl -n kafka exec -ti testclient -- ./bin/kafka-topics.sh --list --zookeeper zk-cs.kafka.svc.cluster.local:2181
+kubectl -n kafka exec -ti testclient -- ./bin/kafka-topics.sh --bootstrap-server kafka-0.kafka-hs.kafka.svc.cluster.local:9092 --topic messages --create --partitions 1 --replication-factor 3 --config retention.ms=86400001 --config retention.bytes=274877906943
+# describe dynamic configs of a topic
+kubectl -n kafka exec -ti testclient -- ./bin/kafka-configs.sh -bootstrap-server kafka-0.kafka-hs.kafka.svc.cluster.local:9092 --entity-type topics --entity-name messages --describe
+# alter topic configs
+kubectl -n kafka exec -ti testclient -- ./bin/kafka-configs.sh --bootstrap-server kafka-0.kafka-hs.kafka.svc.cluster.local:9092 --alter --entity-type topics --entity-name messages --add-config retention.bytes=274877906944
+# list topics, should have "messages"
+kubectl -n kafka exec -ti testclient -- ./bin/kafka-topics.sh --list --bootstrap-server kafka-0.kafka-hs.kafka.svc.cluster.local:9092
 # list all topics using zookeeper shell
 kubectl -n kafka exec -ti testclient -- ./bin/zookeeper-shell.sh zk-cs.kafka.svc.cluster.local:2181 ls /brokers/topics
 # describe a topic
-kubectl -n kafka exec -ti testclient -- ./bin/kafka-topics.sh --topic messages --describe --zookeeper zk-cs.kafka.svc.cluster.local:2181
+kubectl -n kafka exec -ti testclient -- ./bin/kafka-topics.sh --topic messages --describe --bootstrap-server kafka-0.kafka-hs.kafka.svc.cluster.local:9092
 # delete a topic (marked for deletion)
-kubectl -n kafka exec -ti testclient -- ./bin/kafka-topics.sh --delete --topic messages  --zookeeper zk-cs.kafka.svc.cluster.local:2181
-# list topics that are marked deleted
+kubectl -n kafka exec -ti testclient -- ./bin/kafka-topics.sh --delete --topic messages --bootstrap-server kafka-0.kafka-hs.kafka.svc.cluster.local:9092
+# list topics that are marked deleted using zookeeper shell
 kubectl -n kafka exec -ti testclient -- ./bin/zookeeper-shell.sh zk-cs.kafka.svc.cluster.local:2181 ls /admin/delete_topics
 # delete a topic using zookeeper shell
-kubectl -n kafka exec -ti testclient -- ./bin/zookeeper-shell.sh zk-cs.kafka.svc.cluster.local:2181 rmr /brokers/topics/messages
+kubectl -n kafka exec -ti testclient -- ./bin/zookeeper-shell.sh zk-cs.kafka.svc.cluster.local:2181 deleteall /brokers/topics/messages
 # list broker ids using zookeeper shell
 kubectl -n kafka exec -ti testclient -- ./bin/zookeeper-shell.sh zk-cs.kafka.svc.cluster.local:2181 ls /brokers/ids
 # describe a broker using zookeeper shell
-kubectl -n kafka exec -ti testclient -- ./bin/zookeeper-shell.sh zk-cs.kafka.svc.cluster.local:2181 get /brokers/ids/2
+kubectl -n kafka exec -ti testclient -- ./bin/zookeeper-shell.sh zk-cs.kafka.svc.cluster.local:2181 get /brokers/ids/1001
 ```
 Test consumer and producer functionalities:
 ```bash
