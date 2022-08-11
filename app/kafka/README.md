@@ -25,7 +25,9 @@ kubectl exec zk-1 -n kafka -- zkCli.sh get /hello
 Test broker and topic operations:
 ```bash
 # create a topic
-kubectl -n kafka exec -ti testclient -- ./bin/kafka-topics.sh --zookeeper zk-cs.kafka.svc.cluster.local:2181 --topic messages --create --partitions 1 --replication-factor 3
+kubectl -n kafka exec -ti testclient -- ./bin/kafka-topics.sh --zookeeper zk-cs.kafka.svc.cluster.local:2181 --topic messages --create --partitions 1 --replication-factor 3 --config retention.ms=86400000
+# alter topic
+kubectl -n kafka exec -ti testclient -- ./bin/kafka-topics.sh --zookeeper zk-cs.kafka.svc.cluster.local:2181 --topic messages --alter --config retention.ms=86400000
 # list topics, should have __consumer_offsets and messages etc.
 kubectl -n kafka exec -ti testclient -- ./bin/kafka-topics.sh --list --zookeeper zk-cs.kafka.svc.cluster.local:2181
 # list all topics using zookeeper shell
