@@ -82,7 +82,7 @@ spec:
         - --zk-host=localhost
       - name: zookeeper
         imagePullPolicy: Always
-        image: "k8s.gcr.io/kubernetes-zookeeper:1.0-3.4.10"
+        image: "registry.k8s.io/kubernetes-zookeeper:1.0-3.4.10"
         ports:
         - containerPort: 2181
           name: client
