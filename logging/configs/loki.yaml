@@ -1,3 +1,6 @@
+# Set to true to enable multi-tenancy.
+# when using Loki in multi-tenant mode, Loki requires the HTTP header X-Scope-OrgID to be set to a string identifying the tenant;
+# the responsibility of populating this value should be handled by the authenticating reverse proxy
 auth_enabled: false
 chunk_store_config:
   # To avoid querying of data beyond the retention period
