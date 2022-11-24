@@ -1,6 +1,8 @@
 apiVersion: v1
 data:
   tempo.yaml: |
+    # Optional. Setting to true enables multitenancy and requires X-Scope-OrgID header on all requests.
+    multitenancy_enabled: false
     compactor:
         compaction:
             block_retention: 144h
