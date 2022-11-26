@@ -30,8 +30,6 @@ data:
         endpoint: "distributor:4317"
         tls:
           insecure: true
-        # headers:
-        #   X-Scope-OrgID: "ming.com"
     service:
       extensions: [zpages, memory_ballast]
       pipelines:
