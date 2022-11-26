@@ -4,7 +4,7 @@ bases:
 resources:
 - namespace.yaml
 patchesStrategicMerge:
-- minio-scale8.yaml
+- patch.yaml
 secretGenerator:
 - name: minio
   literals:
