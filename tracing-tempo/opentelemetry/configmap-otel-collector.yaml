@@ -27,7 +27,7 @@ data:
         size_mib: 683
     exporters:
       otlphttp:
-        endpoint: http://distributor:4318/v1/traces
+        endpoint: http://distributor:4318
     service:
       extensions: [zpages, memory_ballast]
       pipelines:
