@@ -21,13 +21,16 @@ spec:
         app: querier
         name: querier
         tempo-gossip-member: "true"
+      annotations:
+        prometheus.io/port: prom-metrics
+        prometheus.io/scrape: "true"
     spec:
       containers:
       - args:
         - -target=querier
         - -config.file=/conf/tempo.yaml
         - -mem-ballast-size-mbs=1024
-        image: grafana/tempo:main-fe9a5e9
+        image: grafana/tempo:1.5.0
         imagePullPolicy: IfNotPresent
         name: querier
         ports:

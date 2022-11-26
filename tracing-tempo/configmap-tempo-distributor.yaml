@@ -33,7 +33,15 @@ data:
     search_enabled: true
     server:
         http_listen_port: 3200
-    storage: {}
+    storage:
+        trace:
+            backend: s3
+            s3:
+                bucket: tempo
+                endpoint: minio-hl-svc.minio:9000
+                access_key: XJ2hzpkN
+                secret_key: LkYatYm5Ke4BpnQk
+                insecure: true
 kind: ConfigMap
 metadata:
   name: tempo-distributor

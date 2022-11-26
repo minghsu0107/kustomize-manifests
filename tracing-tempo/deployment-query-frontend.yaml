@@ -19,13 +19,16 @@ spec:
       labels:
         app: query-frontend
         name: query-frontend
+      annotations:
+        prometheus.io/port: prom-metrics
+        prometheus.io/scrape: "true"
     spec:
       containers:
       - args:
         - -target=query-frontend
         - -config.file=/conf/tempo.yaml
         - -mem-ballast-size-mbs=1024
-        image: grafana/tempo:main-fe9a5e9
+        image: grafana/tempo:1.5.0
         imagePullPolicy: IfNotPresent
         name: query-frontend
         ports:
@@ -40,10 +43,12 @@ spec:
         volumeMounts:
         - mountPath: /conf
           name: tempo-conf
+        - mountPath: /overrides
+          name: overrides
       - args:
         - --grpc-storage-plugin.configuration-file=/conf/tempo-query.yaml
         - --query.bearer-token-propagation=true
-        image: grafana/tempo-query:main-fe9a5e9
+        image: grafana/tempo-query:1.5.0
         imagePullPolicy: IfNotPresent
         name: tempo-query
         ports:
@@ -58,6 +63,9 @@ spec:
       - configMap:
           name: tempo-query
         name: tempo-query-conf
+      - configMap:
+          name: tempo-overrides
+        name: overrides
       - configMap:
           name: tempo-query-frontend
         name: tempo-conf

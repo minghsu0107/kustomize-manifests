@@ -10,11 +10,11 @@ spec:
       - name: ingester
         resources:
           limits:
-            cpu: "5"
-            memory: 5Gi
-          requests:
             cpu: 200m
-            memory: 200Mi
+            memory: 500Mi
+          requests:
+            cpu: 50m
+            memory: 100Mi
   volumeClaimTemplates:
   - metadata:
       name: ingester-data
@@ -39,11 +39,11 @@ spec:
       - name: compactor
         resources:
           limits:
-            cpu: "1"
-            memory: 5Gi
+            cpu: 200m
+            memory: 500Mi
           requests:
-            cpu: 500m
-            memory: 300Mi
+            cpu: 50m
+            memory: 100Mi
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -57,11 +57,11 @@ spec:
       - name: distributor
         resources:
           limits:
-            cpu: "5"
-            memory: 5Gi
+            cpu: 200m
+            memory: 500Mi
           requests:
-            cpu: 500m
-            memory: 300Mi
+            cpu: 50m
+            memory: 100Mi
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -75,11 +75,11 @@ spec:
       - name: querier
         resources:
           limits:
-            cpu: "1"
-            memory: 2Gi
-          requests:
-            cpu: 500m
+            cpu: 200m
             memory: 500Mi
+          requests:
+            cpu: 50m
+            memory: 100Mi
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -93,11 +93,11 @@ spec:
       - name: query-frontend
         resources:
           limits:
-            cpu: "1"
-            memory: 2Gi
+            cpu: 200m
+            memory: 500Mi
           requests:
-            cpu: 500m
-            memory: 300Mi
+            cpu: 50m
+            memory: 100Mi
 ---
 apiVersion: apps/v1
 kind: Deployment
