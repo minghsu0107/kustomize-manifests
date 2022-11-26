@@ -2,20 +2,20 @@ apiVersion: v1
 data:
   overrides.yaml: |
     overrides:
-        super_user:
-            ingestion_burst_size_bytes: 2e+07
-            ingestion_rate_limit_bytes: 2e+07
-            max_bytes_per_trace: 3e+07
-            max_traces_per_user: 100000
-        "*":
-            # Specifies whether the ingestion rate limits should be applied by each instance
-            # of the distributor and ingester individually, or the limits are to be shared
-            # across all instances.
-            ingestion_rate_strategy: local
-            ingestion_burst_size_bytes: 2e+07
-            ingestion_rate_limit_bytes: 2e+07
-            max_bytes_per_trace: 3e+07
-            max_traces_per_user: 100000
+      super_user:
+        ingestion_burst_size_bytes: 2e+07
+        ingestion_rate_limit_bytes: 2e+07
+        max_bytes_per_trace: 3e+07
+        max_traces_per_user: 100000
+      "*":
+        # Specifies whether the ingestion rate limits should be applied by each instance
+        # of the distributor and ingester individually, or the limits are to be shared
+        # across all instances.
+        ingestion_rate_strategy: local
+        ingestion_burst_size_bytes: 2e+07
+        ingestion_rate_limit_bytes: 2e+07
+        max_bytes_per_trace: 3e+07
+        max_traces_per_user: 100000
             
 kind: ConfigMap
 metadata:

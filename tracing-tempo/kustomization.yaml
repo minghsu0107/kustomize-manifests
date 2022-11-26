@@ -1,5 +1,6 @@
 namespace: tracing
 resources:
+- opentelemetry/
 - configmap-tempo-compactor.yaml
 - configmap-tempo-distributor.yaml
 - configmap-tempo-ingester.yaml

@@ -7,28 +7,28 @@ data:
     distributor: {}
     http_api_prefix: ""
     ingester:
-        lifecycler:
-            ring:
-                replication_factor: 3
+      lifecycler:
+        ring:
+          replication_factor: 3
     memberlist:
-        abort_if_cluster_join_fails: false
-        bind_port: 7946
-        join_members:
-            - gossip-ring.tracing.svc.cluster.local:7946
+      abort_if_cluster_join_fails: false
+      bind_port: 7946
+      join_members:
+        - gossip-ring.tracing.svc.cluster.local:7946
     overrides:
-        per_tenant_override_config: /overrides/overrides.yaml
+      per_tenant_override_config: /overrides/overrides.yaml
     search_enabled: true
     server:
-        http_listen_port: 3200
+      http_listen_port: 3200
     storage:
-        trace:
-            backend: s3
-            s3:
-                bucket: tempo
-                endpoint: minio-hl-svc.minio:9000
-                access_key: XJ2hzpkN
-                secret_key: LkYatYm5Ke4BpnQk
-                insecure: true
+      trace:
+        backend: s3
+        s3:
+          bucket: tempo
+          endpoint: minio-hl-svc.minio:9000
+          access_key: XJ2hzpkN
+          secret_key: LkYatYm5Ke4BpnQk
+          insecure: true
 kind: ConfigMap
 metadata:
   name: tempo-query-frontend

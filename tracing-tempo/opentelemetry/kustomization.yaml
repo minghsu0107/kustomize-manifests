@@ -1,0 +1,7 @@
+resources:
+- configmap-otel-agent.yaml
+- configmap-otel-collector.yaml
+- daemonset-otel-agent.yaml
+- deployment-otel-collector.yaml
+- service-otel-agent.yaml
+- service-otel-collector.yaml
