@@ -15,7 +15,7 @@ This repository provides one-shot deployment for ingress controller, logging sta
   - `Promtail`: daemonset that tails logs from stdout and stderr of all pods
 - Monitoring stack
   - `Kubelet Cadvisor`: exposes container metrics
-  - `Prometheus node exporter`: scraps metrics from application endpoints and sends to Prometheus server
+  - `Prometheus node exporter`: scraps node-level metrics and sends to Prometheus server
   - `Prometheus blackbox exporter`: allows blackbox probing of endpoints over HTTP, HTTPS, DNS, TCP and ICMP. It is used to monitor K8s services here.
   - `Kube-state-metrics`: server that listens to the Kubernetes API server and generates metrics about the state of Kubernetes components, such as number of running jobs, available replicas, and number of running/stopped/terminated pods, by polling Kubernetes API
   - `Prometheus`: metrics server that collects metrics from Cadvisor, Prometheus node exporter, Kube-state-metrics server and Kubelet metrics
