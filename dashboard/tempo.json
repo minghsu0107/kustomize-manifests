@@ -84,7 +84,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.3.4",
+          "pluginVersion": "9.3.6",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -170,7 +170,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.3.4",
+          "pluginVersion": "9.3.6",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -256,7 +256,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.3.4",
+          "pluginVersion": "9.3.6",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -343,7 +343,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.3.4",
+          "pluginVersion": "9.3.6",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -429,7 +429,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.3.4",
+          "pluginVersion": "9.3.6",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -542,7 +542,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.3.4",
+          "pluginVersion": "9.3.6",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -629,7 +629,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.3.4",
+          "pluginVersion": "9.3.6",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -737,7 +737,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.3.4",
+          "pluginVersion": "9.3.6",
           "pointradius": 2,
           "points": true,
           "renderer": "flot",
@@ -845,7 +845,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.3.4",
+          "pluginVersion": "9.3.6",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -932,7 +932,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.3.4",
+          "pluginVersion": "9.3.6",
           "pointradius": 2,
           "points": true,
           "renderer": "flot",
@@ -1040,7 +1040,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.3.4",
+          "pluginVersion": "9.3.6",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -1137,7 +1137,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.3.4",
+          "pluginVersion": "9.3.6",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -1238,7 +1238,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.3.4",
+          "pluginVersion": "9.3.6",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -1325,7 +1325,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.3.4",
+          "pluginVersion": "9.3.6",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -1433,7 +1433,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.3.4",
+          "pluginVersion": "9.3.6",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -1521,7 +1521,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.3.4",
+          "pluginVersion": "9.3.6",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -1632,7 +1632,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.3.4",
+          "pluginVersion": "9.3.6",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -1719,7 +1719,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.3.4",
+          "pluginVersion": "9.3.6",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -1827,7 +1827,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.3.4",
+          "pluginVersion": "9.3.6",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -1915,7 +1915,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.3.4",
+          "pluginVersion": "9.3.6",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -2026,7 +2026,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.3.4",
+          "pluginVersion": "9.3.6",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -2113,7 +2113,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.3.4",
+          "pluginVersion": "9.3.6",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -2221,7 +2221,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.3.4",
+          "pluginVersion": "9.3.6",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -2309,7 +2309,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.3.4",
+          "pluginVersion": "9.3.6",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -2437,7 +2437,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "8.3.4",
+      "pluginVersion": "9.3.6",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2523,7 +2523,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "8.3.4",
+      "pluginVersion": "9.3.6",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2609,7 +2609,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "8.3.4",
+      "pluginVersion": "9.3.6",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2695,7 +2695,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "8.3.4",
+      "pluginVersion": "9.3.6",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2781,7 +2781,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "8.3.4",
+      "pluginVersion": "9.3.6",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2867,7 +2867,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "8.3.4",
+      "pluginVersion": "9.3.6",
       "pointradius": 2,
       "points": true,
       "renderer": "flot",
@@ -2975,7 +2975,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "8.3.4",
+      "pluginVersion": "9.3.6",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -3073,7 +3073,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "8.3.4",
+      "pluginVersion": "9.3.6",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -3197,7 +3197,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.3.4",
+          "pluginVersion": "9.3.6",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -3289,7 +3289,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.3.4",
+          "pluginVersion": "9.3.6",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -3420,7 +3420,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "8.3.4",
+      "pluginVersion": "9.3.6",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -3512,7 +3512,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "8.3.4",
+      "pluginVersion": "9.3.6",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -3604,7 +3604,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "8.3.4",
+      "pluginVersion": "9.3.6",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -3707,7 +3707,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "8.3.4",
+      "pluginVersion": "9.3.6",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -3910,7 +3910,7 @@
         "showUnfilled": true,
         "text": {}
       },
-      "pluginVersion": "8.3.4",
+      "pluginVersion": "9.3.6",
       "targets": [
         {
           "datasource": {
@@ -3975,7 +3975,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "8.3.4",
+      "pluginVersion": "9.3.6",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -4064,7 +4064,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "8.3.4",
+      "pluginVersion": "9.3.6",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -4150,7 +4150,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "8.3.4",
+      "pluginVersion": "9.3.6",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -4236,7 +4236,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "8.3.4",
+      "pluginVersion": "9.3.6",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",

@@ -1,39 +1,49 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: compactor
+  name: distributor
 spec:
   minReadySeconds: 10
   replicas: 1
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-      app: compactor
-      name: compactor
+      app: distributor
+      name: distributor
+      tempo-gossip-member: "true"
   strategy:
     rollingUpdate:
-      maxSurge: 50%
-      maxUnavailable: 100%
+      maxSurge: 3
+      maxUnavailable: 1
   template:
     metadata:
       labels:
-        app: compactor
-        name: compactor
+        app: distributor
+        name: distributor
+        tempo-gossip-member: "true"
       annotations:
         prometheus.io/port: prom-metrics
         prometheus.io/scrape: "true"
     spec:
       containers:
       - args:
-        - -target=compactor
+        - -target=distributor
         - -config.file=/conf/tempo.yaml
         - -mem-ballast-size-mbs=1024
-        image: grafana/tempo:1.5.0
+        image: grafana/tempo:2.0.0
         imagePullPolicy: IfNotPresent
-        name: compactor
+        name: distributor
         ports:
         - containerPort: 3200
           name: prom-metrics
+        - containerPort: 4317
+          name: otel-grpc
+        - containerPort: 4318
+          name: otel-http
+        - containerPort: 14250
+          name: jaeger-grpc
+        - containerPort: 14268
+          name: jaeger-http
         readinessProbe:
           httpGet:
             path: /ready
@@ -45,9 +55,10 @@ spec:
           name: tempo-conf
         - mountPath: /overrides
           name: overrides
+      terminationGracePeriodSeconds: 60
       volumes:
       - configMap:
-          name: tempo-compactor
+          name: tempo-distributor
         name: tempo-conf
       - configMap:
           name: tempo-overrides

@@ -1,38 +1,36 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: querier
+  name: compactor
 spec:
   minReadySeconds: 10
   replicas: 1
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-      app: querier
-      name: querier
-      tempo-gossip-member: "true"
+      app: compactor
+      name: compactor
   strategy:
     rollingUpdate:
-      maxSurge: 3
-      maxUnavailable: 1
+      maxSurge: 50%
+      maxUnavailable: 100%
   template:
     metadata:
       labels:
-        app: querier
-        name: querier
-        tempo-gossip-member: "true"
+        app: compactor
+        name: compactor
       annotations:
         prometheus.io/port: prom-metrics
         prometheus.io/scrape: "true"
     spec:
       containers:
       - args:
-        - -target=querier
+        - -target=compactor
         - -config.file=/conf/tempo.yaml
         - -mem-ballast-size-mbs=1024
-        image: grafana/tempo:1.5.0
+        image: grafana/tempo:2.0.0
         imagePullPolicy: IfNotPresent
-        name: querier
+        name: compactor
         ports:
         - containerPort: 3200
           name: prom-metrics
@@ -49,7 +47,7 @@ spec:
           name: overrides
       volumes:
       - configMap:
-          name: tempo-querier
+          name: tempo-compactor
         name: tempo-conf
       - configMap:
           name: tempo-overrides

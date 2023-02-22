@@ -12,14 +12,17 @@ spec:
     metadata:
       labels:
         name: memcached
+      annotations:
+        prometheus.io/port: http-metrics
+        prometheus.io/scrape: "true"
     spec:
-      affinity:
-        podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-          - labelSelector:
-              matchLabels:
-                name: memcached
-            topologyKey: kubernetes.io/hostname
+      # affinity:
+      #   podAntiAffinity:
+      #     requiredDuringSchedulingIgnoredDuringExecution:
+      #     - labelSelector:
+      #         matchLabels:
+      #           name: memcached
+      #       topologyKey: kubernetes.io/hostname
       containers:
       - args:
         - -m 1024

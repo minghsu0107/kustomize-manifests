@@ -3,8 +3,6 @@ data:
   tempo.yaml: |
     # Optional. Setting to true enables multitenancy and requires X-Scope-OrgID header on all requests.
     multitenancy_enabled: false
-    compactor: {}
-    distributor: {}
     http_api_prefix: ""
     ingester:
       lifecycler:
@@ -17,13 +15,8 @@ data:
         - gossip-ring.tracing.svc.cluster.local:7946
     overrides:
       per_tenant_override_config: /overrides/overrides.yaml
-    querier:
-      frontend_worker:
-        frontend_address: query-frontend-discovery.tracing.svc.cluster.local:9095
-    search_enabled: true
     server:
       http_listen_port: 3200
-      log_level: debug
     storage:
       trace:
         backend: s3
@@ -33,6 +26,17 @@ data:
           access_key: XJ2hzpkN
           secret_key: LkYatYm5Ke4BpnQk
           insecure: true
+        cache: memcached
+        memcached:
+          host: memcached.tracing
+          max_idle_conns: 16
+          consistent_hash: true
+          circuit_breaker_consecutive_failures: 10
+          circuit_breaker_timeout: 10s
+          circuit_breaker_interval: 10s
+        pool:
+          max_workers: 400
+          queue_depth: 20000
 kind: ConfigMap
 metadata:
-  name: tempo-querier
+  name: tempo-ingester

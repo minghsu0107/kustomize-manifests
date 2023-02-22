@@ -1,0 +1,46 @@
+apiVersion: v1
+data:
+  tempo.yaml: |
+    # Optional. Setting to true enables multitenancy and requires X-Scope-OrgID header on all requests.
+    multitenancy_enabled: false
+    http_api_prefix: ""
+    memberlist:
+      abort_if_cluster_join_fails: false
+      bind_port: 7946
+      join_members:
+        - gossip-ring.tracing.svc.cluster.local:7946
+    overrides:
+      per_tenant_override_config: /overrides/overrides.yaml
+    querier:
+      # The query frontend turns both trace by id (/api/traces/<id>) and search (/api/search?<params>) requests
+      # into subqueries that are then pulled and serviced by the queriers.
+      # This value controls the overall number of simultaneous subqueries that the querier will service at once. It does
+      # not distinguish between the types of queries.
+      max_concurrent_queries: 20
+      frontend_worker:
+        frontend_address: query-frontend-discovery.tracing.svc.cluster.local:9095
+    server:
+      http_listen_port: 3200
+    storage:
+      trace:
+        backend: s3
+        s3:
+          bucket: tempo
+          endpoint: minio-hl-svc.minio:9000
+          access_key: XJ2hzpkN
+          secret_key: LkYatYm5Ke4BpnQk
+          insecure: true
+        cache: memcached
+        memcached:
+          host: memcached.tracing
+          max_idle_conns: 16
+          consistent_hash: true
+          circuit_breaker_consecutive_failures: 10
+          circuit_breaker_timeout: 10s
+          circuit_breaker_interval: 10s
+        pool:
+          max_workers: 400
+          queue_depth: 20000
+kind: ConfigMap
+metadata:
+  name: tempo-querier

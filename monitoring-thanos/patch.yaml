@@ -10,19 +10,19 @@ spec:
       - name: prometheus
         resources:
           limits:
-            cpu: 512m
-            memory: 5Gi
+            cpu: 128m
+            memory: 256Mi
           requests:
-            cpu: 512m
-            memory: 5Gi
+            cpu: 30m
+            memory: 32Mi
       - name: thanos
         resources:
           limits:
             cpu: 128m
             memory: 128Mi
           requests:
-            cpu: 128m
-            memory: 128Mi
+            cpu: 30m
+            memory: 32Mi
       - name: configmap-reload
         resources:
           limits:
@@ -58,8 +58,8 @@ spec:
             cpu: 512m
             memory: 512Mi
           requests:
-            cpu: 512m
-            memory: 512Mi
+            cpu: 30m
+            memory: 32Mi
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -76,8 +76,8 @@ spec:
             cpu: 256m
             memory: 256Mi
           requests:
-            cpu: 256m
-            memory: 256Mi
+            cpu: 30m
+            memory: 32Mi
   volumeClaimTemplates:
   - metadata:
       name: thanos-store-data
@@ -105,8 +105,8 @@ spec:
             cpu: 512m
             memory: 1Gi
           requests:
-            cpu: 512m
-            memory: 1Gi
+            cpu: 30m
+            memory: 32Mi
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -123,5 +123,5 @@ spec:
             cpu: 128m
             memory: 128Mi
           requests:
-            cpu: 128m
-            memory: 128Mi
+            cpu: 30m
+            memory: 32Mi

@@ -20,7 +20,7 @@ This repository provides one-shot deployment for ingress controller, logging sta
   - `Kube-state-metrics`: server that listens to the Kubernetes API server and generates metrics about the state of Kubernetes components, such as number of running jobs, available replicas, and number of running/stopped/terminated pods, by polling Kubernetes API
   - `Prometheus`: metrics server that collects metrics from Cadvisor, Prometheus node exporter, Kube-state-metrics server and Kubelet metrics
       - Save metrics for 7 days
-  - `Grafana`: web UI that visualizes collected metrics (version 8.3.4)
+  - `Grafana`: web UI that visualizes collected metrics (version 9.3.6)
   - `Alertmanager`: server that sends alert to sysadmins when alert conditions are met, based on Prometheus metrics
   - `Thanos components` (optional): a set of components that can be composed into a highly available metric system with unlimited storage capacity
     - Sidecar
@@ -56,7 +56,7 @@ This repository provides one-shot deployment for ingress controller, logging sta
     - `Elasticsearch`: storage backend of Jaeger
     - `Elasticsearch exporter`: server that exports metrics of the Elasticsearch cluster
     - `Elasticsearch index cleaner`: cronjob that delete any indices older than 1 day
-  - `Tempo`: high-volume distributed tracing system that takes advantage of 100% sampling, and only requires an object storage backend
+  - `Tempo v2`: high-volume distributed tracing system that takes advantage of 100% sampling, and only requires an object storage backend
     - Distributor
       - Accepts spans in multiple formats including Jaeger, OpenTelemetry, Zipkin
       - Routes spans to ingesters by hashing the traceID and using a distributed consistent hash ring
@@ -147,7 +147,7 @@ kustomize build monitoring-thanos | kubectl apply -f -
 
 # use tempo as tracing platform
 # remember to create needed buckets in minio beforehand (tempo)
-kustomize build tracing-tempo | kubectl apply -f -
+kustomize build tracing-tempo-v2 | kubectl apply -f -
 
 # or use jaeger as tracing platform
 kustomize build tracing | kubectl apply -f -

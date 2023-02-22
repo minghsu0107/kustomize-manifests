@@ -30,7 +30,7 @@ spec:
         - -target=ingester
         - -config.file=/conf/tempo.yaml
         - -mem-ballast-size-mbs=1024
-        image: grafana/tempo:1.5.0
+        image: grafana/tempo:2.0.0
         imagePullPolicy: IfNotPresent
         name: ingester
         ports:

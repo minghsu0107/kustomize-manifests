@@ -1,15 +1,15 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: distributor
+  name: querier
 spec:
   minReadySeconds: 10
   replicas: 1
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-      app: distributor
-      name: distributor
+      app: querier
+      name: querier
       tempo-gossip-member: "true"
   strategy:
     rollingUpdate:
@@ -18,8 +18,8 @@ spec:
   template:
     metadata:
       labels:
-        app: distributor
-        name: distributor
+        app: querier
+        name: querier
         tempo-gossip-member: "true"
       annotations:
         prometheus.io/port: prom-metrics
@@ -27,23 +27,15 @@ spec:
     spec:
       containers:
       - args:
-        - -target=distributor
+        - -target=querier
         - -config.file=/conf/tempo.yaml
         - -mem-ballast-size-mbs=1024
-        image: grafana/tempo:1.5.0
+        image: grafana/tempo:2.0.0
         imagePullPolicy: IfNotPresent
-        name: distributor
+        name: querier
         ports:
         - containerPort: 3200
           name: prom-metrics
-        - containerPort: 4317
-          name: otel-grpc
-        - containerPort: 4318
-          name: otel-http
-        - containerPort: 14250
-          name: jaeger-grpc
-        - containerPort: 14268
-          name: jaeger-http
         readinessProbe:
           httpGet:
             path: /ready
@@ -55,10 +47,9 @@ spec:
           name: tempo-conf
         - mountPath: /overrides
           name: overrides
-      terminationGracePeriodSeconds: 60
       volumes:
       - configMap:
-          name: tempo-distributor
+          name: tempo-querier
         name: tempo-conf
       - configMap:
           name: tempo-overrides

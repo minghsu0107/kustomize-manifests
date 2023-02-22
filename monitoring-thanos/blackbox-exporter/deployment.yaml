@@ -19,7 +19,6 @@ spec:
       labels:
         app.kubernetes.io/name: blackbox-exporter
     spec:
-      serviceAccountName: blackbox-exporter
       restartPolicy: Always
       containers:
         - name: blackbox-exporter

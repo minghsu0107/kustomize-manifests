@@ -1,7 +1,5 @@
 resources:
 - deployment.yaml
-- pod-security.yaml
-- rbac.yaml
 - service.yaml
 configMapGenerator:
   - name: blackbox-exporter
