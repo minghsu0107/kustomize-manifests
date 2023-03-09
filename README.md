@@ -1,6 +1,7 @@
 # Kustomize Manifests
 ## Overview
-This repository provides one-shot deployment for ingress controller, logging stack, observability platforms, and some common applications on Kubernetes, including:
+This repository provides configurable one-shot deployment for ingress, storage, logging, monitoring, and distributed tracing on Kubernetes.
+
 - Ingress controller (`Traefik`)
   - With distributed tracing enabled using Jaeger
   - Send spans
