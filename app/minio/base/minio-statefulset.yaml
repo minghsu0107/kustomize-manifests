@@ -3,7 +3,6 @@ kind: StatefulSet
 metadata:
   name: minio
   labels:
-    v1beta1.min.io/instance: minio
     app: minio
 spec:
   serviceName: minio-hl-svc
@@ -13,42 +12,44 @@ spec:
   replicas: 0
   selector:
     matchLabels:
-      v1beta1.min.io/instance: minio
       app: minio
   template:
     metadata:
       labels:
-        v1beta1.min.io/instance: minio
         app: minio
       annotations:
-        prometheus.io/path: /minio/prometheus/metrics
+        prometheus.io/path: /minio/v2/metrics/cluster
         prometheus.io/port: "9000"
         prometheus.io/scrape: "true"
     spec:
       containers:
       - name: minio
-        image: docker.io/minio/minio:RELEASE.2021-03-17T02-33-02Z@sha256:d33b2e9559ee59acf7591cd83cb7238837158a316956e6140e6692a8e4e12fe9
+        image: docker.io/minio/minio:RELEASE.2023-07-11T21-29-34Z
         args:
         - server
+        - /export
+        - --console-address
+        - ":9001"
         env:
         # allow public access without authentication for prometheus metrics
         - name: MINIO_PROMETHEUS_AUTH_TYPE
           value: public
-        # disable browser
-        # - name: MINIO_BROWSER
-        # value: "off"
-        - name: MINIO_ACCESS_KEY
+        - name: MINIO_API_ROOT_ACCESS
+          value: "on"
+        - name: MINIO_ROOT_USER
           valueFrom:
             secretKeyRef:
               name: minio
               key: accesskey
-        - name: MINIO_SECRET_KEY
+        - name: MINIO_ROOT_PASSWORD
           valueFrom:
             secretKeyRef:
               name: minio
               key: secretkey
         ports:
         - containerPort: 9000
+          protocol: TCP
+        - containerPort: 9001
           protocol: TCP
         livenessProbe:
           httpGet:
