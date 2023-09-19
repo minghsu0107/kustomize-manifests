@@ -80,7 +80,6 @@ In addition, some common application deployment templates are provided:
 - [Minio](app/minio)
   - 8 replica servers, each with 10Gi storage
 - [NATS JetStream](app/nats-jetstream)
-  - Log retention for 3 hours
 - [Redis cluster](app/redis-cluster)
 - [Cassandra cluster](app/cassandra)
 - [Kibana](app/kibana)
