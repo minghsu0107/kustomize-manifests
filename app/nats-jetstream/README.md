@@ -1,4 +1,4 @@
-# NATS Streaming
+# NATS JetStream
 ## Usage
 ```bash
 kustomize build . | kubectl apply -f -
