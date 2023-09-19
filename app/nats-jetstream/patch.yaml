@@ -1,13 +1,13 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: stan
+  name: jetstream
 spec:
   replicas: 3
   template:
     spec:
       containers:
-      - name: stan
+      - name: jetstream
         resources:
           limits:
             cpu: "1"
@@ -19,7 +19,7 @@ spec:
   - metadata:
       name: data
       labels:
-        app: stan
+        app: jetstream
     spec:
       accessModes: [ "ReadWriteOnce" ]
       storageClassName: local-path

@@ -1,0 +1,15 @@
+namespace: infra
+resources:
+- namespace.yaml
+- jetstream.yaml
+- nats-box.yaml
+patches:
+- path: patch.yaml
+  target:
+    kind: StatefulSet
+    name: jetstream
+    labelSelector: app=jetstream
+secretGenerator:
+- name: jetstream-auth
+  literals:
+  - authtoken=o7N95haCEk5kmoae
