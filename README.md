@@ -79,7 +79,7 @@ In addition, some common application deployment templates are provided:
   - Log retention for 72 hours
 - [Minio](app/minio)
   - 8 replica servers, each with 10Gi storage
-- [NATS Jetstream](app/nats-jetstream)
+- [NATS JetStream](app/nats-jetstream)
   - Log retention for 3 hours
 - [Redis cluster](app/redis-cluster)
 - [Cassandra cluster](app/cassandra)
