@@ -57,8 +57,10 @@ data:
     }
     jetstream {
       store_dir: /data/jetstream/store
-      max_memory_store: 3G
-      max_file_store: 100G
+      # 1GB
+      max_memory_store: 1073741824
+      # 10GB
+      max_file_store: 10737418240
     }
 ---
 apiVersion: apps/v1
