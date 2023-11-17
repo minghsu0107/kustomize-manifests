@@ -132,12 +132,12 @@ spec:
       - name: metrics
         image: natsio/prometheus-nats-exporter:0.12.0
         args:
+        - -healthz
         - -connz
         - -routez
         - -subz
         - -varz
-        - -channelz
-        - -serverz
+        - -jsz=all
         - http://localhost:8222
         ports:
         - containerPort: 7777
