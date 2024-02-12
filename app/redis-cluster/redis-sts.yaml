@@ -45,7 +45,7 @@ spec:
     spec:
       containers:
       - name: redis
-        image: redis:6.2.6
+        image: redis:7.2.4
         ports:
         - containerPort: 6379
           name: client
@@ -65,7 +65,7 @@ spec:
           mountPath: /data
           readOnly: false
       - name: redis-exporter
-        image: oliver006/redis_exporter:v1.15.1
+        image: oliver006/redis_exporter:v1.57.0
         resources:
           requests:
             memory: "200Mi"

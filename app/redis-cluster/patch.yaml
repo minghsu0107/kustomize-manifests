@@ -10,11 +10,11 @@ spec:
       - name: redis
         resources:
           limits:
-            cpu: 512m
-            memory: 2Gi
+            cpu: 128m
+            memory: 0.5Gi
           requests:
-            cpu: 512m
-            memory: 2Gi
+            cpu: 128m
+            memory: 0.5Gi
   volumeClaimTemplates:
   - metadata:
       name: data
