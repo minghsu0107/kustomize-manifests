@@ -1,4 +1,4 @@
-# Kafka and Zookeeper
+# Kafka KRaft Cluster
 - [Broker Configs](https://kafka.apache.org/documentation/#brokerconfigs)
 - [Confluent Platform and Apache Kafka Compatibility](https://docs.confluent.io/platform/current/installation/versions-interoperability.html)
 ## Usage
