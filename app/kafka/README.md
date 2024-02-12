@@ -1,6 +1,5 @@
 # Kafka and Zookeeper
-- [Reference 1](https://kow3ns.github.io/kubernetes-zookeeper/manifests/)
-- [Reference 2](https://kubernetes.io/blog/2017/09/kubernetes-statefulsets-daemonsets/)
+- [Broker Configs](https://kafka.apache.org/documentation/#brokerconfigs)
 - [Helm chart for cp-kafka](https://github.com/confluentinc/cp-helm-charts/tree/master/charts/cp-kafka)
 - [Confluent Platform and Apache Kafka Compatibility](https://docs.confluent.io/platform/current/installation/versions-interoperability.html)
 ## Usage
@@ -66,7 +65,7 @@ world
 ```
 ## Final Notes
 - After deleting a topic using the above command, one should also delete the topic directory on each broker (as defined in the logs.dirs and log.dir properties) with `rm -rf` command.
-- Check the Confluent platform and Apache Kafka compatibility [here](https://docs.confluent.io/platform/current/installation/versions-interoperability.html). For example, we use Confluent platform version 6.0.1, which maps to Kafka version 2.6.1.
+- Check the Confluent platform and Apache Kafka compatibility [here](https://docs.confluent.io/platform/current/installation/versions-interoperability.html). For example, we use Confluent platform version 7.6.0, which maps to Kafka version 3.6.0.
 - One can also test the Kafka cluster using [this helper](https://github.com/rmoff/kafka-listeners/tree/master/golang).
 - Kafka Exporter
     - [Github](https://github.com/danielqsj/kafka_exporter)
