@@ -1,8 +1,10 @@
 namespace: kafka
 resources:
+- kafka-controller.yaml
 - kafka-jmx-configmap.yaml
 - kafka.yaml
 - namespace.yaml
 - test-client.yaml
 patchesStrategicMerge:
+- patch-kafka-controller.yaml
 - patch-kafka.yaml

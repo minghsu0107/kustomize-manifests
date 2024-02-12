@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: kafka
+  name: kafka-controller
 spec:
   replicas: 3
   template:
@@ -19,7 +19,7 @@ spec:
   - metadata:
       name: datadir
       labels:
-        app: kafka
+        app: kafka-controller
     spec:
       accessModes: [ "ReadWriteOnce" ]
       storageClassName: local-path

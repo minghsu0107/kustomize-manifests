@@ -2,51 +2,51 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: kafka-hs
+  name: kafka-controller-hs
   labels:
-    app: kafka
+    app: kafka-controller
   annotations:
     prometheus.io/port: "5556"
     prometheus.io/scrape: "true"
 spec:
   ports:
-  - port: 9092
-    name: broker
+  - port: 9093
+    name: controller
   - port: 5556
     name: metrics
   clusterIP: None
   selector:
-    app: kafka
+    app: kafka-controller
 ---
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
-  name: kafka-pdb
+  name: kafka-controller-pdb
 spec:
   selector:
     matchLabels:
-      app: kafka
+      app: kafka-controller
   maxUnavailable: 1
 ---
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: kafka
+  name: kafka-controller
   labels:
-    app: kafka
+    app: kafka-controller
 spec:
-  serviceName: kafka-hs
+  serviceName: kafka-controller-hs
   replicas: 3
   selector:
     matchLabels:
-      app: kafka
+      app: kafka-controller
   podManagementPolicy: Parallel
   updateStrategy:
     type: RollingUpdate
   template:
     metadata:
       labels:
-        app: kafka
+        app: kafka-controller
       annotations:
         prometheus.io/port: metrics
         prometheus.io/scrape: "true"
@@ -87,8 +87,8 @@ spec:
         image: confluentinc/cp-kafka:7.6.0
         imagePullPolicy: IfNotPresent
         ports:
-        - containerPort: 9092
-          name: broker
+        - containerPort: 9093
+          name: controller
         - containerPort: 5555
           name: jmx
         env:
@@ -194,9 +194,9 @@ spec:
         - sh
         - -exc
         - |
-          export KAFKA_NODE_ID="10$(echo "$HOSTNAME" | sed 's/[^0-9]*//g')" && \
-          export KAFKA_PROCESS_ROLES="broker" && \
-          export KAFKA_ADVERTISED_LISTENERS="PLAINTEXT://${POD_NAME}.kafka-hs:9092" && \
+          export KAFKA_NODE_ID="$(echo "$HOSTNAME" | sed 's/[^0-9]*//g')" && \
+          export KAFKA_PROCESS_ROLES="controller" && \
+          export KAFKA_LISTENERS="CONTROLLER://${POD_NAME}.kafka-controller-hs:9093" && \
           exec /etc/confluent/docker/run
         volumeMounts:
           - name: datadir
