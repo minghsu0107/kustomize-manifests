@@ -20,10 +20,15 @@ metadata:
   name: zk-cs
   labels:
     app: zk
+  annotations:
+    prometheus.io/port: "5556"
+    prometheus.io/scrape: "true"
 spec:
   ports:
   - port: 2181
     name: client
+  - port: 5556
+    name: metrics
   clusterIP: None
   selector:
     app: zk
@@ -55,8 +60,30 @@ spec:
     metadata:
       labels:
         app: zk
+      annotations:
+        prometheus.io/port: metrics
+        prometheus.io/scrape: "true"
     spec:
       containers:
+      - name: prometheus-jmx-exporter
+        imagePullPolicy: IfNotPresent
+        image: "solsson/kafka-prometheus-jmx-exporter@sha256:6f82e2b0464f50da8104acd7363fb9b995001ddff77d248379f8788e78946143"
+        ports:
+        - containerPort: 5556
+          name: metrics
+        command:
+        - java
+        - -XX:+UnlockExperimentalVMOptions
+        - -XX:+UseCGroupMemoryLimitForHeap
+        - -XX:MaxRAMFraction=1
+        - -XshowSettings:vm
+        - -jar
+        - jmx_prometheus_httpserver.jar
+        - "5556"
+        - /etc/jmx-zookeeper/jmx-zookeeper-prometheus.yml
+        volumeMounts:
+        - name: jmx-config
+          mountPath: /etc/jmx-zookeeper
       - name: zookeeper
         imagePullPolicy: Always
         image: "confluentinc/cp-zookeeper:7.6.0"
@@ -67,9 +94,13 @@ spec:
           name: server
         - containerPort: 3888
           name: leader-election
+        - containerPort: 5555
+          name: jmx
         env:
         - name : KAFKA_HEAP_OPTS
           value: "-Xms512M -Xmx512M"
+        - name : KAFKA_JMX_PORT
+          value: "5555"
         - name : ZOOKEEPER_TICK_TIME
           value: "2000"
         - name : ZOOKEEPER_SYNC_LIMIT
@@ -103,6 +134,10 @@ spec:
         volumeMounts:
         - name: datadir
           mountPath: /var/lib/zookeeper
+      volumes:
+        - name: jmx-config
+          configMap:
+            name: zk-jmx-configmap
       securityContext:
         runAsUser: 1000
         fsGroup: 1000

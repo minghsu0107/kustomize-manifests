@@ -67,10 +67,11 @@ world
 - After deleting a topic using the above command, one should also delete the topic directory on each broker (as defined in the logs.dirs and log.dir properties) with `rm -rf` command.
 - Check the Confluent platform and Apache Kafka compatibility [here](https://docs.confluent.io/platform/current/installation/versions-interoperability.html). For example, we use Confluent platform version 7.6.0, which maps to Kafka version 3.6.0.
 - One can also test the Kafka cluster using [this helper](https://github.com/rmoff/kafka-listeners/tree/master/golang).
+- Grafana dashboard for Confluent Kafka and ZooKeeper: https://github.com/confluentinc/cp-helm-charts/blob/master/grafana-dashboard/confluent-open-source-grafana-dashboard.json
 - Kafka Exporter
     - [Github](https://github.com/danielqsj/kafka_exporter)
     - [Dockerhub](https://hub.docker.com/r/danielqsj/kafka-exporter)
-    - Grafana dashboard ID: 7589
+    - Grafana dashboard: https://grafana.com/grafana/dashboards/7589-kafka-exporter-overview/
         1. Import dashboard
         2. Go to Kafka Exporter Overview / Settings
         3. Go to variable `instance` and set query as `label_values(kafka_brokers, instance)`
