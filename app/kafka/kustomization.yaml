@@ -1,10 +1,11 @@
 namespace: kafka
 resources:
-- jmx-configmap.yaml
+- kafka-jmx-configmap.yaml
 - kafka.yaml
 - namespace.yaml
 - test-client.yaml
 - zookeeper.yaml
+- zk-jmx-configmap.yaml
 patchesStrategicMerge:
 - patch-kafka.yaml
 - patch-zk.yaml
