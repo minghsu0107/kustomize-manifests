@@ -137,6 +137,11 @@ spec:
         # The number of partitions for the offset commit topic (should not change after deployment)
         - name: KAFKA_OFFSETS_TOPIC_NUM_PARTITIONS
           value: "50"
+        # The replication factor for the transaction topic.
+        # Internal topic creation will fail until the cluster size meets this replication factor requirement
+        # default=3
+        # - name: KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR
+        #   value: "2"
         # set to 256GB
         - name: KAFKA_LOG_RETENTION_BYTES
           value: "274877906944"
