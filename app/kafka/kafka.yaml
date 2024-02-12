@@ -206,7 +206,7 @@ spec:
         - name: KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS
           value: "3500"
         - name: KAFKA_LOG4J_ROOT_LOGLEVEL
-          value: "WARN"
+          value: "ERROR"
         - name: KAFKA_LOG4J_LOGGERS
           value: "org.apache.zookeeper=ERROR,org.apache.kafka=ERROR,kafka=ERROR,kafka.cluster=ERROR,kafka.controller=ERROR,kafka.coordinator=ERROR,kafka.log=ERROR,kafka.server=ERROR,kafka.zookeeper=ERROR,state.change.logger=ERROR"
         - name: KAFKA_TOOLS_LOG4J_LOGLEVEL
