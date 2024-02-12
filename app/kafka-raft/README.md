@@ -10,17 +10,17 @@ This will create a cluster with 3 controllers (`kafka-controller-0.kafka-control
 Test broker and topic operations:
 ```bash
 # create a topic
-kubectl -n kafka exec -ti testclient -- ./bin/kafka-topics.sh --bootstrap-server kafka-0.kafka-hs.kafka.svc.cluster.local:9092 --topic messages --create --partitions 1 --replication-factor 2 --config retention.ms=86400001 --config retention.bytes=274877906943
+kubectl -n kafka exec -ti testclient -- ./bin/kafka-topics.sh --bootstrap-server kafka-hs.kafka.svc.cluster.local:9092 --topic messages --create --partitions 1 --replication-factor 3 --config retention.ms=86400001 --config retention.bytes=274877906943
 # describe dynamic configs of a topic
-kubectl -n kafka exec -ti testclient -- ./bin/kafka-configs.sh --bootstrap-server kafka-0.kafka-hs.kafka.svc.cluster.local:9092 --entity-type topics --entity-name messages --describe
+kubectl -n kafka exec -ti testclient -- ./bin/kafka-configs.sh --bootstrap-server kafka-hs.kafka.svc.cluster.local:9092 --entity-type topics --entity-name messages --describe
 # alter topic configs
-kubectl -n kafka exec -ti testclient -- ./bin/kafka-configs.sh --bootstrap-server kafka-0.kafka-hs.kafka.svc.cluster.local:9092 --alter --entity-type topics --entity-name messages --add-config retention.bytes=274877906944
+kubectl -n kafka exec -ti testclient -- ./bin/kafka-configs.sh --bootstrap-server kafka-hs.kafka.svc.cluster.local:9092 --alter --entity-type topics --entity-name messages --add-config retention.bytes=274877906944
 # list topics, should have "messages"
-kubectl -n kafka exec -ti testclient -- ./bin/kafka-topics.sh --list --bootstrap-server kafka-0.kafka-hs.kafka.svc.cluster.local:9092
+kubectl -n kafka exec -ti testclient -- ./bin/kafka-topics.sh --list --bootstrap-server kafka-hs.kafka.svc.cluster.local:9092
 # describe a topic
-kubectl -n kafka exec -ti testclient -- ./bin/kafka-topics.sh --topic messages --describe --bootstrap-server kafka-0.kafka-hs.kafka.svc.cluster.local:9092
+kubectl -n kafka exec -ti testclient -- ./bin/kafka-topics.sh --topic messages --describe --bootstrap-server kafka-hs.kafka.svc.cluster.local:9092
 # delete a topic (marked for deletion)
-kubectl -n kafka exec -ti testclient -- ./bin/kafka-topics.sh --delete --topic messages --bootstrap-server kafka-0.kafka-hs.kafka.svc.cluster.local:9092
+kubectl -n kafka exec -ti testclient -- ./bin/kafka-topics.sh --delete --topic messages --bootstrap-server kafka-hs.kafka.svc.cluster.local:9092
 ```
 Test consumer and producer functionalities:
 ```bash
