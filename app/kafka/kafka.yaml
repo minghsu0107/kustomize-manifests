@@ -65,7 +65,7 @@ spec:
           mountPath: /var/lib/kafka/data
       containers:
       - name: kafka-exporter
-        image: danielqsj/kafka-exporter:v1.2.0
+        image: danielqsj/kafka-exporter:v1.7.0
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 9308
@@ -77,7 +77,7 @@ spec:
           until nc -z -v -w30 $POD_IP 9092; do echo 'Waiting for kafka...'; sleep 2; done && \
           kafka_exporter \
           --kafka.server=$POD_IP:9092 \
-          --kafka.version=2.6.1 \
+          --kafka.version=3.6.0 \
           --web.listen-address=:9308 \
           --log.level=info
         env:

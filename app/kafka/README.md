@@ -76,16 +76,6 @@ world
         3. Go to variable `instance` and set query as `label_values(kafka_brokers, instance)`
             - the value of variable `instance` is set to the value of label `instance` in metric `kafka_brokers`
         4. Update the dashboard settings and save the variable
-- Zookeeper Exporter
-    - [Github](https://github.com/dabealu/zookeeper-exporter)
-    - [Dockerhub](https://hub.docker.com/r/bitnami/zookeeper-exporter)
-    - Grafana dashboard ID: 11442
-        1. Import dashboard
-        2. Go to Zookeeper Exporter (dabealu) / Settings
-        3. Go to variable `instance` and set query as `label_values(zk_up,instance)`
-        4. Go to variable `job` and set query as `label_values(zk_up,job)`
-        5. Go to variable `version` and set query as `label_values(zk_version{job=~"$job", instance=~"$instance"}, version)`
-        6. Update the dashboard settings and save the variable
 - To filter out all Kafka-related logs on Loki:
 ```bash
 {app="kafka"} != "SocketServer" != "InvalidReceiveException" != "org.apache.kafka.common.network" != "Thread.java" != "kafka_exporter.go"

@@ -10,11 +10,11 @@ spec:
       - name: kafka
         resources:
           limits:
-            cpu: "1"
-            memory: 2Gi
+            cpu: "0.5"
+            memory: 0.5Gi
           requests:
-            cpu: "1"
-            memory: 2Gi
+            cpu: "0.5"
+            memory: 0.5Gi
   volumeClaimTemplates:
   - metadata:
       name: datadir
