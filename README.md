@@ -77,6 +77,7 @@ This repository provides configurable one-shot deployment for common infrastruct
 In addition, some common application deployment templates are provided:
 - [Kafka + Zookeeper](app/kafka)
   - Log retention for 72 hours
+- [Kafka KRaft](app/kafka-raft)
 - [Minio](app/minio)
   - 8 replica servers, each with 10Gi storage
 - [NATS JetStream](app/nats-jetstream)
