@@ -1,0 +1,203 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-hs
+  labels:
+    app: kafka
+  annotations:
+    prometheus.io/port: "5556"
+    prometheus.io/scrape: "true"
+spec:
+  ports:
+  - port: 9092
+    name: server
+  - port: 5556
+    name: metrics
+  clusterIP: None
+  selector:
+    app: kafka
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: kafka-pdb
+spec:
+  selector:
+    matchLabels:
+      app: kafka
+  maxUnavailable: 1
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: kafka
+  labels:
+    app: kafka
+spec:
+  serviceName: kafka-hs
+  replicas: 5
+  selector:
+    matchLabels:
+      app: kafka
+  podManagementPolicy: Parallel
+  updateStrategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: kafka
+      annotations:
+        prometheus.io/port: metrics
+        prometheus.io/scrape: "true"
+    spec:
+      securityContext:
+        runAsUser: 1000
+        fsGroup: 1000
+      initContainers:
+      - name: clean-datadir
+        image: busybox:1.34.1
+        command: ["sh", "-c", "rm -rf /var/lib/kafka/data/*"]
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - name: datadir
+          mountPath: /var/lib/kafka/data
+      containers:
+      - name: prometheus-jmx-exporter
+        image: solsson/kafka-prometheus-jmx-exporter@sha256:6f82e2b0464f50da8104acd7363fb9b995001ddff77d248379f8788e78946143
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5556
+          name: metrics
+        command:
+        - java
+        - -XX:+UnlockExperimentalVMOptions
+        - -XX:+UseCGroupMemoryLimitForHeap
+        - -XX:MaxRAMFraction=1
+        - -XshowSettings:vm
+        - -jar
+        - jmx_prometheus_httpserver.jar
+        - "5556"
+        - /etc/jmx-kafka/jmx-kafka-prometheus.yml
+        volumeMounts:
+        - name: jmx-config
+          mountPath: /etc/jmx-kafka
+      - name: kafka
+        # if KAFKA_BROKER_ID is not specified, it will automatically be generated
+        image: confluentinc/cp-kafka:7.6.0
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 9092
+          name: kafka
+        - containerPort: 9093
+          name: leader-election
+        - containerPort: 5555
+          name: jmx
+        env:
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: HOST_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: KAFKA_HEAP_OPTS
+          value: "-Xms512M -Xmx512M"
+        - name: KAFKA_JMX_PORT
+          value: "5555"
+        - name: CLUSTER_ID
+          value: "ciWo7IWazngRchmPES6q5A=="
+        - name: KAFKA_CONTROLLER_LISTENER_NAMES
+          value: "CONTROLLER"
+        - name: KAFKA_LISTENER_SECURITY_PROTOCOL_MAP
+          value: "CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT"
+        - name: KAFKA_CONTROLLER_QUORUM_VOTERS
+          value: "0@kafka-0.kafka-hs:9093,1@kafka-1.kafka-hs:9093,2@kafka-2.kafka-hs:9093"
+        - name: KAFKA_LOG_DIRS
+          value: /var/lib/kafka/data
+        # For subscribed consumers, committed offset of a specific partition will be expired and discarded when 
+        # 1) this retention period has elapsed after the consumer group loses all its consumers (i.e. becomes empty)
+        # 2) this retention period has elapsed since the last time an offset is committed for the partition and the group is no longer subscribed to the corresponding topic
+        # default 7 days
+        - name: KAFKA_OFFSETS_RETENTION_MINUTES
+          value: "10080"
+        # The replication factor for the offsets topic (set higher to ensure availability)
+        - name: KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR
+          value: "2"
+        # The number of partitions for the offset commit topic (should not change after deployment)
+        - name: KAFKA_OFFSETS_TOPIC_NUM_PARTITIONS
+          value: "50"
+        # set to 256GB
+        - name: KAFKA_LOG_RETENTION_BYTES
+          value: "274877906944"
+        # - name: KAFKA_LOG_RETENTION_HOURS
+        #   value: "72"
+        - name: KAFKA_LOG_RETENTION_MINUTES
+          value: "4320"
+        - name: KAFKA_BACKGROUND_THREADS
+          value: "15"
+        - name: KAFKA_AUTO_CREATE_TOPICS_ENABLE
+          value: "true"
+        - name: KAFKA_AUTO_LEADER_REBALANCE_ENABLE
+          value: "true"
+        - name: KAFKA_DEFAULT_REPLICATION_FACTOR
+          value: "2"
+        # The number of acknowledgments the producer requires the leader to have received
+        # 1 means he leader will write the record to its local log but will respond without awaiting full acknowledgement from all followers
+        # if the leader fail immediately after acknowledging the record but before the followers have replicated it then the record will be lost
+        # all means the leader will wait for the full set of in-sync replicas to acknowledge the record
+        # default=1
+        - name: KAFKA_ACKS
+          value: "all"
+        # When a producer sets acks to "all" (or "-1"), min.insync.replicas specifies the minimum number of in-sync replicas that must acknowledge the write
+        # set to 2 to ensure quorum acknowledgement under relication factor = 3 and acks = all
+        - name: KAFKA_MIN_INSYNC_REPLICAS
+          value: "2"
+        # When set to 'true', the producer will ensure that exactly one copy of each message is written in the stream (using an internal sequence number)
+        # If 'false', producer retries due to broker failures, etc., may write duplicates of the retried message in the stream
+        # enabling idempotence requires max.in.flight.requests.per.connection <= 5 (default=5), retries > 0 (default=2147483647) and acks must be 'all'
+        - name: KAFKA_ENABLE_IDEMPOTENCE
+          value: "false"
+        # The number of threads that the server uses for processing requests, which may include disk I/O
+        # default=8
+        - name: KAFKA_NUM_IO_THREADS
+          value: "8"
+        # The number of threads that the server uses for receiving requests from the network and sending responses to the network
+        # default=3
+        - name: KAFKA_NUM_NETWORK_THREADS
+          value: "4"
+        # default=1048588 (1MB)
+        - name: KAFKA_MESSAGE_MAX_BYTES
+          value: "1048588"
+        # The amount of time the group coordinator will wait for more consumers to join a new group before performing the first rebalance (default=3000)
+        - name: KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS
+          value: "3500"
+        - name: KAFKA_LOG4J_ROOT_LOGLEVEL
+          value: "WARN"
+        - name: KAFKA_TOOLS_LOG4J_LOGLEVEL
+          value: "ERROR"
+        command:
+        - sh
+        - -exc
+        - |
+          export KAFKA_NODE_ID="$(echo "$HOSTNAME" | sed 's/[^0-9]*//g')" && \
+          [[ "${KAFKA_NODE_ID}" -le 2 ]] && export KAFKA_PROCESS_ROLES="controller" || export KAFKA_PROCESS_ROLES="broker" && \
+          [[ "${KAFKA_NODE_ID}" -le 2 ]] && export KAFKA_LISTENERS="CONTROLLER://${POD_NAME}.kafka-hs:9093" || export KAFKA_ADVERTISED_LISTENERS="PLAINTEXT://${POD_NAME}.kafka-hs:9092" && \
+          exec /etc/confluent/docker/run
+        volumeMounts:
+          - name: datadir
+            mountPath: /var/lib/kafka/data
+      volumes:
+        - name: jmx-config
+          configMap:
+            name: kafka-jmx-configmap

@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: kafka
+spec:
+  replicas: 5
+  template:
+    spec:
+      containers:
+      - name: kafka
+        resources:
+          limits:
+            cpu: "0.5"
+            memory: 0.5Gi
+          requests:
+            cpu: "0.5"
+            memory: 0.5Gi
+  volumeClaimTemplates:
+  - metadata:
+      name: datadir
+      labels:
+        app: kafka
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: local-path
+      resources:
+        requests:
+          storage: 10Gi
