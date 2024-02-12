@@ -2,6 +2,7 @@
 - [Broker Configs](https://kafka.apache.org/documentation/#brokerconfigs)
 - [Helm chart for cp-kafka](https://github.com/confluentinc/cp-helm-charts/tree/master/charts/cp-kafka)
 - [Confluent Platform and Apache Kafka Compatibility](https://docs.confluent.io/platform/current/installation/versions-interoperability.html)
+- https://github.com/confluentinc/cp-helm-charts/tree/master/charts/cp-zookeeper
 ## Usage
 ```bash
 kustomize build . | kubectl apply -f -

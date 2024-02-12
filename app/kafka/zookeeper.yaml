@@ -20,15 +20,10 @@ metadata:
   name: zk-cs
   labels:
     app: zk
-  annotations:
-    prometheus.io/port: "8080"
-    prometheus.io/scrape: "true"
 spec:
   ports:
   - port: 2181
     name: client
-  - port: 8080
-    name: metrics
   clusterIP: None
   selector:
     app: zk
@@ -60,14 +55,11 @@ spec:
     metadata:
       labels:
         app: zk
-      annotations:
-        prometheus.io/port: "8080"
-        prometheus.io/scrape: "true"
     spec:
       containers:
       - name: zookeeper
         imagePullPolicy: Always
-        image: "registry.k8s.io/kubernetes-zookeeper:1.0-3.4.10"
+        image: "confluentinc/cp-zookeeper:7.6.0"
         ports:
         - containerPort: 2181
           name: client
@@ -75,43 +67,39 @@ spec:
           name: server
         - containerPort: 3888
           name: leader-election
+        env:
+        - name : KAFKA_HEAP_OPTS
+          value: "-Xms512M -Xmx512M"
+        - name : ZOOKEEPER_TICK_TIME
+          value: "2000"
+        - name : ZOOKEEPER_SYNC_LIMIT
+          value: "5"
+        - name : ZOOKEEPER_INIT_LIMIT
+          value: "10"
+        - name : ZOOKEEPER_MAX_CLIENT_CNXNS
+          value: "60"
+        - name : ZOOKEEPER_AUTOPURGE_SNAP_RETAIN_COUNT
+          value: "3"
+        - name : ZOOKEEPER_AUTOPURGE_PURGE_INTERVAL
+          value: "24"
+        - name: ZOOKEEPER_CLIENT_PORT
+          value: "2181"
+        - name : ZOOKEEPER_SERVERS
+          value: "zk-0.zk-headless:2888:3888;zk-1.zk-headless:2888:3888;zk-2.zk-headless:2888:3888"
+        # ZOOKEEPER_SERVER_ID is required just to pass cp-zookeeper ensure script for env check,
+        # the value(metadata.mame) is not used and will be overwritten in command part
+        - name: ZOOKEEPER_SERVER_ID
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
         command:
-        - sh
-        - -c
-        - "start-zookeeper \
-          --servers=3 \
-          --data_dir=/var/lib/zookeeper/data \
-          --data_log_dir=/var/lib/zookeeper/data/log \
-          --conf_dir=/opt/zookeeper/conf \
-          --client_port=2181 \
-          --election_port=3888 \
-          --server_port=2888 \
-          --tick_time=2000 \
-          --init_limit=10 \
-          --sync_limit=5 \
-          --heap=128M \
-          --max_client_cnxns=60 \
-          --snap_retain_count=3 \
-          --purge_interval=12 \
-          --max_session_timeout=40000 \
-          --min_session_timeout=4000 \
-          --log_level=INFO"
-        readinessProbe:
-          exec:
-            command:
-            - sh
-            - -c
-            - "zookeeper-ready 2181"
-          initialDelaySeconds: 10
-          timeoutSeconds: 5
-        livenessProbe:
-          exec:
-            command:
-            - sh
-            - -c
-            - "zookeeper-ready 2181"
-          initialDelaySeconds: 10
-          timeoutSeconds: 5
+        - "bash"
+        - "-c"
+        - |
+          ZK_FIX_HOST_REGEX="s/${HOSTNAME}\.[^:]*:/0.0.0.0:/g"
+          ZOOKEEPER_SERVER_ID=$((${HOSTNAME##*-}+1)) \
+          ZOOKEEPER_SERVERS=`echo $ZOOKEEPER_SERVERS | sed -e "$ZK_FIX_HOST_REGEX"` \
+          /etc/confluent/docker/run
         volumeMounts:
         - name: datadir
           mountPath: /var/lib/zookeeper
