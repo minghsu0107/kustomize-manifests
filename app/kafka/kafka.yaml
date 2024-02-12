@@ -142,7 +142,7 @@ spec:
               fieldPath: metadata.namespace
         - name: KAFKA_HEAP_OPTS
           value: "-Xms512M -Xmx512M"
-        - name : KAFKA_JMX_PORT
+        - name: KAFKA_JMX_PORT
           value: "5555"
         - name: KAFKA_ZOOKEEPER_CONNECT
           value: zk-cs:2181
