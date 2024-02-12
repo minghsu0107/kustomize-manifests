@@ -122,8 +122,18 @@ spec:
           value: zk-cs:2181
         - name: KAFKA_LOG_DIRS
           value: /var/lib/kafka/data
+        # For subscribed consumers, committed offset of a specific partition will be expired and discarded when 
+        # 1) this retention period has elapsed after the consumer group loses all its consumers (i.e. becomes empty)
+        # 2) this retention period has elapsed since the last time an offset is committed for the partition and the group is no longer subscribed to the corresponding topic
+        # default 7 days
+        - name: KAFKA_OFFSETS_RETENTION_MINUTES
+          value: "10080"
+        # The replication factor for the offsets topic (set higher to ensure availability)
         - name: KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR
           value: "3"
+        # The number of partitions for the offset commit topic (should not change after deployment)
+        - name: KAFKA_OFFSETS_TOPIC_NUM_PARTITIONS
+          value: "50"
         # set to 256GB
         - name: KAFKA_LOG_RETENTION_BYTES
           value: "274877906944"
