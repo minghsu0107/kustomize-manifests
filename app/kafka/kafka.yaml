@@ -180,6 +180,9 @@ spec:
         # if the leader fail immediately after acknowledging the record but before the followers have replicated it then the record will be lost
         # all means the leader will wait for the full set of in-sync replicas to acknowledge the record
         # default=1
+        # The default number of partitions per topic (default to 1)
+        - name: KAFKA_NUM_PARTITIONS
+          value: "1"
         - name: KAFKA_ACKS
           value: "all"
         # When a producer sets acks to "all" (or "-1"), min.insync.replicas specifies the minimum number of in-sync replicas that must acknowledge the write
