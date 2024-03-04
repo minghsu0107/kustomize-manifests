@@ -4,7 +4,7 @@
 kustomize build . | kubectl apply -f -
 ```
 
-- [Grafana dashboard for NATS server](https://grafana.com/grafana/dashboards/2279)
+- https://grafana.com/grafana/dashboards/14725-nats-jetstream/
 
 ## Test
 
