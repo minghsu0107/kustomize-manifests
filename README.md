@@ -20,7 +20,7 @@ This repository provides configurable one-shot deployment for common infrastruct
   - `Prometheus blackbox exporter`: allows blackbox probing of endpoints over HTTP, HTTPS, DNS, TCP and ICMP. It is used to monitor K8s services here.
   - `Kube-state-metrics`: server that listens to the Kubernetes API server and generates metrics about the state of Kubernetes components, such as number of running jobs, available replicas, and number of running/stopped/terminated pods, by polling Kubernetes API
   - `Prometheus`: metrics server that collects metrics from Cadvisor, Prometheus node exporter, Kube-state-metrics server and Kubelet metrics
-      - Save metrics for 7 days
+      - Metrics retention: 3 days
   - `Grafana`: web UI that visualizes collected metrics (version 9.3.6)
   - `Alertmanager`: server that sends alert to sysadmins when alert conditions are met, based on Prometheus metrics
   - `Thanos components` (optional): a set of components that can be composed into a highly available metric system with unlimited storage capacity
