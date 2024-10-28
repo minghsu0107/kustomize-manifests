@@ -9,9 +9,8 @@ This repository provides configurable one-shot deployment for common infrastruct
     - To Jaeger collector: `http://jaeger-collector.tracing:14268/api/traces?format=jaeger.thrift`
 - Logging stack
   - `Loki`: log aggregation system
-    - Save logs on S3 for 72 hours
     - Components
-      - Core: Distributor, Ingester, Ruler, Table manager, Querier, Querier frontend
+      - Core: Distributor, Ingester, Ruler, Table manager (log retention: 72 hours), Querier, Querier frontend
       - Compactor: Dedup the index on S3 and merging all the files to a single file per table every 5 minutes
   - `Promtail`: daemonset that tails logs from stdout and stderr of all pods
 - Monitoring stack
@@ -70,13 +69,14 @@ This repository provides configurable one-shot deployment for common infrastruct
       - Queries should be sent to the Query Frontend; responsible for sharding the search space for an incoming query
       - Internally, the Query Frontend splits the blockID space into a configurable number of shards and queues these requests; queriers connect to the Query Frontend via a streaming gRPC connection to process these sharded queries
     - Compactor
+      - Block retention: 144 hours
       - Streams blocks to and from the backend storage to reduce the total number of blocks
     - Vulture
       - Monitors Grafana Tempo's performance; it pushes traces, queries Tempo, and metrics 404s and traces with missing spans
 
 In addition, some common application deployment templates are provided:
 - [Kafka + Zookeeper](app/kafka)
-  - Log retention for 72 hours
+  - Log retention: 72 hours
 - [Kafka KRaft](app/kafka-raft)
 - [Minio](app/minio)
   - 8 replica servers, each with 10Gi storage
