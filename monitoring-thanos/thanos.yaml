@@ -36,10 +36,10 @@ spec:
         - name: prometheus-data
           mountPath: /prometheus/data
       # an alternative to fixing permissions in init container
-      securityContext:
-        fsGroup: 65534
-        supplementalGroups:
-          - 0
+      # securityContext:
+      #   fsGroup: 65534
+      #   supplementalGroups:
+      #     - 0
       containers:
       - name: prometheus
         image: prom/prometheus:v2.25.2
