@@ -31,6 +31,11 @@ spec:
         volumeMounts:
         - name: grafana-persistent-storage
           mountPath: /var/lib/grafana
+      # an alternative to fixing permissions in init container
+      # securityContext:
+      #   fsGroup: 472
+      #   supplementalGroups:
+      #     - 0
       containers:
       - image: grafana/grafana:9.3.6
         name: grafana-core
