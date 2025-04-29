@@ -30,6 +30,9 @@ data:
     exporters:
       otlphttp:
         endpoint: http://distributor:4318
+        timeout: 30s
+        tls:
+          insecure: true
     service:
       extensions: [zpages, memory_ballast]
       pipelines:
