@@ -14,8 +14,6 @@ data:
     cluster-require-full-coverage no
     cluster-node-timeout 15000
     cluster-config-file /data/nodes.conf
-    masterauth mypass123
-    requirepass mypass123
     cluster-migration-barrier 1
     appendonly yes
     appendfsync everysec
@@ -51,12 +49,14 @@ spec:
           name: client
         - containerPort: 16379
           name: gossip
-        command: ["/conf/update-node.sh", "redis-server", "/conf/redis.conf"]
+        command: ["/conf/update-node.sh", "redis-server", "/conf/redis.conf", "--masterauth", "$(REDIS_PASSWORD)", "--requirepass", "$(REDIS_PASSWORD)"]
         env:
         - name: POD_IP
           valueFrom:
             fieldRef:
               fieldPath: status.podIP
+        - name: REDIS_PASSWORD
+          value: mypass123
         volumeMounts:
         - name: conf
           mountPath: /conf
