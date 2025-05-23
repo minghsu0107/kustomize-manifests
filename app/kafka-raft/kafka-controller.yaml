@@ -116,8 +116,12 @@ spec:
           value: "ciWo7IWazngRchmPES6q5A=="
         - name: KAFKA_CONTROLLER_LISTENER_NAMES
           value: "CONTROLLER"
+        - name: KAFKA_LISTENERS
+          value: "CONTROLLER://0.0.0.0:9093"
         - name: KAFKA_LISTENER_SECURITY_PROTOCOL_MAP
           value: "CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT"
+        - name: KAFKA_INTER_BROKER_LISTENER_NAME
+          value: "CONTROLLER"
         - name: KAFKA_CONTROLLER_QUORUM_VOTERS
           value: "0@kafka-controller-0.kafka-controller-hs:9093,1@kafka-controller-1.kafka-controller-hs:9093,2@kafka-controller-2.kafka-controller-hs:9093"
         - name: KAFKA_LOG_DIRS
