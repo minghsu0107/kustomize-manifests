@@ -162,7 +162,7 @@ spec:
         - name: KAFKA_NUM_PARTITIONS
           value: "1"
         # The number of acknowledgments the producer requires the leader to have received
-        # 1 means he leader will write the record to its local log but will respond without awaiting full acknowledgement from all followers
+        # 1 means the leader will write the record to its local log but will respond without awaiting full acknowledgement from all followers
         # if the leader fail immediately after acknowledging the record but before the followers have replicated it then the record will be lost
         # all means the leader will wait for the full set of in-sync replicas to acknowledge the record
         # default=1
